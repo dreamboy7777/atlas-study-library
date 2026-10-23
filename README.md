@@ -45,6 +45,8 @@ The Android APK and iPhone IPA are built by [`.github/workflows/build-mobile.yml
 
 > The iPhone IPA is unsigned because signing requires an Apple Developer account. It will not install by tapping it in Safari; use a sideloading tool.
 
+Checksums for all three files are in [`downloads/SHA256SUMS.txt`](downloads/SHA256SUMS.txt).
+
 ## First-run checklist
 
 - [ ] Open `atlas.html` and create the admin account.
