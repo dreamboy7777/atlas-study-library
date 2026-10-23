@@ -31,6 +31,20 @@ No dependencies. Node 18+ only. The server is optional; the file works on its ow
 If port 4321 is busy, use `$env:PORT=4322; npm start` in PowerShell or
 `PORT=4322 npm start` on macOS/Linux.
 
+## Download the apps
+
+The repo includes a [download page](download.html) with the same app packaged for each platform:
+
+| Platform | File | Notes |
+|---|---|---|
+| **Windows 10/11** | [`downloads/atlas-windows.zip`](downloads/atlas-windows.zip) | Portable. Unzip, then double-click `Start Atlas.bat`. |
+| **Android 7+** | [`downloads/atlas-android.apk`](downloads/atlas-android.apk) | Debug-signed APK. Allow installs from your browser or Files app. |
+| **iPhone / iPad 15+** | [`downloads/atlas-ios.ipa`](downloads/atlas-ios.ipa) | Unsigned IPA. Sideload with AltStore or Sideloadly. |
+
+The Android APK and iPhone IPA are built by [`.github/workflows/build-mobile.yml`](.github/workflows/build-mobile.yml). The wrappers live in [`mobile/`](mobile/). Both load the same `atlas.html`, so your library stays local to the device. For iPhone without a computer, host the folder and use **Share → Add to Home Screen** in Safari.
+
+> The iPhone IPA is unsigned because signing requires an Apple Developer account. It will not install by tapping it in Safari; use a sideloading tool.
+
 ## First-run checklist
 
 - [ ] Open `atlas.html` and create the admin account.
@@ -141,6 +155,11 @@ This is a local-first build, not a server. The admin password gates the UI only;
 | [`seed/module_subjects.csv`](seed/module_subjects.csv) | Module → subject mapping — fill in when known |
 | [`serve.mjs`](serve.mjs) | Optional zero-dependency static server |
 | [`web/`](web/) | Optional Next.js + Postgres prototype |
+| [`download.html`](download.html) | Download page for Windows, Android and iPhone |
+| [`downloads/`](downloads/) | Built ZIP, APK and IPA artifacts |
+| [`assets/`](assets/) | Logo source and generated icons |
+| [`mobile/`](mobile/) | Android and iPhone WebView wrappers |
+| [`.github/workflows/build-mobile.yml`](.github/workflows/build-mobile.yml) | CI build for the APK and unsigned IPA |
 | `studyhub.html` | Tiny redirect for old links |
 | `studyhub-v1.html` | Earlier light-theme build, kept as a legacy fallback |
 

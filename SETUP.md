@@ -110,6 +110,18 @@ If you want to give someone a completely fresh app:
 
 This deletes every account, file, chat message, meme, sign-in record, custom module and setting in that browser. The app returns to the first-run screen with the default Atlas branding and the default admin password.
 
+## Optional: install the mobile apps
+
+The repository includes a [download page](download.html) with three packages:
+
+- **Windows** — [`downloads/atlas-windows.zip`](downloads/atlas-windows.zip). Unzip it, then double-click `Start Atlas.bat`.
+- **Android** — [`downloads/atlas-android.apk`](downloads/atlas-android.apk). Install it directly after allowing installs from your browser or Files app.
+- **iPhone / iPad** — [`downloads/atlas-ios.ipa`](downloads/atlas-ios.ipa). This IPA is unsigned. Sideload it with AltStore or Sideloadly, then trust the developer profile in **Settings → General → VPN & Device Management**.
+
+The mobile apps are WebView wrappers around the same `atlas.html`. Data stays in the app on the device. Export a JSON backup before uninstalling.
+
+> No computer for the iPhone? Host this folder on a local server or static host, open it in Safari, and choose **Share → Add to Home Screen**.
+
 ## Optional: run it on a local address
 
 If you prefer `http://127.0.0.1:4321` instead of double-clicking the file:
@@ -132,7 +144,7 @@ This is optional. The app works without it.
 In this browser's local storage (IndexedDB). They are not uploaded anywhere. Clearing browser data deletes them, so keep backups.
 
 **Can I use it on my phone?**
-The file is designed for a desktop browser. For phone use, put the folder on a simple local web server and open it over your network, or use the optional Next.js prototype.
+Yes. Use the Android APK or the iPhone IPA from [download.html](download.html), or host the folder and add it to your Home Screen. The APK is debug-signed; the IPA is unsigned and needs a sideloading tool.
 
 **Can two people use it at the same time?**
 The single-file app is local to one browser profile. Multiple tabs on the same device can chat live. For multiple devices, use the `web/` prototype or a real backend.
