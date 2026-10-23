@@ -2662,6 +2662,39 @@ async function render() {
 }
 
 /* ================================================================== saves */
+/* Native wrappers save through a bridge so blob downloads work inside the Android and iPhone apps. */
+function saveBlob(blob, filename) {
+  if (!blob) return;
+  const android = window.AtlasNative && typeof window.AtlasNative.saveFile === "function";
+  const ios = window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.atlas;
+  if (android || ios) {
+    const reader = new FileReader();
+    reader.onload = function () {
+      const dataUrl = String(reader.result || "");
+      const comma = dataUrl.indexOf(",");
+      const b64 = comma >= 0 ? dataUrl.slice(comma + 1) : "";
+      const mime = blob.type || "application/octet-stream";
+      try {
+        if (android) window.AtlasNative.saveFile(filename, mime, b64);
+        else window.webkit.messageHandlers.atlas.postMessage({ action: "save", name: filename, mime: mime, base64: b64 });
+        toast("Saving " + filename + "...");
+      } catch (e) {
+        toast("Could not save the file on this device.");
+      }
+    };
+    reader.onerror = function () { toast("Could not read the file."); };
+    reader.readAsDataURL(blob);
+    return;
+  }
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 30000);
+}
 function handleDownload(id) {
   (async () => {
     const meta = await DB.allMeta();
@@ -2673,14 +2706,7 @@ function handleDownload(id) {
     const blob = await DB.getFile(id);
     if (!blob) { toast("File missing on this device."); return; }
 
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = slugify(rec.title) + ".pdf";
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    setTimeout(() => URL.revokeObjectURL(url), 30000);
+    saveBlob(blob, slugify(rec.title) + ".pdf");
 
     rec.downloads = (rec.downloads || 0) + 1;
     await DB.putMeta(rec);
@@ -2762,14 +2788,7 @@ function downloadMeme(i) {
   paintMeme(c, MEMES[i], i);
   c.toBlob((blob) => {
     if (!blob) return;
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "atlas-meme-" + String(i + 1).padStart(2, "0") + ".png";
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    setTimeout(() => URL.revokeObjectURL(url), 30000);
+    saveBlob(blob, "atlas-meme-" + String(i + 1).padStart(2, "0") + ".png");
     toast("Meme saved.");
   }, "image/png");
 }
@@ -2783,14 +2802,7 @@ function memeExt(mime) {
 }
 function downloadUploadedMeme(rec) {
   if (!rec || !rec.blob) { toast("Meme missing."); return; }
-  const url = URL.createObjectURL(rec.blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = (slugify(rec.title) || "atlas-meme") + memeExt(rec.mime);
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-  setTimeout(() => URL.revokeObjectURL(url), 30000);
+  saveBlob(rec.blob, (slugify(rec.title) || "atlas-meme") + memeExt(rec.mime));
   toast("Meme saved.");
 }
 function downloadPopupMeme() {
@@ -3103,14 +3115,7 @@ function exportJson(meta) {
     delete siteExport.adminPasscode;
     const payload = { app: "atlas", version: 2, exportedAt: new Date().toISOString(), resources: records, modules: CUSTOM_MODULES, site: siteExport };
     const blob = new Blob([JSON.stringify(payload)], { type: "application/json" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "atlas-library-" + new Date().toISOString().slice(0, 10) + ".json";
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    setTimeout(() => URL.revokeObjectURL(url), 30000);
+    saveBlob(blob, "atlas-library-" + new Date().toISOString().slice(0, 10) + ".json");
     toast("Exported " + records.length + " files.");
   })();
 }

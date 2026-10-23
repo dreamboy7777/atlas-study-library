@@ -1,0 +1,3486 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#070a09">
+<title>Atlas — study library</title>
+<meta name="description" content="Atlas — a calm, searchable study library for medical students: slides, past papers, MCQs and notes.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230a0f0d'/%3E%3Cpath d='M9 23.5 16 8l7 15.5' fill='none' stroke='%239ff0dd' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M12.4 18.6h7.2' stroke='%23d8b98a' stroke-width='1.4' stroke-linecap='round'/%3E%3C/svg%3E">
+<style>
+:root{
+  color-scheme:dark;
+  --bg:#070a09;
+  --surface:#0c1110;
+  --surface2:#111715;
+  --surface3:#17201d;
+  --line:rgba(233,255,246,.07);
+  --line2:rgba(233,255,246,.145);
+  --text:#edf3ef;
+  --mut:#9aa8a1;
+  --dim:#68756f;
+  --accent:#9ff0dd;
+  --accent-rgb:159,240,221;
+  --accent-d:#6fd7c1;
+  --accent-ink:#062420;
+  --accent-soft:#c9f8ed;
+  --gold:#d8b98a;
+  --danger:#f19aa7;
+  --amber:#e6c07a;
+  --violet:#c3b5f7;
+  --sky:#9ed3f5;
+  --radius:16px;
+  --serif:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,ui-serif,serif;
+  --sans:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+}
+/* Theme presets — the admin can switch these from Site settings. */
+:root[data-theme="ocean"]{
+  --accent:#9ed3f5; --accent-rgb:158,211,245; --accent-d:#6bb8e8;
+  --accent-ink:#06202e; --accent-soft:#d6efff;
+}
+:root[data-theme="rose"]{
+  --accent:#f3b6c8; --accent-rgb:243,182,200; --accent-d:#e78aa6;
+  --accent-ink:#2a0712; --accent-soft:#ffe1ea;
+}
+:root[data-theme="amber"]{
+  --accent:#f0d59f; --accent-rgb:240,213,159; --accent-d:#d9b86f;
+  --accent-ink:#2a1c04; --accent-soft:#fff0cf;
+}
+:root[data-theme="violet"]{
+  --accent:#c9bdf7; --accent-rgb:201,189,247; --accent-d:#a78ee8;
+  --accent-ink:#170b2e; --accent-soft:#e9e2ff;
+}
+
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0; color:var(--text); min-height:100vh;
+  background:
+    radial-gradient(1200px 680px at 10% -12%, rgba(var(--accent-rgb),.075), transparent 58%),
+    radial-gradient(900px 520px at 98% -8%, rgba(216,185,138,.055), transparent 55%),
+    var(--bg);
+  font-family:var(--sans);
+  font-size:14px; line-height:1.55; letter-spacing:.004em;
+  -webkit-font-smoothing:antialiased;
+}
+a{color:var(--accent); text-decoration:none}
+a:hover{text-decoration:none}
+h1,h2,h3{margin:0; line-height:1.2; font-weight:400}
+button{font-family:inherit}
+::selection{background:rgba(var(--accent-rgb),.24); color:#fff}
+::-webkit-scrollbar{width:9px;height:9px}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,.11);border-radius:99px;border:2px solid var(--bg)}
+::-webkit-scrollbar-thumb:hover{background:rgba(255,255,255,.18)}
+::-webkit-scrollbar-track{background:transparent}
+input[type=search]::-webkit-search-cancel-button{-webkit-appearance:none;height:12px;width:12px;background:rgba(255,255,255,.25);border-radius:50%;cursor:pointer}
+:focus-visible{outline:2px solid rgba(var(--accent-rgb),.55);outline-offset:2px}
+
+.ic{width:17px;height:17px;flex:none;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.ic.solid{fill:currentColor;stroke:currentColor}
+.hide{display:none !important}
+.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+
+/* ---------------------------------------------------------------- logo */
+.logo{
+  width:38px;height:38px;border-radius:12px;flex:none;display:grid;place-items:center;
+  color:var(--accent);
+  background:radial-gradient(circle at 30% 18%, rgba(var(--accent-rgb),.16), rgba(var(--accent-rgb),.02) 70%);
+  border:1px solid rgba(var(--accent-rgb),.17);
+  transition:box-shadow .25s, border-color .25s;
+}
+.logo svg{width:26px;height:26px;display:block}
+.logo-letter{font-family:var(--serif);font-size:22px;line-height:1;letter-spacing:-.04em;color:var(--accent)}
+.logo-lg .logo-letter{font-size:30px}
+.logo-sm .logo-letter{font-size:17px}
+.logo-lg{width:46px;height:46px;border-radius:14px}
+.logo-lg svg{width:32px;height:32px}
+.logo-sm{width:30px;height:30px;border-radius:9px}
+.logo-sm svg{width:21px;height:21px}
+.word-dot{color:var(--gold)}
+
+/* ---------------------------------------------------------------- shell */
+.shell{min-height:100vh}
+.sidebar{
+  position:fixed; inset:0 auto 0 0; width:264px; z-index:60;
+  display:flex; flex-direction:column; padding:20px 14px 16px;
+  background:linear-gradient(180deg, rgba(9,13,11,.94), rgba(6,9,8,.985));
+  border-right:1px solid var(--line);
+  backdrop-filter:blur(20px);
+  transform:translateX(-100%); transition:transform .24s cubic-bezier(.2,.7,.3,1);
+}
+.navopen .sidebar{transform:none}
+.overlay{
+  position:fixed; inset:0; z-index:55; background:rgba(2,4,3,.66);
+  backdrop-filter:blur(3px); opacity:0; pointer-events:none; transition:opacity .22s;
+}
+.navopen .overlay{opacity:1; pointer-events:auto}
+
+.sbrand{display:flex; align-items:center; gap:11px; padding:2px 8px 18px; border-radius:12px}
+.sbrand:hover .logo{border-color:rgba(var(--accent-rgb),.32); box-shadow:0 10px 26px -18px rgba(var(--accent-rgb),.8)}
+.sbrand-txt b{
+  display:block; font-family:var(--serif); font-size:19px; font-weight:500;
+  line-height:1.05; letter-spacing:.008em;
+}
+.sbrand-txt > span{
+  display:block; font-size:8px; font-weight:700; letter-spacing:.24em;
+  text-transform:uppercase; color:var(--dim); margin-top:4px;
+}
+
+.snav{display:flex; flex-direction:column; gap:3px; overflow-y:auto; flex:1; padding-right:2px}
+.ngroup{
+  font-size:8.5px; font-weight:700; letter-spacing:.2em; text-transform:uppercase;
+  color:var(--dim); margin:20px 12px 7px;
+}
+.ngroup:first-child{margin-top:4px}
+.nav-item{
+  position:relative; display:flex; align-items:center; gap:11px;
+  padding:9px 11px; border-radius:9px; font-size:12.5px; font-weight:500;
+  letter-spacing:.012em; color:var(--mut);
+  transition:background .18s, color .18s;
+}
+.nav-item .ic{opacity:.72; width:16px; height:16px}
+.nav-item:hover{background:rgba(255,255,255,.035); color:var(--text)}
+.nav-item:hover .ic{opacity:.95}
+.nav-item.on{
+  color:var(--accent-soft);
+  background:linear-gradient(90deg, rgba(var(--accent-rgb),.10), rgba(var(--accent-rgb),.015));
+}
+.nav-item.on::before{
+  content:""; position:absolute; left:0; top:9px; bottom:9px; width:2px;
+  border-radius:0 2px 2px 0; background:var(--accent);
+  box-shadow:0 0 14px rgba(var(--accent-rgb),.65);
+}
+.nav-item.on .ic{opacity:1; color:var(--accent)}
+.nbadge{
+  margin-left:auto; min-width:18px; height:18px; padding:0 5px; border-radius:99px;
+  background:rgba(var(--accent-rgb),.12); border:1px solid rgba(var(--accent-rgb),.22);
+  color:var(--accent); font-size:9px; font-weight:700;
+  display:grid; place-items:center;
+}
+.nbadge.quiet{background:rgba(255,255,255,.05); border-color:var(--line); color:var(--mut)}
+
+.suser{
+  margin-top:14px; padding:14px 8px 0; display:flex; align-items:center; gap:10px;
+  border-top:1px solid var(--line);
+}
+.avatar{
+  width:30px;height:30px;border-radius:50%;flex:none; display:grid; place-items:center;
+  font-size:10px;font-weight:700;color:#04120e;
+  box-shadow:inset 0 0 0 1px rgba(0,0,0,.28);
+}
+.uinfo{min-width:0;flex:1}
+.uname{font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.urole{font-size:9.5px;letter-spacing:.04em;color:var(--dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.suser .icon-btn{width:28px;height:28px;border:0;background:transparent;color:var(--dim)}
+.suser .icon-btn:hover{background:rgba(255,255,255,.05);color:var(--text);border:0}
+
+/* ---------------------------------------------------------------- main */
+.main{margin-left:0; min-height:100vh; display:flex; flex-direction:column}
+.topbar{
+  position:sticky; top:0; z-index:40; display:flex; align-items:center; gap:10px;
+  height:58px; padding:0 20px; border-bottom:1px solid var(--line);
+  background:rgba(7,10,9,.72); backdrop-filter:blur(18px);
+}
+.brand-m{display:flex;align-items:center;gap:9px}
+.brand-word{font-family:var(--serif);font-size:16px;letter-spacing:.01em;color:var(--text)}
+@media (max-width:379px){.brand-word{display:none}}
+.search{flex:1; max-width:420px; margin-left:auto}
+.search input{
+  width:100%; padding:9px 12px 9px 34px; border-radius:9px;
+  border:1px solid var(--line); background:rgba(255,255,255,.02);
+  color:var(--text); font-size:12.5px; letter-spacing:.005em;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%237f8c86' stroke-width='2' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='m20 20-3.5-3.5'/%3E%3C/svg%3E");
+  background-repeat:no-repeat; background-position:12px 50%; background-size:14px;
+  transition:border-color .18s, box-shadow .18s, background .18s;
+}
+.search input::placeholder{color:var(--dim)}
+.search input:focus{
+  outline:none; border-color:rgba(var(--accent-rgb),.42);
+  box-shadow:0 0 0 3px rgba(var(--accent-rgb),.075);
+  background:rgba(255,255,255,.035);
+}
+.content{padding:30px 20px 90px; max-width:1080px; width:100%; margin:0 auto; flex:1}
+@keyframes atlas-in{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:none}}
+.content > *{animation:atlas-in .34s cubic-bezier(.2,.7,.3,1) both}
+
+/* ---------------------------------------------------------------- type */
+.mut{color:var(--mut)}
+.small{font-size:12.5px}
+.tiny{font-size:10.5px}
+.page-head{display:flex; flex-wrap:wrap; gap:12px; align-items:flex-end; justify-content:space-between; margin-bottom:20px}
+.page-head h1{font-family:var(--serif); font-size:31px; font-weight:400; letter-spacing:-.018em}
+.page-head p{margin:5px 0 0; font-size:12px; color:var(--mut); max-width:64ch}
+.stack{display:flex;flex-direction:column;gap:22px}
+.row{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.between{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px}
+.sec-title{
+  font-family:var(--sans); font-size:8.5px; font-weight:700; letter-spacing:.2em;
+  text-transform:uppercase; color:var(--dim); margin-bottom:10px;
+}
+
+/* ---------------------------------------------------------------- buttons */
+.btn{
+  display:inline-flex; align-items:center; justify-content:center; gap:7px;
+  padding:9px 15px; border-radius:10px; border:1px solid transparent;
+  background:var(--accent); color:var(--accent-ink);
+  font-size:12px; font-weight:600; letter-spacing:.012em;
+  cursor:pointer; white-space:nowrap;
+  transition:background .18s, box-shadow .18s, border-color .18s, transform .08s;
+}
+.btn:hover{background:var(--accent-soft); box-shadow:0 10px 26px -16px rgba(var(--accent-rgb),.75)}
+.btn:active{transform:translateY(1px)}
+.btn.ghost{background:rgba(255,255,255,.025); border-color:var(--line2); color:#c3d0c9}
+.btn.ghost:hover{background:rgba(255,255,255,.05); border-color:rgba(255,255,255,.22); color:var(--text); box-shadow:none}
+.btn.danger{background:transparent; border-color:rgba(241,154,167,.28); color:#f4b3bd}
+.btn.danger:hover{background:rgba(241,154,167,.09)}
+.btn.sm{padding:5px 10px; font-size:11px; border-radius:8px}
+.btn.block{width:100%}
+.btn:disabled{opacity:.45; cursor:not-allowed}
+.icon-btn{
+  width:34px;height:34px;border-radius:9px;border:1px solid var(--line);
+  background:rgba(255,255,255,.02); color:#a9b6af;
+  display:grid; place-items:center; cursor:pointer; flex:none;
+  transition:background .18s, border-color .18s, color .18s;
+}
+.icon-btn:hover{background:rgba(255,255,255,.05); border-color:var(--line2); color:var(--text)}
+.icon-btn.on{color:var(--gold); border-color:rgba(216,185,138,.35); background:rgba(216,185,138,.08)}
+
+/* ---------------------------------------------------------------- chips */
+.chips{display:flex; flex-wrap:wrap; gap:6px; align-items:center}
+.chip{
+  display:inline-flex; align-items:center; gap:5px; padding:5px 12px; border-radius:999px;
+  border:1px solid var(--line); background:rgba(255,255,255,.02);
+  color:#a9b6af; font-size:11px; font-weight:500; letter-spacing:.012em;
+  white-space:nowrap; cursor:pointer; transition:border-color .16s, color .16s, background .16s;
+}
+.chip:hover{border-color:var(--line2); color:var(--text)}
+.chip.on{background:rgba(var(--accent-rgb),.10); border-color:rgba(var(--accent-rgb),.34); color:#bdf5e9}
+
+/* ---------------------------------------------------------------- hero */
+.hero{
+  position:relative; overflow:hidden; padding:28px 28px 24px; border-radius:20px;
+  border:1px solid var(--line);
+  background:
+    radial-gradient(700px 250px at 100% 0%, rgba(var(--accent-rgb),.10), transparent 65%),
+    radial-gradient(480px 220px at 82% 120%, rgba(216,185,138,.055), transparent 70%),
+    linear-gradient(170deg,#0d1311,#090d0c);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.03), 0 30px 60px -50px #000;
+}
+.hero .eyebrow{
+  margin:0; font-size:8.5px; font-weight:700; letter-spacing:.24em; text-transform:uppercase;
+  color:var(--gold); opacity:.85;
+}
+.hero::after{
+  content:""; position:absolute; right:28px; top:27px; width:56px; height:1px;
+  background:linear-gradient(90deg, transparent, rgba(216,185,138,.55));
+}
+.hero h1{
+  font-family:var(--serif); font-size:35px; font-weight:400;
+  letter-spacing:-.022em; margin-top:11px; max-width:26ch;
+}
+.hero h1 em{font-style:italic; color:#e9d7b6}
+.hero p{margin:9px 0 0; font-size:12.5px; color:var(--mut); max-width:58ch}
+.hero .chips{margin-top:0}
+.hero .filterlab, .filterlab{
+  font-size:8px; font-weight:700; letter-spacing:.18em; text-transform:uppercase;
+  color:var(--dim); margin-right:5px;
+}
+.hero-filter{margin-top:8px}
+.hero-filter:first-of-type{margin-top:18px; padding-top:15px; border-top:1px solid var(--line)}
+
+/* ---------------------------------------------------------------- stats */
+.stats{
+  display:grid; grid-template-columns:repeat(2,1fr);
+  border:1px solid var(--line); border-radius:16px; overflow:hidden;
+  background:linear-gradient(180deg,#0c1110,#090d0c);
+}
+.stat{padding:15px 18px; border-right:1px solid var(--line); border-bottom:1px solid var(--line)}
+.stat:nth-child(2n){border-right:0}
+.stat:nth-child(n+3){border-bottom:0}
+.stat span{font-size:8px; font-weight:700; letter-spacing:.18em; text-transform:uppercase; color:var(--dim)}
+.stat b{display:block; font-family:var(--serif); font-size:26px; font-weight:400; letter-spacing:-.01em; margin-top:5px}
+.stat-accent b{color:var(--accent)}
+
+/* ---------------------------------------------------------------- grid */
+.grid{display:grid;grid-template-columns:1fr;gap:12px}
+.tile{
+  display:flex; flex-direction:column; gap:8px; padding:15px 16px; min-height:112px;
+  border-radius:14px; border:1px solid var(--line);
+  background:linear-gradient(180deg, rgba(255,255,255,.026), rgba(255,255,255,.006));
+  color:inherit;
+  transition:border-color .2s, transform .2s, background .2s, box-shadow .2s;
+}
+.tile:hover{
+  border-color:rgba(var(--accent-rgb),.28); transform:translateY(-2px);
+  background:linear-gradient(180deg, rgba(var(--accent-rgb),.05), rgba(255,255,255,.008));
+  box-shadow:0 18px 34px -30px rgba(var(--accent-rgb),.55);
+}
+.tile .code{
+  font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  font-weight:600; font-size:11.5px; letter-spacing:.09em; color:#cfe9e2;
+}
+.tile .title{font-size:12px; color:#97a59e; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+.tile .meta{font-size:10px; color:var(--dim); margin-top:auto; padding-top:2px}
+.tile-top{display:flex; align-items:center; justify-content:space-between; gap:6px}
+
+/* ---------------------------------------------------------------- badges */
+.badge{
+  display:inline-flex; align-items:center; padding:2.5px 6px; border-radius:5px;
+  font-size:8px; font-weight:700; letter-spacing:.1em; text-transform:uppercase;
+  white-space:nowrap; border:1px solid transparent;
+}
+.b-vert{background:rgba(216,185,138,.10); color:#e3c9a2; border-color:rgba(216,185,138,.20)}
+.b-horz{background:rgba(255,255,255,.04); color:#9aa8a1; border-color:var(--line)}
+.b-type{text-transform:none; letter-spacing:.01em; font-weight:600; font-size:9.5px}
+.t-slides{background:rgba(158,211,245,.10); color:#b9dcf7; border-color:rgba(158,211,245,.18)}
+.t-past_paper{background:rgba(230,192,122,.10); color:#ecd3a6; border-color:rgba(230,192,122,.18)}
+.t-mcq{background:rgba(195,181,247,.10); color:#d6cbfa; border-color:rgba(195,181,247,.18)}
+.t-summary_note{background:rgba(var(--accent-rgb),.10); color:#bdf3e6; border-color:rgba(var(--accent-rgb),.18)}
+.t-practical_guide{background:rgba(241,154,167,.10); color:#f6c0c8; border-color:rgba(241,154,167,.18)}
+.t-syllabus,.t-reference{background:rgba(255,255,255,.05); color:#c3cec8; border-color:var(--line)}
+
+/* ---------------------------------------------------------------- rows */
+.list{display:flex;flex-direction:column;gap:9px}
+.rrow{
+  display:flex; gap:13px; align-items:center; padding:13px 16px; border-radius:14px;
+  border:1px solid var(--line);
+  background:linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,.005));
+  transition:border-color .18s, background .18s;
+}
+.rrow:hover{border-color:var(--line2); background:rgba(255,255,255,.03)}
+.rbody{min-width:0;flex:1}
+.rtitle{display:block; font-size:13.5px; font-weight:600; letter-spacing:.004em; color:var(--text); overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+.rtitle:hover{color:var(--accent)}
+.rmeta{margin:3px 0 0; font-size:10.5px; color:var(--dim); overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+.racts{display:flex; align-items:center; gap:6px; flex:none}
+.racts .icon-btn{border-color:transparent; background:transparent; width:32px; height:32px}
+.racts .icon-btn:hover{background:rgba(255,255,255,.05); border-color:var(--line)}
+
+/* ---------------------------------------------------------------- cards/forms */
+.card{
+  border:1px solid var(--line); border-radius:16px; padding:20px;
+  background:linear-gradient(180deg,#0c1110,#090d0c);
+}
+.field{
+  display:flex; flex-direction:column; gap:6px; font-size:8.5px; font-weight:700;
+  letter-spacing:.14em; text-transform:uppercase; color:var(--dim);
+}
+.field input,.field select,.field textarea{
+  padding:10px 12px; border-radius:9px; border:1px solid var(--line2);
+  background:rgba(255,255,255,.02); color:var(--text);
+  font-size:12.5px; font-weight:400; width:100%; text-transform:none; letter-spacing:.004em;
+  transition:border-color .18s, box-shadow .18s;
+}
+.field input::placeholder{color:var(--dim)}
+.field input:focus,.field select:focus,.field textarea:focus{
+  outline:none; border-color:rgba(var(--accent-rgb),.45);
+  box-shadow:0 0 0 3px rgba(var(--accent-rgb),.075);
+}
+.field select{
+  appearance:none;
+  background-image:linear-gradient(45deg,transparent 50%,#7d8b84 50%),linear-gradient(135deg,#7d8b84 50%,transparent 50%);
+  background-position:calc(100% - 16px) 50%,calc(100% - 11px) 50%;
+  background-size:5px 5px,5px 5px; background-repeat:no-repeat; padding-right:30px;
+}
+select{color-scheme:dark}
+select option, select optgroup{
+  background-color:#0b100e;
+  color:#edf3ef;
+}
+select option:checked, select option:hover{
+  background-color:#163b33;
+  color:#eafff8;
+}
+.formgrid{display:grid;grid-template-columns:1fr;gap:13px}
+.check{display:flex;align-items:center;gap:9px;font-size:11.5px;font-weight:500;color:#a7b4ad}
+.check input{width:15px;height:15px;accent-color:var(--accent-d)}
+
+/* ---------------------------------------------------------------- alerts */
+.alert{
+  border-radius:10px; padding:11px 13px; font-size:11.5px; border:1px solid;
+  display:flex; gap:9px; align-items:flex-start; line-height:1.5;
+}
+.err{background:rgba(241,154,167,.06); border-color:rgba(241,154,167,.26); color:#f4b3bd}
+.ok{background:rgba(var(--accent-rgb),.05); border-color:rgba(var(--accent-rgb),.22); color:#bdf3e6}
+.warn{background:rgba(216,185,138,.055); border-color:rgba(216,185,138,.22); color:#e7cfa9}
+.info{background:rgba(158,211,245,.05); border-color:rgba(158,211,245,.2); color:#c2e2f8}
+
+/* ---------------------------------------------------------------- auth */
+.auth{
+  min-height:100vh; display:grid; place-items:center; padding:28px 16px;
+  background:
+    radial-gradient(820px 480px at 50% -12%, rgba(var(--accent-rgb),.10), transparent 62%),
+    radial-gradient(620px 420px at 92% 104%, rgba(216,185,138,.06), transparent 62%);
+}
+.authcard{
+  position:relative; overflow:hidden;
+  width:100%; max-width:414px; padding:30px; border-radius:22px;
+  border:1px solid var(--line2);
+  background:linear-gradient(175deg,#0d1311,#080b0a);
+  box-shadow:0 46px 90px -46px #000, inset 0 1px 0 rgba(255,255,255,.045);
+}
+.authcard::before{
+  content:""; position:absolute; inset:0 0 auto; height:1px;
+  background:linear-gradient(90deg, transparent, rgba(var(--accent-rgb),.55), transparent);
+}
+.auth-brand{display:flex; align-items:center; gap:12px; margin-bottom:22px}
+.auth-word{font-family:var(--serif); font-size:21px; letter-spacing:.008em}
+.authcard h1{font-family:var(--serif); font-size:27px; font-weight:400; letter-spacing:-.018em}
+.authcard .sub{font-size:11.5px; line-height:1.65; color:var(--mut); margin:9px 0 21px}
+.authcard form{display:flex; flex-direction:column; gap:13px}
+.switch{font-size:11.5px; color:var(--mut); text-align:center; margin-top:18px}
+.switch a{font-weight:600; border-bottom:1px solid rgba(var(--accent-rgb),.25)}
+.switch a:hover{border-color:var(--accent)}
+
+/* ---------------------------------------------------------------- tables */
+.tblwrap{overflow-x:auto; border:1px solid var(--line); border-radius:14px; background:#0a0e0d}
+table{width:100%; border-collapse:collapse; font-size:11.5px}
+thead{background:rgba(255,255,255,.02)}
+th{
+  text-align:left; font-weight:700; padding:10px 12px; font-size:8px;
+  letter-spacing:.16em; text-transform:uppercase; color:var(--dim);
+}
+td{padding:10px 12px; border-top:1px solid var(--line); vertical-align:middle; color:#c9d4ce}
+tbody tr:hover{background:rgba(255,255,255,.02)}
+
+/* ---------------------------------------------------------------- empty */
+.empty{
+  border:1px dashed var(--line2); border-radius:16px; padding:38px 18px;
+  text-align:center; background:rgba(255,255,255,.012);
+}
+.empty b{display:block; font-family:var(--serif); font-weight:400; font-size:17px; color:#d5e0da}
+.empty span{font-size:11.5px; color:var(--dim); display:block; margin-top:5px; line-height:1.6}
+
+/* ---------------------------------------------------------------- detail */
+.detail-head{
+  border:1px solid var(--line); border-radius:20px; padding:22px;
+  background:
+    radial-gradient(600px 220px at 100% 0%, rgba(var(--accent-rgb),.06), transparent 65%),
+    linear-gradient(170deg,#0d1311,#090d0c);
+}
+.detail-head h1{font-family:var(--serif); font-weight:400; letter-spacing:-.015em}
+dl.facts{display:grid; grid-template-columns:1fr 1fr; gap:14px; margin:18px 0 0}
+dl.facts dt{color:var(--dim); font-size:8px; font-weight:700; letter-spacing:.16em; text-transform:uppercase}
+dl.facts dd{margin:3px 0 0; font-weight:600; font-size:11.5px; color:#dbe5df}
+.preview{border:1px solid var(--line); border-radius:16px; overflow:hidden; background:#0a0e0d}
+.preview .ph{display:flex; justify-content:space-between; align-items:center; gap:8px; padding:9px 14px; border-bottom:1px solid var(--line)}
+.preview iframe{display:block; width:100%; height:66vh; border:0; background:#0a0e0d}
+
+/* ---------------------------------------------------------------- chat */
+.chatwrap{
+  display:flex; flex-direction:column; height:calc(100vh - 250px); min-height:380px;
+  border:1px solid var(--line); border-radius:18px; overflow:hidden; background:#080b0a;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.025);
+}
+.chathead{display:flex; align-items:center; gap:11px; padding:13px 16px; border-bottom:1px solid var(--line); background:rgba(255,255,255,.015); flex:none}
+.chathead .hash{
+  width:28px;height:28px;border-radius:8px;background:rgba(var(--accent-rgb),.08);
+  color:var(--accent); display:grid; place-items:center; font-weight:600; font-size:12px;
+  border:1px solid rgba(var(--accent-rgb),.16);
+}
+.msglist{flex:1;min-height:0;overflow-y:auto;padding:18px 16px;display:flex;flex-direction:column;gap:14px}
+.msg{display:flex; gap:10px; max-width:min(680px,92%)}
+.msg.me{align-self:flex-end; flex-direction:row-reverse}
+.mavatar{width:28px;height:28px;border-radius:50%;flex:none;display:grid;place-items:center;font-size:10px;font-weight:700;color:#04120e}
+.mbody{min-width:0}
+.mhead{display:flex; align-items:baseline; gap:7px; margin-bottom:4px}
+.mhead b{font-size:10.5px; font-weight:600; color:#c6d2cc}
+.mhead span{font-size:9.5px; color:var(--dim)}
+.msg.me .mhead{justify-content:flex-end}
+.mbubble{
+  padding:9px 13px; border-radius:12px; border:1px solid var(--line2);
+  background:#101614; font-size:12.5px; line-height:1.55;
+  overflow-wrap:anywhere; white-space:pre-wrap;
+}
+.msg.me .mbubble{background:rgba(var(--accent-rgb),.09); border-color:rgba(var(--accent-rgb),.24); color:#dcfaf3}
+.msg.sys{align-self:center; max-width:520px; justify-content:center}
+.msg.sys .mbubble{
+  background:transparent; border:1px dashed var(--line2); color:var(--dim);
+  font-size:10.5px; text-align:center;
+}
+.composer{display:flex; gap:9px; padding:12px; border-top:1px solid var(--line); background:rgba(255,255,255,.015); flex:none}
+.composer textarea{
+  flex:1; resize:none; min-height:40px; max-height:120px; padding:10px 13px; border-radius:11px;
+  border:1px solid var(--line2); background:rgba(255,255,255,.02); color:var(--text);
+  font-size:12.5px; font-family:inherit; line-height:1.5;
+}
+.composer textarea:focus{outline:none; border-color:rgba(var(--accent-rgb),.42); box-shadow:0 0 0 3px rgba(var(--accent-rgb),.07)}
+.composer .btn{align-self:flex-end; height:40px}
+.typing{font-size:10px;color:var(--dim);padding:0 14px 8px}
+
+/* ---------------------------------------------------------------- memes */
+.memegrid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.meme{
+  position:relative; border-radius:12px; overflow:hidden;
+  border:1px solid var(--line); background:#0a0e0d;
+  transition:border-color .2s, transform .2s, box-shadow .2s;
+}
+.meme:hover{border-color:rgba(var(--accent-rgb),.3); transform:translateY(-2px); box-shadow:0 16px 30px -26px rgba(var(--accent-rgb),.5)}
+.meme canvas{display:block;width:100%;height:auto;aspect-ratio:1}
+.meme .macts{
+  position:absolute; inset:auto 0 0 0; display:flex; justify-content:flex-end; gap:6px; padding:9px;
+  background:linear-gradient(transparent,rgba(0,0,0,.7));
+}
+.mlayer{
+  position:fixed; inset:0; z-index:90; display:grid; place-items:center; padding:18px;
+  background:rgba(3,5,4,.84); backdrop-filter:blur(8px);
+}
+.mcard{
+  width:min(430px,92vw); border-radius:20px; overflow:hidden;
+  border:1px solid var(--line2); background:#0a0e0d;
+  box-shadow:0 50px 100px -40px #000;
+}
+.mcard canvas{display:block;width:100%;height:auto}
+.mcard .macts{display:flex; gap:8px; padding:11px; background:rgba(255,255,255,.02)}
+
+/* ---------------------------------------------------------------- toast */
+.toastwrap{position:fixed;z-index:100;left:50%;bottom:20px;transform:translateX(-50%);display:flex;flex-direction:column;gap:8px;align-items:center;pointer-events:none}
+.toast{
+  background:#101614; color:var(--text); font-size:11px; font-weight:600; letter-spacing:.01em;
+  padding:10px 16px; border-radius:99px; border:1px solid var(--line2);
+  box-shadow:0 20px 40px -20px #000; max-width:90vw;
+}
+
+.divider{height:1px;background:var(--line);margin:2px 0}
+
+/* ---------------------------------------------------------------- cool layer */
+html{overflow-x:clip}
+body{position:relative;isolation:isolate}
+#app{position:relative;z-index:1;min-height:100vh}
+body::before{
+  content:""; position:fixed; inset:0; z-index:0; pointer-events:none;
+  background:
+    radial-gradient(38% 38% at 16% 18%, rgba(var(--accent-rgb),.10), transparent 62%),
+    radial-gradient(34% 32% at 84% 14%, rgba(216,185,138,.075), transparent 64%),
+    radial-gradient(42% 40% at 72% 84%, rgba(120,140,255,.055), transparent 66%);
+  animation:atlas-drift 26s ease-in-out infinite alternate;
+}
+body::after{
+  content:""; position:fixed; inset:0; z-index:0; pointer-events:none; opacity:.55;
+  background-image:radial-gradient(rgba(255,255,255,.035) 1px, transparent 1px);
+  background-size:26px 26px;
+  -webkit-mask-image:radial-gradient(ellipse at 50% 0%, #000, transparent 72%);
+  mask-image:radial-gradient(ellipse at 50% 0%, #000, transparent 72%);
+}
+@keyframes atlas-drift{from{transform:translate3d(-1%,-1%,0) scale(1)}to{transform:translate3d(2%,2%,0) scale(1.07)}}
+
+.hero::before{
+  content:""; position:absolute; width:470px; height:470px; right:-150px; top:-220px;
+  border-radius:50%; pointer-events:none; z-index:0;
+  background:radial-gradient(circle, rgba(var(--accent-rgb),.17), transparent 66%);
+  animation:atlas-float 12s ease-in-out infinite alternate;
+}
+.hero > *{position:relative; z-index:1}
+@keyframes atlas-float{from{transform:translate3d(0,0,0)}to{transform:translate3d(-30px,22px,0)}}
+
+.topbar::after{
+  content:""; position:absolute; left:0; right:0; bottom:-1px; height:1px; pointer-events:none;
+  background:linear-gradient(90deg,transparent,rgba(var(--accent-rgb),.30),rgba(216,185,138,.20),transparent);
+}
+
+.sec-title::before{
+  content:""; display:inline-block; width:4px; height:4px; border-radius:50%;
+  background:var(--gold); margin-right:8px; vertical-align:2px;
+  box-shadow:0 0 9px rgba(216,185,138,.55);
+}
+
+.page-head h1{
+  background:linear-gradient(180deg,#ffffff,#cfe9df);
+  -webkit-background-clip:text; background-clip:text; color:transparent;
+}
+.stat b{
+  background:linear-gradient(118deg,#ffffff 0%,color-mix(in srgb, var(--accent) 35%, #fff) 55%,var(--accent) 100%);
+  -webkit-background-clip:text; background-clip:text; color:transparent;
+}
+.stat-accent b{
+  background:linear-gradient(118deg,#fff6e6,#e6c9a0 60%,#d8b98a);
+  -webkit-background-clip:text; background-clip:text; color:transparent;
+}
+
+.btn{
+  background:linear-gradient(120deg,color-mix(in srgb, var(--accent) 72%, #fff) 0%,var(--accent-d) 100%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.40);
+}
+.btn:hover{
+  background:linear-gradient(120deg,color-mix(in srgb, var(--accent) 52%, #fff) 0%,color-mix(in srgb, var(--accent-d) 78%, #fff) 100%);
+  box-shadow:0 14px 32px -16px rgba(var(--accent-rgb),.6), inset 0 1px 0 rgba(255,255,255,.45);
+}
+
+.tile{position:relative; overflow:hidden}
+.tile::after{
+  content:""; position:absolute; inset:-40% -60%; pointer-events:none;
+  background:linear-gradient(115deg, transparent 42%, rgba(255,255,255,.055) 50%, transparent 58%);
+  transform:translateX(-70%);
+  transition:transform .7s ease;
+}
+.tile:hover::after{transform:translateX(70%)}
+
+.live{
+  display:inline-flex; align-items:center; gap:6px; padding:4px 10px; border-radius:999px;
+  border:1px solid rgba(var(--accent-rgb),.28); background:rgba(var(--accent-rgb),.07); color:#bdf5e9;
+  font-size:9px; font-weight:700; letter-spacing:.12em; text-transform:uppercase;
+}
+.live i{width:6px; height:6px; border-radius:50%; background:var(--accent); animation:atlas-beat 2.4s ease-out infinite}
+@keyframes atlas-beat{
+  0%,100%{box-shadow:0 0 0 0 rgba(var(--accent-rgb),.45),0 0 10px rgba(var(--accent-rgb),.8)}
+  50%{box-shadow:0 0 0 7px rgba(var(--accent-rgb),0),0 0 10px rgba(var(--accent-rgb),.8)}
+}
+
+.reactions{
+  display:flex; align-items:center; gap:7px; flex-wrap:wrap;
+  margin-top:16px; padding-top:14px; border-top:1px solid var(--line);
+}
+.reactions .filterlab{margin-right:3px}
+.react{
+  display:inline-flex; align-items:center; gap:5px; padding:5px 11px; border-radius:999px;
+  border:1px solid var(--line2); background:rgba(255,255,255,.02); color:#c9d6cf;
+  font-size:12px; line-height:1.2; cursor:pointer;
+  transition:background .18s, border-color .18s, transform .12s, box-shadow .18s;
+}
+.react .re{font-size:14px; line-height:1; filter:grayscale(.25); transition:transform .18s, filter .18s}
+.react .rc{font-size:10px; font-weight:700; color:var(--mut); min-width:8px}
+.react:hover{border-color:rgba(var(--accent-rgb),.35); background:rgba(var(--accent-rgb),.06); transform:translateY(-1px)}
+.react.on{
+  background:rgba(var(--accent-rgb),.12); border-color:rgba(var(--accent-rgb),.45);
+  color:#dcfbf3; box-shadow:0 0 20px -10px rgba(var(--accent-rgb),.8);
+}
+.react.on .re{filter:none; transform:scale(1.08)}
+.react.on .rc{color:var(--accent)}
+.react.bump{animation:atlas-bump .35s cubic-bezier(.2,.7,.3,1)}
+@keyframes atlas-bump{0%{transform:scale(1)}40%{transform:scale(1.15)}100%{transform:scale(1)}}
+
+.meme img{
+  display:block; width:100%; height:auto; aspect-ratio:1; object-fit:contain;
+  background:#060909; transition:transform .45s ease;
+}
+.meme canvas{transition:transform .45s ease}
+.meme:hover img, .meme:hover canvas{transform:scale(1.035)}
+.mcard img{display:block; width:100%; height:auto; max-height:70vh; object-fit:contain; background:#050706}
+.mcap{
+  padding:12px 16px; border-top:1px solid var(--line);
+  background:rgba(255,255,255,.02); font-size:11.5px; color:var(--mut);
+}
+.mcard .macts{flex-wrap:wrap; justify-content:flex-end}
+
+.gatehead{display:flex; align-items:center; gap:15px}
+.gate-icon{
+  width:50px; height:50px; border-radius:15px; flex:none; display:grid; place-items:center;
+  color:var(--gold); border:1px solid rgba(216,185,138,.25);
+  background:radial-gradient(circle at 30% 20%, rgba(216,185,138,.16), rgba(216,185,138,.03));
+}
+.gate-icon .ic{width:22px; height:22px}
+
+.authcard::before{
+  background:linear-gradient(90deg,transparent,rgba(var(--accent-rgb),.6),rgba(216,185,138,.45),transparent);
+  background-size:220% 100%;
+  animation:atlas-shimmer 8s linear infinite;
+}
+@keyframes atlas-shimmer{0%{background-position:180% 0}100%{background-position:-180% 0}}
+
+/* ---------------------------------------------------------------- responsive */
+@media (min-width:560px){
+  .grid{grid-template-columns:1fr 1fr}
+  .stats{grid-template-columns:repeat(4,1fr)}
+  .stat{border-bottom:0; border-right:1px solid var(--line)}
+  .stat:nth-child(2n){border-right:1px solid var(--line)}
+  .stat:last-child{border-right:0}
+  .formgrid{grid-template-columns:1fr 1fr}
+  .formgrid .full{grid-column:1/-1}
+  dl.facts{grid-template-columns:repeat(4,1fr)}
+  .memegrid{grid-template-columns:repeat(3,1fr)}
+  .content{padding:32px 24px 90px}
+}
+@media (min-width:900px){
+  .sidebar{transform:none}
+  .navopen .sidebar{transform:none}
+  .overlay{display:none}
+  .main{margin-left:264px}
+  .content{padding:34px 30px 90px}
+  .grid{grid-template-columns:repeat(3,1fr)}
+  .memegrid{grid-template-columns:repeat(4,1fr)}
+  .burger{display:none}
+  .brand-m{display:none}
+  .topbar{padding:0 30px}
+}
+@media (prefers-reduced-motion: reduce){
+  *{animation:none !important; transition:none !important}
+}
+
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div class="toastwrap" id="toasts"></div>
+<div class="mlayer hide" id="memeLayer">
+  <div class="mcard">
+    <canvas id="memeCanvas" width="640" height="640"></canvas>
+    <img id="memeImg" class="hide" alt="Uploaded meme">
+    <div class="mcap hide" id="memeCap"></div>
+    <div class="macts">
+      <button class="btn ghost sm" data-action="meme-download-popup">Save</button>
+      <button class="btn ghost sm" data-action="meme-next">Another one</button>
+      <button class="btn sm" data-action="meme-close">Back to studying</button>
+    </div>
+  </div>
+</div>
+
+<script>
+"use strict";
+/* ================================================================== utils */
+const $app = document.getElementById("app");
+const esc = (s) => String(s == null ? "" : s).replace(/[&<>"']/g, (c) => (
+  { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]
+));
+const slugify = (s) => String(s).toLowerCase().replace(/&/g, " ").replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+const uid = () => (window.crypto && crypto.randomUUID ? crypto.randomUUID()
+  : "id-" + Date.now().toString(36) + "-" + Math.random().toString(36).slice(2, 10));
+
+const fmtBytes = (n) => {
+  if (n == null) return "—";
+  if (n < 1024) return n + " B";
+  if (n < 1048576) return Math.round(n / 1024) + " KB";
+  return (n / 1048576).toFixed(1) + " MB";
+};
+const fmtDate = (ts) => ts ? new Date(ts).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" }) : "—";
+const timeShort = (ts) => new Date(ts).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" });
+const dayKey = (ts) => new Date(ts).toDateString();
+const dayLabel = (ts) => {
+  const d = new Date(ts), today = new Date();
+  const y = new Date(Date.now() - 86400000);
+  if (d.toDateString() === today.toDateString()) return "Today";
+  if (d.toDateString() === y.toDateString()) return "Yesterday";
+  return d.toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" });
+};
+const initials = (name) => String(name || "?").trim().split(/\s+/).slice(0, 2).map((w) => w[0]).join("").toUpperCase() || "?";
+const AV_COLORS = ["#2dd4bf", "#7dd3fc", "#c4b5fd", "#fcd34d", "#fda4af", "#86efac"];
+const avatarColor = (name) => {
+  let h = 0;
+  for (let i = 0; i < String(name).length; i++) h = (h * 31 + String(name).charCodeAt(i)) >>> 0;
+  return AV_COLORS[h % AV_COLORS.length];
+};
+const relTime = (ts) => {
+  const s = Math.max(0, Math.floor((Date.now() - ts) / 1000));
+  if (s < 60) return "just now";
+  if (s < 3600) return Math.floor(s / 60) + "m ago";
+  if (s < 86400) return Math.floor(s / 3600) + "h ago";
+  if (s < 604800) return Math.floor(s / 86400) + "d ago";
+  return fmtDate(ts);
+};
+
+async function sha256Hex(input) {
+  try {
+    if (window.crypto && crypto.subtle) {
+      const buf = await crypto.subtle.digest("SHA-256", input);
+      return Array.from(new Uint8Array(buf)).map((b) => b.toString(16).padStart(2, "0")).join("");
+    }
+  } catch (e) {}
+  const u8 = input instanceof Uint8Array ? input : new Uint8Array(input);
+  let h = 0x811c9dc5;
+  for (let i = 0; i < u8.length; i++) { h ^= u8[i]; h = Math.imul(h, 0x01000193) >>> 0; }
+  return "fnv" + h.toString(16) + u8.length.toString(16);
+}
+
+function toast(msg, ms) {
+  const el = document.createElement("div");
+  el.className = "toast";
+  el.textContent = msg;
+  document.getElementById("toasts").appendChild(el);
+  setTimeout(() => el.remove(), ms || 2600);
+}
+
+/* ================================================================ catalog */
+const BATCHES = ["200", "199", "198"];
+const YEARS_FOR_BATCH = { "200": [1], "199": [1, 2], "198": [1, 2, 3] };
+const BATCH_YEAR = { "200": 1, "199": 2, "198": 3 };
+const yearsLabel = (years) => {
+  const list = years.slice().sort((a, b) => a - b);
+  if (list.length === 1) return "Year " + list[0];
+  if (list.length === 2) return "Years " + list[0] + " and " + list[1];
+  return "Years " + list.slice(0, -1).join(", ") + " and " + list[list.length - 1];
+};
+
+const SUBJECTS = [
+  "Anatomy", "Physiology", "Histology", "Biochemistry", "Pathology", "Pharmacology",
+  "EPE", "Critical thinking", "Communication skills", "Medical Terminology",
+  "Behavioural science", "MPE", "EPE-2", "Medical research & EBM-1", "Computer",
+  "Parasitology and microbiology", "Pharmacology and pathology", "Immunology",
+  "Radiology", "Eye disorders", "Ear, nose and throat",
+  "Clinical toxicology and legal medicine", "Nutrition",
+  "Medical professionalism and communication skills-2"
+];
+
+const YEARS = [
+  {
+    no: 1, label: "Year 1",
+    modules: [
+      ["ISK-101", "horizontal", null], ["INT-102", "horizontal", null],
+      ["BMS-103", "horizontal", null], ["CPS-104", "horizontal", null],
+      ["INT-108", "vertical", null], ["EPE", "vertical", "EPE"],
+      ["Critical thinking", "vertical", "Critical thinking"],
+      ["Communication skills", "vertical", "Communication skills"],
+      ["Medical Terminology", "vertical", "Medical Terminology"]
+    ]
+  },
+  {
+    no: 2, label: "Year 2",
+    modules: [
+      ["NEU-205", "horizontal", null], ["DIG-206", "horizontal", null],
+      ["END-207", "horizontal", null], ["INT-208", "horizontal", null],
+      ["PAT-210", "horizontal", null], ["PSY-213", "horizontal", null],
+      ["RES-234", "horizontal", null], ["EPE-2", "vertical", "EPE-2"],
+      ["MPE", "vertical", "MPE"], ["Computer", "vertical", "Computer"]
+    ]
+  },
+  {
+    no: 3, label: "Year 3",
+    modules: [
+      ["INF-309", "horizontal", "Parasitology and microbiology", 1],
+      ["PAT-310", "horizontal", "Pharmacology and pathology", 1],
+      ["IMN-311", "horizontal", "Immunology", 1],
+      ["INV-314", "horizontal", "Radiology", 1],
+      ["OPH-315", "horizontal", "Eye disorders", 2],
+      ["ENT-316", "horizontal", "Ear, nose and throat", 2],
+      ["TOX-317", "horizontal", "Clinical toxicology and legal medicine", 2],
+      ["NTR-319", "horizontal", "Nutrition", 2],
+      ["MPC-326", "vertical", "Medical professionalism and communication skills-2", 2]
+    ]
+  }
+];
+
+const BUILTIN_MODULES = [];
+YEARS.forEach((y) => y.modules.forEach(([code, kind, title, sem], i) => {
+  BUILTIN_MODULES.push({ code, slug: slugify(code), kind, title, year: y.no, sem: sem || null, pos: i, custom: false });
+}));
+let MODULES = BUILTIN_MODULES.slice();
+const moduleBySlug = (slug) => MODULES.find((m) => m.slug === slug);
+const moduleByCode = (code) => MODULES.find((m) => m.code === code);
+
+const TYPES = ["slides", "past_paper", "mcq", "summary_note", "syllabus", "practical_guide", "reference"];
+const TYPE_LABEL = {
+  slides: "Slides", past_paper: "Past paper", mcq: "MCQ", summary_note: "Summary note",
+  syllabus: "Syllabus", practical_guide: "Practical", reference: "Reference", video_link: "Video"
+};
+const typeLabel = (t) => TYPE_LABEL[t] || String(t || "").replace(/_/g, " ");
+
+const REACTIONS = [
+  { e: "👍", label: "Helpful" },
+  { e: "🔥", label: "Banger" },
+  { e: "❤️", label: "Loved" },
+  { e: "🤯", label: "Mind blown" }
+];
+
+function reactionCounts(rec) {
+  const out = {};
+  Object.values(rec.reactions || {}).forEach((e) => { out[e] = (out[e] || 0) + 1; });
+  return out;
+}
+function topReaction(rec) {
+  const entries = Object.entries(reactionCounts(rec)).sort((a, b) => b[1] - a[1]);
+  return entries.length ? entries[0] : null;
+}
+function reactionBar(rec) {
+  const counts = reactionCounts(rec);
+  const mine = state.user ? (rec.reactions || {})[state.user.id] : null;
+  return '<div class="reactions" data-reactions="' + esc(rec.id) + '">' +
+    '<span class="filterlab">React</span>' +
+    REACTIONS.map((r) =>
+      '<button class="react' + (mine === r.e ? " on" : "") + '" data-action="react" data-id="' + esc(rec.id) + '" data-emoji="' + r.e + '"' +
+      ' title="' + r.label + '" aria-pressed="' + (mine === r.e) + '">' +
+        '<span class="re">' + r.e + "</span>" +
+        (counts[r.e] ? '<span class="rc">' + counts[r.e] + "</span>" : "") +
+      "</button>").join("") +
+    "</div>";
+}
+
+/* ================================================================ storage */
+const LS = { users: "sh.users", session: "sh.session", prefs: "sh.prefs", read: "sh.lastread.", saves: "sh.saves." };
+const readJSON = (k, fallback) => {
+  try { const v = JSON.parse(localStorage.getItem(k)); return v == null ? fallback : v; }
+  catch (e) { return fallback; }
+};
+const writeJSON = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} };
+
+/* =============================================================== site config */
+const SITE_KEY = "sh.site";
+const DEFAULT_SITE = {
+  name: "Atlas",
+  tagline: "Slides, past papers, MCQs and notes — one calm place instead of 8,000 unread messages.",
+  logo: "",
+  theme: "mint",
+  announcement: "",
+  footer: "Local build · your files and chat stay in this browser.",
+  adminPasscode: "kellyisthecutest"
+};
+let SITE = Object.assign({}, DEFAULT_SITE, readJSON(SITE_KEY, {}));
+const saveSite = () => writeJSON(SITE_KEY, SITE);
+const adminPass = () => SITE.adminPasscode || DEFAULT_SITE.adminPasscode;
+
+function applySite() {
+  const themes = ["mint", "ocean", "rose", "amber", "violet"];
+  const theme = themes.indexOf(SITE.theme) >= 0 ? SITE.theme : "mint";
+  document.documentElement.dataset.theme = theme;
+  document.title = (SITE.name || "Atlas") + " — study library";
+  const meta = document.querySelector('meta[name="theme-color"]');
+  if (meta) meta.setAttribute("content",
+    theme === "ocean" ? "#071018" : theme === "rose" ? "#12070b" :
+    theme === "amber" ? "#100c05" : theme === "violet" ? "#0b0714" : "#070a09");
+}
+
+/* Custom modules live beside the built-in catalog in localStorage. */
+const MODULES_KEY = "sh.modules";
+let CUSTOM_MODULES = readJSON(MODULES_KEY, []);
+if (!Array.isArray(CUSTOM_MODULES)) CUSTOM_MODULES = [];
+CUSTOM_MODULES = CUSTOM_MODULES.filter((m) => m && m.code && [1, 2, 3].indexOf(Number(m.year)) >= 0).map((m) => ({
+  code: String(m.code).slice(0, 24),
+  title: m.title ? String(m.title).slice(0, 120) : null,
+  year: Number(m.year),
+  kind: m.kind === "vertical" ? "vertical" : "horizontal",
+  sem: m.sem === 1 || m.sem === 2 ? Number(m.sem) : null,
+  pos: Number(m.pos) || 0
+}));
+function rebuildModules() {
+  MODULES = BUILTIN_MODULES.concat(CUSTOM_MODULES.map((m) => Object.assign({}, m, {
+    slug: slugify(m.code), custom: true, pos: 1000 + (Number(m.pos) || 0)
+  })));
+}
+function saveCustomModules(list) {
+  CUSTOM_MODULES = list;
+  writeJSON(MODULES_KEY, CUSTOM_MODULES);
+  rebuildModules();
+}
+rebuildModules();
+
+
+const DB = {
+  mode: "idb",
+  _openPromise: null,
+  _db: null,
+  _meta: new Map(),
+  _files: new Map(),
+  _msgs: [],
+  _users: new Map(),
+  _logins: [],
+  _memes: new Map(),
+
+  _open() {
+    if (this._openPromise) return this._openPromise;
+    this._openPromise = new Promise((resolve) => {
+      let settled = false;
+      const fallback = () => {
+        if (settled) return;
+        settled = true;
+        this.mode = "memory";
+        this._db = null;
+        resolve(null);
+      };
+      try {
+        if (!("indexedDB" in window)) return fallback();
+        const req = indexedDB.open("studyhub", 3);
+        req.onupgradeneeded = () => {
+          const d = req.result;
+          if (!d.objectStoreNames.contains("meta")) d.createObjectStore("meta", { keyPath: "id" });
+          if (!d.objectStoreNames.contains("files")) d.createObjectStore("files", { keyPath: "id" });
+          if (!d.objectStoreNames.contains("messages")) d.createObjectStore("messages", { keyPath: "id" });
+          if (!d.objectStoreNames.contains("users")) d.createObjectStore("users", { keyPath: "id" });
+          if (!d.objectStoreNames.contains("logins")) d.createObjectStore("logins", { keyPath: "id" });
+          if (!d.objectStoreNames.contains("memes")) d.createObjectStore("memes", { keyPath: "id" });
+        };
+        req.onsuccess = () => {
+          if (settled) return;
+          settled = true;
+          this._db = req.result;
+          try {
+            req.result.onversionchange = () => {
+              try { req.result.close(); } catch (e) {}
+              this._db = null;
+              this._openPromise = null;
+            };
+          } catch (e) {}
+          resolve(req.result);
+        };
+        req.onerror = fallback;
+        req.onblocked = fallback;
+        setTimeout(fallback, 4000);
+      } catch (e) { fallback(); }
+    });
+    return this._openPromise;
+  },
+
+  _tx(store, mode, fn) {
+    return new Promise((resolve) => {
+      try {
+        const t = this._db.transaction(store, mode);
+        const s = t.objectStore(store);
+        const req = fn(s);
+        if (req) req.onsuccess = () => resolve(req.result);
+        t.oncomplete = () => resolve(req ? req.result : undefined);
+        t.onerror = () => resolve(req ? req.result : undefined);
+        t.onabort = () => resolve(req ? req.result : undefined);
+      } catch (e) { resolve(undefined); }
+    });
+  },
+
+  async allMeta() {
+    await this._open();
+    if (!this._db) return Array.from(this._meta.values());
+    const r = await this._tx("meta", "readonly", (s) => s.getAll());
+    return r || Array.from(this._meta.values());
+  },
+
+  async putMeta(rec) {
+    this._meta.set(rec.id, rec);
+    await this._open();
+    if (!this._db) return;
+    await this._tx("meta", "readwrite", (s) => s.put(rec));
+  },
+
+  async delMeta(id) {
+    this._meta.delete(id);
+    await this._open();
+    if (!this._db) return;
+    await this._tx("meta", "readwrite", (s) => s.delete(id));
+  },
+
+  async getFile(id) {
+    await this._open();
+    if (!this._db) return this._files.get(id) || null;
+    const r = await this._tx("files", "readonly", (s) => s.get(id));
+    return (r && r.blob) || this._files.get(id) || null;
+  },
+
+  async putFile(id, blob) {
+    this._files.set(id, blob);
+    await this._open();
+    if (!this._db) return;
+    await this._tx("files", "readwrite", (s) => s.put({ id, blob }));
+  },
+
+  async delFile(id) {
+    this._files.delete(id);
+    await this._open();
+    if (!this._db) return;
+    await this._tx("files", "readwrite", (s) => s.delete(id));
+  },
+
+  async allMessages() {
+    await this._open();
+    if (!this._db) return this._msgs.slice();
+    const r = await this._tx("messages", "readonly", (s) => s.getAll());
+    return r || this._msgs.slice();
+  },
+
+  async putMessage(msg) {
+    this._msgs.push(msg);
+    await this._open();
+    if (!this._db) return;
+    await this._tx("messages", "readwrite", (s) => s.put(msg));
+  },
+
+  async allUsers() {
+    await this._open();
+    if (!this._db) return Array.from(this._users.values());
+    const r = await this._tx("users", "readonly", (s) => s.getAll());
+    return r || Array.from(this._users.values());
+  },
+
+  async putUser(user) {
+    this._users.set(user.id, user);
+    await this._open();
+    if (!this._db) return;
+    await this._tx("users", "readwrite", (s) => s.put(user));
+  },
+
+  async allLogins() {
+    await this._open();
+    if (!this._db) return this._logins.slice();
+    const r = await this._tx("logins", "readonly", (s) => s.getAll());
+    return r || this._logins.slice();
+  },
+
+  async putLogin(entry) {
+    this._logins.push(entry);
+    await this._open();
+    if (!this._db) return;
+    await this._tx("logins", "readwrite", (s) => s.put(entry));
+  },
+
+  async allMemes() {
+    await this._open();
+    if (!this._db) return Array.from(this._memes.values());
+    const r = await this._tx("memes", "readonly", (s) => s.getAll());
+    return r || Array.from(this._memes.values());
+  },
+
+  async putMeme(rec) {
+    this._memes.set(rec.id, rec);
+    await this._open();
+    if (!this._db) return;
+    await this._tx("memes", "readwrite", (s) => s.put(rec));
+  },
+
+  async delMeme(id) {
+    this._memes.delete(id);
+    await this._open();
+    if (!this._db) return;
+    await this._tx("memes", "readwrite", (s) => s.delete(id));
+  }
+};
+
+/* =================================================================== auth */
+const SESSION_DAYS = 30;
+/* Local-only staff key. It is visible in this file; it gates the UI, not a server. */
+/* The value lives in Site settings and is exposed through adminPass(). */
+const isAdminUser = () => !!(state.user && state.user.role === "admin" && state.user.adminVerified === true);
+const batchYears = (batch) => YEARS_FOR_BATCH[batch] || [1, 2, 3];
+const userBatchYears = () => isAdminUser() ? [1, 2, 3] : batchYears(state.user && state.user.batch);
+const userYear = () => {
+  if (!state.user) return 1;
+  const allowed = batchYears(state.user.batch);
+  const y = Number(state.user.year);
+  if (allowed.indexOf(y) >= 0) return y;
+  const preferred = BATCH_YEAR[state.user.batch];
+  return allowed.indexOf(preferred) >= 0 ? preferred : allowed[0];
+};
+const canSeeYear = (year) => isAdminUser() || userBatchYears().indexOf(Number(year)) >= 0;
+const visibleMeta = (meta) => meta.filter((r) => {
+  const mod = moduleByCode(r.module);
+  return !mod || canSeeYear(mod.year);
+});
+
+const loadUsers = () => state.users || [];
+function saveUsers(list) {
+  state.users = list;
+  if (DB.mode === "memory") { writeJSON(LS.users, list); return Promise.resolve(); }
+  return Promise.all(list.map((u) => DB.putUser(u)));
+}
+async function ensureUsers() {
+  if (state.usersReady) return state.users;
+  let users = await DB.allUsers();
+  if (!users.length) {
+    const legacy = readJSON(LS.users, []);
+    if (legacy.length) {
+      users = legacy;
+      for (const u of users) await DB.putUser(u);
+    }
+  }
+  let changed = false;
+  for (const u of users) {
+    if (u.role === "admin" && u.adminVerified !== true) { u.role = "student"; changed = true; }
+    const allowed = batchYears(u.batch);
+    if (allowed.indexOf(Number(u.year)) < 0) {
+      const preferred = BATCH_YEAR[u.batch];
+      u.year = allowed.indexOf(preferred) >= 0 ? preferred : allowed[0];
+      changed = true;
+    }
+  }
+  if (changed) for (const u of users) await DB.putUser(u);
+  state.users = users;
+  state.usersReady = true;
+  return users;
+}
+async function recordLogin(user, action) {
+  user.lastLoginAt = Date.now();
+  user.loginCount = (user.loginCount || 0) + 1;
+  await DB.putUser(user);
+  await DB.putLogin({ id: uid(), userId: user.id, username: user.username, name: user.name || user.username, action, ts: Date.now() });
+}
+
+function setSession(userId) { writeJSON(LS.session, { uid: userId, exp: Date.now() + SESSION_DAYS * 86400000 }); }
+function clearSession() { try { localStorage.removeItem(LS.session); } catch (e) {} }
+function readSession() {
+  const s = readJSON(LS.session, null);
+  if (!s || !s.exp || s.exp < Date.now()) return null;
+  return s;
+}
+async function hashPassword(password, salt) {
+  return sha256Hex(new TextEncoder().encode(salt + "::" + password));
+}
+
+const prefsRaw = readJSON(LS.prefs, {});
+const state = {
+  user: null,
+  users: [],
+  usersReady: false,
+  uploads: [],
+  memeUrls: [],
+  popupUrl: null,
+  popupMeme: null,
+  prefs: {
+    batch: prefsRaw.batch || "200",
+    year: prefsRaw.year || 1,
+    sem: prefsRaw.sem == null ? null : prefsRaw.sem,
+    memesMuted: !!prefsRaw.memesMuted
+  },
+  loginError: "",
+  adminError: "",
+  loginMode: "signin",
+  previewUrl: null,
+  nextMemeAt: Date.now() + 5 * 60 * 1000,
+  memeIndex: 0,
+  navOpen: false
+};
+function savePrefs() { writeJSON(LS.prefs, state.prefs); }
+function revokeMemeUrls() {
+  (state.memeUrls || []).forEach((u) => { try { URL.revokeObjectURL(u); } catch (e) {} });
+  state.memeUrls = [];
+}
+
+/* ------------------------------------------------------------------ saves */
+function loadSaves() {
+  if (!state.user) return [];
+  return readJSON(LS.saves + state.user.id, []);
+}
+function saveSaves(ids) {
+  if (!state.user) return;
+  writeJSON(LS.saves + state.user.id, Array.from(new Set(ids)));
+}
+function isSaved(id) { return loadSaves().indexOf(id) >= 0; }
+function toggleSave(id) {
+  const ids = loadSaves();
+  const i = ids.indexOf(id);
+  if (i >= 0) { ids.splice(i, 1); saveSaves(ids); toast("Removed from saved."); }
+  else { ids.push(id); saveSaves(ids); toast("Saved for later."); }
+}
+
+/* --------------------------------------------------------------- unread */
+function lastReadKey() { return LS.read + (state.user ? state.user.id : "anon"); }
+function getLastRead() { return readJSON(lastReadKey(), 0) || 0; }
+function setLastRead(ts) { writeJSON(lastReadKey(), ts); }
+function unreadCount(msgs) {
+  const last = getLastRead();
+  return (msgs || []).filter((m) => m.ts > last && m.userId !== "system" && (!state.user || m.userId !== state.user.id)).length;
+}
+
+async function seedChat() {
+  const msgs = await DB.allMessages();
+  if (msgs.length) return;
+  const now = Date.now();
+  const siteName = SITE.name || "Atlas";
+  const welcome = [
+    "Welcome to the " + siteName + " lounge. Ask for a paper, drop a note, complain about the timetable.",
+    "House rule: no exam papers in the chat, upload them to the library so they stay findable.",
+    "Tip: press Enter to send, Shift+Enter for a new line."
+  ];
+  for (let i = 0; i < welcome.length; i++) {
+    await DB.putMessage({ id: uid(), userId: "system", name: siteName, role: "system", text: welcome[i], ts: now - (welcome.length - i) * 60000 });
+  }
+}
+/* ================================================================== icons */
+const ICONS = {
+  home: '<path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/>',
+  search: '<circle cx="11" cy="11" r="7"/><path d="m20 20-3.6-3.6"/>',
+  chat: '<path d="M21 12a8 8 0 0 1-8 8H7l-4 3V12a8 8 0 0 1 8-8h2a8 8 0 0 1 8 8Z"/>',
+  smile: '<circle cx="12" cy="12" r="9"/><path d="M8.5 14s1.3 2 3.5 2 3.5-2 3.5-2"/><path d="M9 9h.01M15 9h.01"/>',
+  bookmark: '<path d="M6 3h12v18l-6-4-6 4Z"/>',
+  upload: '<path d="M12 16V4"/><path d="m7 9 5-5 5 5"/><path d="M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"/>',
+  shield: '<path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6Z"/>',
+  lock: '<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>',
+  key: '<circle cx="8" cy="12" r="4"/><path d="M12 12h8"/><path d="M17 12v3"/>',
+  library: '<path d="M4 4h5v16H4z"/><path d="M9 4h5v16H9z"/><path d="m14 5 4-1 3 15-4 1z"/>',
+  layers: '<path d="m12 3 9 5-9 5-9-5 9-5Z"/><path d="m3 12 9 5 9-5"/><path d="m3 16 9 5 9-5"/>',
+  settings: '<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/>',
+  dice: '<rect x="3" y="3" width="18" height="18" rx="3"/><path d="M8 8h.01M16 8h.01M12 12h.01M8 16h.01M16 16h.01"/>',
+  menu: '<path d="M4 7h16M4 12h16M4 17h16"/>',
+  close: '<path d="M6 6l12 12M18 6 6 18"/>',
+  logout: '<path d="M15 4h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-3"/><path d="m10 17 5-5-5-5"/><path d="M15 12H3"/>',
+  download: '<path d="M12 4v12"/><path d="m7 11 5 5 5-5"/><path d="M4 20h16"/>',
+  trash: '<path d="M4 7h16"/><path d="M9 7V4h6v3"/><path d="M6 7l1 14h10l1-14"/>',
+  check: '<path d="m4 12 5 5L20 6"/>',
+  star: '<path d="m12 3 2.7 5.7 6.3.9-4.6 4.4 1.1 6.2-5.5-3-5.5 3 1.1-6.2L3 9.6l6.3-.9Z"/>',
+  arrow: '<path d="M5 12h14"/><path d="m13 6 6 6-6 6"/>',
+  plus: '<path d="M12 5v14M5 12h14"/>',
+  copy: '<rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h8"/>'
+};
+const icon = (n, cls) => '<svg class="ic ' + (cls || "") + '" viewBox="0 0 24 24" aria-hidden="true">' + (ICONS[n] || "") + "</svg>";
+
+/* brand mark: a circled A with a champagne horizon and a north star */
+const LOGO_SVG =
+  '<svg viewBox="0 0 44 44" aria-hidden="true">' +
+    '<rect x="1.1" y="1.1" width="41.8" height="41.8" rx="12.5" fill="none" stroke="currentColor" stroke-opacity=".26"/>' +
+    '<path d="M13 31.2 22 10.4l9 20.8" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>' +
+    '<path d="M17.2 24.7h9.6" stroke="#d8b98a" stroke-width="1.4" stroke-linecap="round"/>' +
+    '<circle cx="22" cy="7.4" r="1.2" fill="#d8b98a"/>' +
+  "</svg>";
+const logoMark = (cls) => '<span class="logo ' + (cls || "") + '">' +
+  (SITE.logo ? '<span class="logo-letter">' + esc(String(SITE.logo).slice(0, 2)) + "</span>" : LOGO_SVG) + "</span>";
+
+/* ================================================================== memes */
+const MEME_PALETTES = [
+  ["#0b1220", "#134e4a"], ["#1a1035", "#4c1d95"], ["#2a0a0a", "#7c2d12"],
+  ["#04202f", "#0c4a6e"], ["#141210", "#3f3f46"], ["#2b0736", "#831843"],
+  ["#071b12", "#14532d"], ["#1b1206", "#78350f"]
+];
+
+const MEMES = [
+  { t: "WHEN THE SLIDE SAYS", b: '"EXAM FOCUS" AND HE SKIPS IT', e: "💀" },
+  { t: "ME: I'LL START AT 8AM", b: "ME AT 8AM: ASLEEP", e: "😴" },
+  { t: '"IS THIS ON THE EXAM?"', b: "LECTURER: *SMILES*", e: "🤡" },
+  { t: "MY BRAIN", b: "DURING THE VIVA", e: "🫠" },
+  { t: "47 SLIDES", b: "4 MINUTES LEFT", e: "⏳" },
+  { t: "THE PAST PAPER", b: "VS THE LECTURE", e: "🤯" },
+  { t: "STUDYING ANATOMY", b: "WITH A 3AM VIDEO", e: "🧠" },
+  { t: '"I\'LL JUST READ THE SUMMARY"', b: "*OPENS 600 PAGE PDF*", e: "📚" },
+  { t: "GROUP CHAT:", b: '"ANYONE HAS THE NOTES?"', e: "💀" },
+  { t: "FINAL_FINAL_REAL_FINAL", b: "_V7.PDF", e: "📄" },
+  { t: "FINALLY FOUND THE PAPER", b: "EVERYONE TALKED ABOUT", e: "🏆" },
+  { t: "WHEN THE KREBS CYCLE", b: "FINALLY MAKES SENSE", e: "🧪" },
+  { t: "ME EXPLAINING PHARM", b: "TO MY MOM", e: "💊" },
+  { t: "THAT ONE CLASSMATE:", b: '"WILL THIS BE MARKED?"', e: "🫡" },
+  { t: "EXAM STARTS", b: "FORGETS OWN NAME", e: "😵‍💫" },
+  { t: "SLEEP: 3AM TO 6AM", b: 'PLUS A 4PM "NAP"', e: "😴" },
+  { t: "42 FILES AT ONCE", b: "IN THE CHANNEL", e: "📂" },
+  { t: "MY NOTES", b: "VS THE SLIDES", e: "📝" },
+  { t: "MISSED ONE SLIDE", b: "IT WAS THE IMPORTANT ONE", e: "🎯" },
+  { t: '"DO WE MEMORISE THIS?"', b: "EVERY LECTURER: YES", e: "🥼" },
+  { t: "PAST PAPER", b: "NO ANSWER KEY", e: "😭" },
+  { t: "THE PDF IS A PHOTO", b: "OF A SCREEN", e: "📸" },
+  { t: '"THE EXAM WAS EASY"', b: "— THAT ONE GUY", e: "🤡" },
+  { t: "LIBRARY MODE:", b: "14 TABS, ZERO READING", e: "💻" },
+  { t: "GROUP PROJECT", b: "ONE PERSON DOES EVERYTHING", e: "🫠" },
+  { t: '"I\'LL MAKE A TIMETABLE"', b: "THE TIMETABLE:", e: "📅" },
+  { t: "60 STATIONS", b: "ANATOMY PRACTICAL", e: "🦴" },
+  { t: "DRUG NAMES AT 2AM", b: "GOOD LUCK", e: "💊" },
+  { t: '"THIS IS COMMON SENSE"', b: "NOTHING IS", e: "🧠" },
+  { t: "CONFIDENCE", b: "BEFORE VS AFTER", e: "📉" },
+  { t: "A SUMMARY THAT", b: "ACTUALLY MAKES SENSE", e: "✨" },
+  { t: '"JUST 10 MORE MINUTES"', b: "3 HOURS LATER", e: "⏰" },
+  { t: "400MB FILE", b: "200MB DATA PLAN", e: "📶" },
+  { t: '"DID YOU STUDY?"', b: "ME: 😀", e: "😀" },
+  { t: "MCQ: ALL OF THE ABOVE", b: "AND NONE OF THE ABOVE", e: "🤡" },
+  { t: '"I\'LL SLEEP EARLY"', b: "NARRATOR: HE DIDN'T", e: "🎬" }
+];
+
+function seeded(seed) {
+  let s = seed + 1337;
+  return () => {
+    s = (s * 1664525 + 1013904223) >>> 0;
+    return s / 4294967296;
+  };
+}
+
+function wrapCanvasText(ctx, text, maxWidth) {
+  const words = String(text).split(/\s+/);
+  const lines = [];
+  let line = "";
+  words.forEach((w) => {
+    const test = line ? line + " " + w : w;
+    if (ctx.measureText(test).width > maxWidth && line) { lines.push(line); line = w; }
+    else line = test;
+  });
+  if (line) lines.push(line);
+  return lines;
+}
+
+function paintMeme(canvas, meme, seed) {
+  if (!canvas) return;
+  const ctx = canvas.getContext("2d");
+  if (!ctx) return;
+  const S = canvas.width || 640;
+  const rnd = seeded(seed || 0);
+  const pal = MEME_PALETTES[(seed || 0) % MEME_PALETTES.length];
+
+  const g = ctx.createLinearGradient(0, 0, S, S);
+  g.addColorStop(0, pal[0]);
+  g.addColorStop(1, pal[1]);
+  ctx.fillStyle = g;
+  ctx.fillRect(0, 0, S, S);
+
+  ctx.save();
+  ctx.globalAlpha = 0.08;
+  for (let i = 0; i < 7; i++) {
+    ctx.fillStyle = "#ffffff";
+    ctx.beginPath();
+    const w = 40 + rnd() * 190;
+    ctx.ellipse(rnd() * S, rnd() * S, w, w * 0.6, rnd() * Math.PI, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  ctx.restore();
+
+  ctx.save();
+  ctx.globalAlpha = 0.09;
+  ctx.strokeStyle = "#ffffff";
+  ctx.lineWidth = 2;
+  for (let i = -S; i < S * 2; i += 46) {
+    ctx.beginPath();
+    ctx.moveTo(i, 0);
+    ctx.lineTo(i - S, S);
+    ctx.stroke();
+  }
+  ctx.restore();
+
+  ctx.save();
+  ctx.translate(S / 2 + (rnd() - 0.5) * 40, S / 2 + (rnd() - 0.5) * 30);
+  ctx.rotate((rnd() - 0.5) * 0.18);
+  ctx.font = Math.round(S * 0.27) + 'px "Segoe UI Emoji","Apple Color Emoji","Noto Color Emoji",sans-serif';
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.globalAlpha = 0.95;
+  ctx.fillText(meme.e, 0, 0);
+  ctx.restore();
+
+  ctx.textAlign = "center";
+  ctx.textBaseline = "top";
+  ctx.lineJoin = "round";
+  ctx.font = "900 " + Math.round(S * 0.058) + 'px ui-sans-serif,system-ui,"Segoe UI",Arial,sans-serif';
+  ctx.fillStyle = "#ffffff";
+  ctx.strokeStyle = "rgba(0,0,0,.6)";
+  ctx.lineWidth = 7;
+
+  const topLines = wrapCanvasText(ctx, meme.t, S - 72);
+  let y = 34;
+  topLines.forEach((l) => {
+    ctx.strokeText(l, S / 2, y);
+    ctx.fillText(l, S / 2, y);
+    y += Math.round(S * 0.066);
+  });
+
+  ctx.textBaseline = "bottom";
+  const botLines = wrapCanvasText(ctx, meme.b, S - 72).reverse();
+  let by = S - 58;
+  botLines.forEach((l) => {
+    ctx.strokeText(l, S / 2, by);
+    ctx.fillText(l, S / 2, by);
+    by -= Math.round(S * 0.066);
+  });
+
+  ctx.textBaseline = "alphabetic";
+  ctx.font = '800 12px ui-sans-serif,system-ui,Arial';
+  ctx.globalAlpha = 0.5;
+  ctx.fillStyle = "#ffffff";
+  ctx.fillText("ATLAS", S - 22, S - 18);
+  ctx.textAlign = "left";
+  ctx.fillText("MEME " + String((seed || 0) + 1).padStart(2, "0"), 22, S - 18);
+  ctx.globalAlpha = 1;
+}
+
+function popupPick(idx) {
+  if (idx != null) return { kind: "gen", index: Math.abs(Number(idx)) % MEMES.length };
+  const ups = state.uploads || [];
+  if (ups.length && Math.random() < 0.45) return { kind: "upload", rec: ups[Math.floor(Math.random() * ups.length)] };
+  return { kind: "gen", index: Math.floor(Math.random() * MEMES.length) };
+}
+function revokePopupUrl() {
+  if (state.popupUrl) { try { URL.revokeObjectURL(state.popupUrl); } catch (e) {} state.popupUrl = null; }
+}
+function renderPopup(pick) {
+  revokePopupUrl();
+  state.popupMeme = pick;
+  const layer = document.getElementById("memeLayer");
+  const cv = document.getElementById("memeCanvas");
+  const img = document.getElementById("memeImg");
+  const cap = document.getElementById("memeCap");
+  if (!layer || !cv || !img || !cap) return;
+  if (pick.kind === "upload") {
+    state.popupUrl = URL.createObjectURL(pick.rec.blob);
+    img.src = state.popupUrl;
+    img.alt = pick.rec.title || "Uploaded meme";
+    img.classList.remove("hide");
+    cv.classList.add("hide");
+    cap.textContent = (pick.rec.title || "From the batch") + (pick.rec.uploader ? " · " + pick.rec.uploader : "");
+    cap.classList.remove("hide");
+  } else {
+    state.memeIndex = pick.index;
+    paintMeme(cv, MEMES[pick.index], pick.index);
+    cv.classList.remove("hide");
+    img.classList.add("hide");
+    img.removeAttribute("src");
+    cap.classList.add("hide");
+  }
+  layer.classList.remove("hide");
+}
+function showMemePopup(idx) {
+  if (!state.user) return;
+  renderPopup(popupPick(idx));
+}
+function showUploadedMeme(rec) {
+  if (!state.user || !rec || !rec.blob) return;
+  renderPopup({ kind: "upload", rec });
+}
+function hideMemePopup() {
+  document.getElementById("memeLayer").classList.add("hide");
+  revokePopupUrl();
+}
+function memeTick() {
+  const el = document.querySelector("[data-meme-timer]");
+  if (el) {
+    const left = Math.max(0, state.nextMemeAt - Date.now());
+    el.textContent = Math.floor(left / 60000) + ":" + String(Math.floor((left % 60000) / 1000)).padStart(2, "0");
+  }
+  if (Date.now() >= state.nextMemeAt) {
+    state.nextMemeAt = Date.now() + 5 * 60 * 1000;
+    if (!state.prefs.memesMuted && state.user) showMemePopup();
+  }
+}
+
+/* ================================================================= layout */
+function layout(content, opts) {
+  opts = opts || {};
+  const admin = isAdminUser();
+  const savedN = loadSaves().length;
+  const unread = unreadCount(state.msgs);
+
+  const nav = (key, href, ic, label, badge, badgeQuiet) =>
+    '<a class="nav-item' + (opts.active === key ? " on" : "") + '" href="' + href + '">' +
+      icon(ic) + "<span>" + label + "</span>" +
+      (badge ? '<span class="nbadge' + (badgeQuiet ? " quiet" : "") + '"' + (key === "chat" ? " data-chat-badge" : "") + ">" + badge + "</span>" : "") +
+    "</a>";
+
+  return '<div class="shell">' +
+    '<aside class="sidebar" id="sidebar">' +
+      '<a class="sbrand" href="#/">' + logoMark() +
+        '<span class="sbrand-txt"><b>' + esc(SITE.name) + '<span class="word-dot">.</span></b><span>Study library</span></span></a>' +
+      '<nav class="snav">' +
+        '<p class="ngroup">Library</p>' +
+        nav("home", "#/", "home", "Home") +
+        nav("search", "#/search", "search", "Search") +
+        nav("saved", "#/saved", "bookmark", "Saved", savedN ? String(savedN) : "", true) +
+        '<p class="ngroup">Community</p>' +
+        nav("chat", "#/chat", "chat", "Lounge chat", unread ? String(unread) : "", false) +
+        nav("memes", "#/memes", "smile", "Meme break") +
+        '<p class="ngroup">Contribute</p>' +
+        (admin
+          ? nav("upload", "#/upload", "upload", "Upload a file") + nav("admin", "#/admin", "shield", "Admin console")
+          : nav("admin", "#/admin", "lock", "Admin access")) +
+        (admin
+          ? '<p class="ngroup">Manage</p>' +
+            nav("modules", "#/modules", "layers", "Modules") +
+            nav("settings", "#/settings", "settings", "Site settings")
+          : "") +
+      "</nav>" +
+      '<div class="suser">' +
+        '<div class="avatar" style="background:' + avatarColor(state.user.name || state.user.username) + '">' + esc(initials(state.user.name || state.user.username)) + "</div>" +
+        '<div class="uinfo"><div class="uname">' + esc(state.user.name || state.user.username) + '</div>' +
+          '<div class="urole">' + (admin ? "Admin · all batches" : "Student · Batch " + esc(state.user.batch || "—")) + "</div></div>" +
+        '<button class="icon-btn" data-action="signout" title="Sign out" aria-label="Sign out">' + icon("logout") + "</button>" +
+      "</div>" +
+      '<p class="tiny" style="color:#42505f;margin:10px 8px 0;line-height:1.4">' + esc(SITE.footer) + '</p>' +
+    "</aside>" +
+
+    '<div class="main">' +
+      '<header class="topbar">' +
+        '<button class="icon-btn burger" data-action="toggle-nav" aria-label="Menu">' + icon("menu") + "</button>" +
+        '<a class="brand-m" href="#/" aria-label="' + esc(SITE.name) + ' home">' + logoMark("logo-sm") + '<span class="brand-word">' + esc(SITE.name) + '</span></a>' +
+        '<form class="search" data-form="search" role="search">' +
+          '<input name="q" type="search" autocomplete="off" aria-label="Search materials" placeholder="Search papers, slides, notes…" value="' + esc(opts.q || "") + '">' +
+        "</form>" +
+        '<button class="icon-btn" data-action="meme-now" title="Random meme" aria-label="Random meme">' + icon("dice") + "</button>" +
+      "</header>" +
+      '<div class="content">' +
+        (DB.mode === "memory"
+          ? '<div class="alert warn" style="margin-bottom:14px">Storage is blocked in this browser, so uploads and chat disappear on reload. Chrome or Edge opened normally works best.</div>'
+          : "") +
+        (SITE.announcement ? '<div class="alert info" style="margin-bottom:14px">' + esc(SITE.announcement) + "</div>" : "") +
+        content +
+      "</div>" +
+    "</div>" +
+    '<div class="overlay" data-action="close-nav"></div>' +
+  "</div>";
+}
+
+function pageHead(title, sub, actions) {
+  return '<div class="page-head"><div><h1>' + title + "</h1>" + (sub ? "<p>" + sub + "</p>" : "") + "</div>" +
+    (actions ? '<div class="row">' + actions + "</div>" : "") + "</div>";
+}
+
+function typeBadge(type) {
+  return '<span class="badge b-type t-' + esc(type) + '">' + esc(typeLabel(type)) + "</span>";
+}
+/* ================================================================ helpers */
+const published = (list) => list.filter((r) => r.status === "published");
+const moduleOf = (rec) => moduleByCode(rec.module);
+
+function emptyState(title, sub) {
+  return '<div class="empty"><b>' + esc(title) + "</b>" + (sub ? "<span>" + esc(sub) + "</span>" : "") + "</div>";
+}
+
+function resourceRow(rec, opts) {
+  opts = opts || {};
+  const mod = moduleOf(rec);
+  const saved = isSaved(rec.id);
+  const top = topReaction(rec);
+  const bits = [
+    opts.showModule ? null : rec.subject,
+    rec.examYear || null,
+    rec.size ? fmtBytes(rec.size) : null,
+    (rec.downloads || 0) + " downloads",
+    top ? top[0] + " " + top[1] : null,
+    opts.showDate ? relTime(rec.publishedAt || rec.createdAt) : null
+  ].filter(Boolean);
+
+  return '<div class="rrow">' +
+    '<div class="rbody">' +
+      '<div class="row" style="gap:6px">' +
+        typeBadge(rec.type) +
+        (rec.examYear ? '<span class="tiny mono" style="color:#7d8b9a;font-weight:800">' + esc(rec.examYear) + "</span>" : "") +
+        (opts.showModule && mod ? '<a class="tiny mono" style="font-weight:800;color:#5eead4" href="#/m/' + esc(mod.slug) + '">' + esc(mod.code) + "</a>" : "") +
+        (rec.reported ? '<span class="badge" style="background:rgba(251,113,133,.12);color:#fda4af">reported</span>' : "") +
+      "</div>" +
+      '<a class="rtitle" href="#/r/' + esc(rec.id) + '">' + esc(rec.title) + "</a>" +
+      (bits.length ? '<p class="rmeta">' + esc(bits.join(" · ")) + "</p>" : "") +
+    "</div>" +
+    '<div class="racts">' +
+      '<button class="icon-btn' + (saved ? " on" : "") + '" data-action="toggle-save" data-id="' + esc(rec.id) + '" title="' + (saved ? "Saved" : "Save for later") + '" aria-label="Save">' + icon("star", saved ? "solid" : "") + "</button>" +
+      (rec.hasFile
+        ? '<button class="btn ghost sm" data-action="download" data-id="' + esc(rec.id) + '">' + icon("download") + "Download</button>"
+        : '<span class="tiny mut">no file</span>') +
+    "</div>" +
+  "</div>";
+}
+
+function paintMemes() {
+  document.querySelectorAll("canvas[data-meme]").forEach((c) => {
+    const i = Number(c.dataset.meme);
+    paintMeme(c, MEMES[i], i);
+  });
+}
+
+/* =================================================================== auth */
+function authView() {
+  const users = loadUsers();
+  const firstRun = users.length === 0;
+  const mode = firstRun ? "signup" : state.loginMode;
+  const signup = mode === "signup";
+  const u = state.user;
+
+  const defBatch = BATCHES.indexOf("200") >= 0 ? "200" : BATCHES[0];
+  const defYears = YEARS_FOR_BATCH[defBatch] || [1, 2, 3];
+  const yearOptions = (years, selected) =>
+    years.map((n) => '<option value="' + n + '"' + (Number(selected) === n ? " selected" : "") + ">Year " + n + "</option>").join("");
+
+  const form = signup
+    ? '<form data-form="signup">' +
+        '<label class="field">Full name<input name="name" required maxlength="60" placeholder="e.g. Ayesha Rahman"></label>' +
+        '<label class="field">Username<input name="username" required maxlength="24" autocapitalize="none" placeholder="ayesha"></label>' +
+        '<label class="field">Batch<select name="batch" data-auth-batch>' +
+          BATCHES.map((b) => '<option value="' + b + '"' + (b === defBatch ? " selected" : "") + ">Batch " + b + "</option>").join("") +
+        "</select></label>" +
+        '<label class="field">Year<select name="year">' + yearOptions(defYears, defYears[0]) + "</select></label>" +
+        '<p class="tiny mut" data-batch-hint style="margin:-8px 0 2px">Batch ' + defBatch + " can join " + yearsLabel(defYears) + ".</p>" +
+        '<label class="field">Password<input name="password" type="password" required minlength="6" placeholder="At least 6 characters"></label>' +
+        '<label class="field">Admin password (optional)<input name="adminPass" type="password" autocomplete="off" placeholder="Leave empty to join as a student"></label>' +
+        '<button class="btn block" type="submit">Create account</button>' +
+      "</form>"
+    : '<form data-form="signin">' +
+        '<label class="field">Username<input name="username" required autocapitalize="none" autofocus autocomplete="username"></label>' +
+        '<label class="field">Password<input name="password" type="password" required autocomplete="current-password"></label>' +
+        '<label class="field">Year<select name="year"><option value="">Use my saved year</option>' + yearOptions([1, 2, 3], null) + "</select></label>" +
+        '<p class="tiny mut" style="margin:-8px 0 2px">Your batch controls which years are open. Pick one to switch.</p>' +
+        '<button class="btn block" type="submit">Sign in</button>' +
+      "</form>";
+
+  const sw = firstRun
+    ? '<p class="switch">First account on this device? Create it here. Admin access needs the staff password — otherwise you join as a student.</p>'
+    : '<p class="switch">' + (signup
+        ? 'Already have an account? <a href="#/login">Sign in</a>'
+        : 'New here? <a href="#/login?mode=signup">Create an account</a>') + "</p>";
+
+  return '<div class="auth"><div class="authcard">' +
+    '<div class="auth-brand">' + logoMark("logo-lg") +
+      '<span class="auth-word">' + esc(SITE.name) + '<span class="word-dot">.</span></span></div>' +
+    "<h1>" + (firstRun ? "Set up " + esc(SITE.name) : signup ? "Create your account" : "Welcome back.") + "</h1>" +
+    '<p class="sub">' + esc(SITE.tagline) + '</p>' +
+    (state.loginError ? '<div class="alert err" style="margin-bottom:14px">' + esc(state.loginError) + "</div>" : "") +
+    form + sw +
+    '<p class="switch" style="margin-top:12px">You stay signed in on this device for ' + SESSION_DAYS + " days.</p>" +
+    '<p class="tiny" style="color:#42505f;text-align:center;margin-top:14px;line-height:1.5">' + esc(SITE.footer) + ' Accounts are stored in this browser only — not real security; do not reuse a real password.</p>' +
+  "</div></div>";
+}
+
+/* =================================================================== home */
+function homeView(meta, params) {
+  const batch = isAdminUser()
+    ? (params.get("b") || state.prefs.batch || BATCHES[0])
+    : (state.user.batch || BATCHES[0]);
+  const allowedYears = batchYears(batch);
+  const requested = Number(params.get("y") || state.prefs.year || userYear());
+  const fallbackYear = allowedYears.indexOf(userYear()) >= 0
+    ? userYear()
+    : (allowedYears.indexOf(BATCH_YEAR[batch]) >= 0 ? BATCH_YEAR[batch] : allowedYears[0]);
+  const yearNo = allowedYears.indexOf(requested) >= 0 ? requested : fallbackYear;
+  const semRaw = params.get("sem");
+  const sem = semRaw === "1" ? 1 : semRaw === "2" ? 2 : null;
+  const year = YEARS.find((y) => y.no === yearNo) || YEARS[0];
+
+  state.prefs.batch = batch;
+  state.prefs.year = year.no;
+  state.prefs.sem = sem;
+  savePrefs();
+
+  // Keep the address bar honest: a hand-edited ?b=199&y=3 must snap back
+  // to a year that batch is actually allowed to open.
+  const norm = new URLSearchParams();
+  norm.set("b", batch);
+  norm.set("y", String(year.no));
+  if (sem) norm.set("sem", String(sem));
+  const normHash = "#/?" + norm.toString();
+  if (location.hash !== normHash) {
+    try { history.replaceState(null, "", normHash); } catch (e) {}
+  }
+
+  const allPub = published(visibleMeta(meta));
+  const pub = allPub.filter((r) => {
+    const mod = moduleOf(r);
+    return mod && mod.year === year.no;
+  });
+  const mods = MODULES.filter((m) => m.year === year.no);
+  const semesterMapped = mods.some((m) => m.sem !== null);
+  const visible = mods.filter((m) => sem === null || m.sem === null || m.sem === sem);
+
+  const counts = {};
+  pub.forEach((r) => {
+    const c = counts[r.module] || (counts[r.module] = { total: 0, papers: 0, slides: 0 });
+    c.total++;
+    if (r.type === "past_paper") c.papers++;
+    if (r.type === "slides") c.slides++;
+  });
+
+  const href = (o) => {
+    const p = new URLSearchParams();
+    p.set("b", o.b || batch);
+    p.set("y", String(o.y || year.no));
+    const s = o.sem === undefined ? sem : o.sem;
+    if (s) p.set("sem", String(s));
+    return "#/?" + p.toString();
+  };
+
+  const batchHref = (b) => {
+    const ys = batchYears(b);
+    const target = ys.indexOf(year.no) >= 0
+      ? year.no
+      : (ys.indexOf(BATCH_YEAR[b]) >= 0 ? BATCH_YEAR[b] : ys[0]);
+    return href({ b, y: target, sem: null });
+  };
+
+  const filterRow = (label, items) =>
+    '<div class="row hero-filter"><span class="filterlab">' + label + "</span>" + items.join("") + "</div>";
+
+  const totalFiles = visible.reduce((n, m) => n + ((counts[m.code] || {}).total || 0), 0);
+  const withFiles = mods.filter((m) => (counts[m.code] || {}).total).length;
+  const savedN = loadSaves().filter((id) => allPub.some((r) => r.id === id)).length;
+  const unread = unreadCount(state.msgs);
+
+  const grid = visible.map((m) => {
+    const c = counts[m.code] || { total: 0, papers: 0, slides: 0 };
+    const bits = [c.total + (c.total === 1 ? " file" : " files")];
+    if (c.papers) bits.push(c.papers + " papers");
+    if (c.slides) bits.push(c.slides + " decks");
+    return '<a class="tile" href="#/m/' + esc(m.slug) + '" title="' + esc(m.title || m.code) + '">' +
+      '<div class="tile-top"><span class="code">' + esc(m.code) + "</span>" +
+        '<span class="badge ' + (m.kind === "vertical" ? "b-vert" : "b-horz") + '">' + (m.kind === "vertical" ? "Vertical" : "Horizontal") + "</span></div>" +
+      '<span class="title">' + (m.title ? esc(m.title) : '<i style="color:#42505f">Title not set</i>') + "</span>" +
+      '<span class="meta">' + esc(bits.join(" · ")) + "</span>" +
+    "</a>";
+  }).join("");
+
+  const recent = pub.slice().sort((a, b) => (b.publishedAt || b.createdAt) - (a.publishedAt || a.createdAt)).slice(0, 5);
+  const memeStart = Math.floor(Date.now() / 86400000) % MEMES.length;
+  const memePicks = [memeStart, (memeStart + 9) % MEMES.length, (memeStart + 21) % MEMES.length];
+
+  const stat = (label, value, accent) =>
+    '<div class="stat' + (accent ? " stat-accent" : "") + '"><span>' + label + "</span><b>" + value + "</b></div>";
+
+  const heroCopy = isAdminUser()
+    ? "Pick a batch, a year or a module. Batch " + batch + " covers " + yearsLabel(allowedYears) + "."
+    : (allowedYears.length === 1
+        ? "Batch " + batch + " is " + year.label + ". Everything for your year lives here."
+        : "Batch " + batch + " can browse " + yearsLabel(allowedYears) + ". You are viewing " + year.label + ".");
+
+  const noFilesAtAll = allPub.length === 0;
+  const emptyTitle = isAdminUser()
+    ? (noFilesAtAll ? "The library is empty" : "No files in " + year.label + " yet")
+    : (noFilesAtAll ? "No files yet" : "No " + year.label + " files yet");
+  const emptyText = isAdminUser()
+    ? (noFilesAtAll
+        ? "This is the real library. Upload the first PDF, or import a JSON backup from the Admin console."
+        : "Other years already have material. Add the first file for " + year.label + ".")
+    : "Your batch reps are adding material for " + year.label + ". Try another year above while you wait.";
+  const emptyLibraryCard = pub.length ? "" :
+    '<section class="card" style="padding:24px">' +
+      '<div class="row" style="align-items:flex-start;gap:14px">' +
+        '<span class="gate-icon">' + icon(isAdminUser() ? "upload" : "library") + "</span>" +
+        '<div style="flex:1;min-width:220px">' +
+          '<h2 class="sec-title" style="margin:0 0 6px">' + esc(emptyTitle) + "</h2>" +
+          '<p class="small mut" style="margin:0">' + esc(emptyText) + "</p>" +
+        "</div>" +
+        (isAdminUser()
+          ? '<a class="btn" href="#/upload">' + icon("upload") + "Upload a file</a>"
+          : '<a class="btn ghost" href="#/chat">' + icon("chat") + "Open lounge chat</a>") +
+      "</div>" +
+    "</section>";
+
+  return layout(
+    '<div class="stack">' +
+
+      '<section class="hero">' +
+        '<p class="eyebrow">' + esc(SITE.name) + ' · Batch ' + esc(batch) + " · " + esc(year.label) + (isAdminUser() ? " · Admin" : "") + "</p>" +
+        '<h1>Welcome back, <em>' + esc((state.user.name || state.user.username).split(" ")[0]) + ".</em></h1>" +
+        '<p>' + esc(heroCopy) + "</p>" +
+        (isAdminUser()
+          ? filterRow("Batch", BATCHES.map((b) => '<a class="chip' + (b === batch ? " on" : "") + '" href="' + batchHref(b) + '">' + b + "</a>"))
+          : "") +
+        (isAdminUser() || allowedYears.length > 1
+          ? filterRow("Year", allowedYears.map((n) => {
+              const y = YEARS.find((x) => x.no === n);
+              return '<a class="chip' + (n === year.no ? " on" : "") + '" href="' + href({ y: n, sem: null }) + '">' + esc(y ? y.label : "Year " + n) + "</a>";
+            }))
+          : "") +
+        (semesterMapped
+          ? filterRow("Semester", [
+              '<a class="chip' + (sem === null ? " on" : "") + '" href="' + href({ sem: null }) + '">All</a>',
+              '<a class="chip' + (sem === 1 ? " on" : "") + '" href="' + href({ sem: 1 }) + '">1st</a>',
+              '<a class="chip' + (sem === 2 ? " on" : "") + '" href="' + href({ sem: 2 }) + '">2nd</a>'
+            ])
+          : "") +
+        (!semesterMapped && isAdminUser()
+          ? '<div class="alert warn" style="margin-top:12px">Semester mapping is not set for ' + esc(year.label) +
+            " yet. Add it when you know which modules run when.</div>"
+          : "") +
+      "</section>" +
+
+      '<section class="stats">' +
+        stat("Files published", pub.length, true) +
+        stat("Modules with files", withFiles + " / " + mods.length) +
+        stat("Saved", savedN) +
+        stat("Chat unread", unread) +
+      "</section>" +
+
+      emptyLibraryCard +
+
+      "<section>" +
+        '<div class="between" style="margin-bottom:10px">' +
+          '<h2 class="sec-title" style="margin:0">' + esc(year.label) + " · " + visible.length + " modules</h2>" +
+          '<span class="tiny mut">' + totalFiles + " files in this year</span>" +
+        "</div>" +
+        (visible.length ? '<div class="grid">' + grid + "</div>" : emptyState("No modules for this selection")) +
+      "</section>" +
+
+      (recent.length
+        ? "<section>" +
+            '<div class="between" style="margin-bottom:10px">' +
+              '<h2 class="sec-title" style="margin:0">Recently added</h2>' +
+              '<a class="tiny" href="#/search" style="font-weight:800">Browse everything →</a>' +
+            "</div>" +
+            '<div class="list">' + recent.map((r) => resourceRow(r, { showModule: true, showDate: true })).join("") + "</div>" +
+          "</section>"
+        : "") +
+
+      "<section>" +
+        '<div class="between" style="margin-bottom:10px">' +
+          '<h2 class="sec-title" style="margin:0">Meme break</h2>' +
+          '<a class="tiny" href="#/memes" style="font-weight:800">All ' + (MEMES.length + (state.uploads || []).length) + " memes →</a>" +
+        "</div>" +
+        '<div class="memegrid">' +
+          memePicks.map((i) => '<div class="meme"><canvas data-meme="' + i + '" width="640" height="640"></canvas></div>').join("") +
+        "</div>" +
+      "</section>" +
+    "</div>",
+    { active: "home" }
+  );
+}
+/* ================================================================= module */
+function moduleView(meta, params) {
+  const mod = moduleBySlug(params.get("slug"));
+  if (!mod) return layout(emptyState("Module not found", "Check the link or go back to your year."), { active: "home" });
+  if (!canSeeYear(mod.year)) {
+    return lockedView("Year " + mod.year + " is not open to Batch " + (state.user.batch || "—"),
+      "Batch " + (state.user.batch || "—") + " can browse " + yearsLabel(userBatchYears()) + ". This module belongs to Year " + mod.year + ".",
+      "home");
+  }
+
+  const all = meta.filter((r) => r.module === mod.code && r.status === "published");
+  const type = TYPES.indexOf(params.get("type")) >= 0 ? params.get("type") : null;
+  const subject = params.get("subject") || null;
+
+  const subjects = Array.from(new Set(all.map((r) => r.subject).filter(Boolean))).sort();
+  const counts = {};
+  all.forEach((r) => { counts[r.type] = (counts[r.type] || 0) + 1; });
+
+  const list = all
+    .filter((r) => (!type || r.type === type) && (!subject || r.subject === subject))
+    .sort((a, b) => (b.publishedAt || 0) - (a.publishedAt || 0));
+
+  const link = (o) => {
+    const p = new URLSearchParams();
+    const t = o.type === undefined ? type : o.type;
+    const s = o.subject === undefined ? subject : o.subject;
+    if (t) p.set("type", t);
+    if (s) p.set("subject", s);
+    const qs = p.toString();
+    return "#/m/" + mod.slug + (qs ? "?" + qs : "");
+  };
+
+  return layout(
+    '<div class="stack">' +
+      '<nav class="tiny mut"><a href="#/?y=' + mod.year + '">Year ' + mod.year + "</a>" +
+        '<span style="margin:0 7px;color:#384453">/</span><span class="mono" style="color:#c3cedb">' + esc(mod.code) + "</span></nav>" +
+
+      '<header class="card">' +
+        '<div class="row" style="gap:10px">' +
+          '<h1 class="mono" style="font-size:24px">' + esc(mod.code) + "</h1>" +
+          '<span class="badge ' + (mod.kind === "vertical" ? "b-vert" : "b-horz") + '">' + (mod.kind === "vertical" ? "Vertical" : "Horizontal") + "</span>" +
+          '<span class="tiny mut">' + all.length + (all.length === 1 ? " file" : " files") + "</span>" +
+          (isAdminUser() ? '<a class="btn ghost sm" style="margin-left:auto" href="#/upload?module=' + encodeURIComponent(mod.code) + '">' + icon("plus") + "Add file</a>" : "") +
+        "</div>" +
+        '<p class="small mut" style="margin:6px 0 0">' + (mod.title ? esc(mod.title) : '<i style="color:#42505f">Title not set yet</i>') + "</p>" +
+        (subjects.length
+          ? '<div class="row" style="margin-top:14px"><span class="filterlab" style="font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#5f6d7d;margin-right:4px">Subject</span>' +
+              '<a class="chip' + (!subject ? " on" : "") + '" href="' + link({ subject: null }) + '">All</a>' +
+              subjects.map((s) => '<a class="chip' + (s === subject ? " on" : "") + '" href="' + link({ subject: s }) + '">' + esc(s) + "</a>").join("") +
+            "</div>"
+          : "") +
+      "</header>" +
+
+      (Object.keys(counts).length
+        ? '<div class="chips">' +
+            '<a class="chip' + (!type ? " on" : "") + '" href="' + link({ type: null }) + '">All (' + all.length + ")</a>" +
+            TYPES.filter((t) => counts[t]).map((t) =>
+              '<a class="chip' + (t === type ? " on" : "") + '" href="' + link({ type: t }) + '">' + esc(typeLabel(t)) + " (" + counts[t] + ")</a>").join("") +
+          "</div>"
+        : "") +
+
+      (list.length
+        ? '<div class="list">' + list.map((r) => resourceRow(r)).join("") + "</div>"
+        : emptyState(all.length ? "No files match this filter" : "Nothing published yet",
+            all.length ? "Try a different type or subject." : (isAdminUser()
+              ? "Upload the slides and past papers for this module."
+              : "Your batch reps are adding material for this module."))) +
+
+      '<p class="tiny mut">Last updated ' + fmtDate(list[0] ? (list[0].publishedAt || list[0].createdAt) : null) + "</p>" +
+    "</div>",
+    { active: "home" }
+  );
+}
+
+/* =============================================================== resource */
+async function resourceView(meta, params) {
+  const rec = meta.find((r) => r.id === params.get("id"));
+  if (!rec) return layout(emptyState("File not found", "It may have been removed."), { active: "home" });
+  if (rec.status !== "published" && !isAdminUser()) {
+    return layout(emptyState("Not published", "This file is still waiting for review."), { active: "home" });
+  }
+
+  const mod = moduleOf(rec);
+  if (mod && !canSeeYear(mod.year)) {
+    return lockedView("Year " + mod.year + " is not open to Batch " + (state.user.batch || "—"),
+      "Batch " + (state.user.batch || "—") + " can browse " + yearsLabel(userBatchYears()) + ". This file belongs to Year " + mod.year + ".",
+      "home");
+  }
+  let blobUrl = "";
+  if (rec.hasFile) {
+    const blob = await DB.getFile(rec.id);
+    if (blob) {
+      blobUrl = URL.createObjectURL(blob);
+      state.previewUrl = blobUrl;
+    }
+  }
+
+  const saved = isSaved(rec.id);
+  const more = meta
+    .filter((r) => r.status === "published" && r.module === rec.module && r.id !== rec.id)
+    .slice(0, 3);
+
+  return layout(
+    '<div class="stack">' +
+      '<nav class="tiny mut"><a href="#/m/' + esc(mod.slug) + '">' + esc(mod.code) + "</a>" +
+        '<span style="margin:0 7px;color:#384453">/</span><span style="color:#8d9bab">' + esc(rec.title) + "</span></nav>" +
+
+      (rec.status !== "published"
+        ? '<div class="alert warn">Not published — only admins can see this. Status: <b>' + esc(rec.status) + "</b></div>"
+        : "") +
+
+      '<header class="detail-head">' +
+        '<div class="row" style="gap:6px">' + typeBadge(rec.type) +
+          (rec.examYear ? '<span class="tiny mono" style="font-weight:800;color:#7d8b9a">' + esc(rec.examYear) + "</span>" : "") +
+          "</div>" +
+        '<h1 style="font-size:22px;margin-top:9px">' + esc(rec.title) + "</h1>" +
+        (rec.description ? '<p class="small mut" style="margin-top:6px">' + esc(rec.description) + "</p>" : "") +
+        '<dl class="facts">' +
+          "<div><dt>Module</dt><dd>" + esc(mod.code) + "</dd></div>" +
+          "<div><dt>Subject</dt><dd>" + esc(rec.subject || "—") + "</dd></div>" +
+          "<div><dt>Size</dt><dd>" + esc(fmtBytes(rec.size)) + "</dd></div>" +
+          "<div><dt>Downloads</dt><dd data-dl-count>" + esc(rec.downloads || 0) + "</dd></div>" +
+        "</dl>" +
+        '<div class="row" style="margin-top:16px">' +
+          (blobUrl
+            ? '<button class="btn" data-action="download" data-id="' + esc(rec.id) + '">' + icon("download") + "Download " + esc(fmtBytes(rec.size)) + "</button>"
+            : '<span class="btn" style="background:#16202c;color:#5f6d7d;cursor:not-allowed">' + (rec.hasFile ? "File missing" : "No file attached") + "</span>") +
+          '<button class="btn ghost" data-action="toggle-save" data-id="' + esc(rec.id) + '">' + icon("star", saved ? "solid" : "") + (saved ? "Saved" : "Save") + "</button>" +
+          (blobUrl ? '<a class="btn ghost" href="' + esc(blobUrl) + '" target="_blank" rel="noreferrer">Open in tab</a>' : "") +
+          '<span class="tiny mut" style="margin-left:auto">added ' + esc(fmtDate(rec.publishedAt || rec.createdAt)) +
+            (rec.uploader ? " by " + esc(rec.uploader) : "") + "</span>" +
+        "</div>" +
+        reactionBar(rec) +
+      "</header>" +
+
+      (blobUrl
+        ? '<section class="preview"><div class="ph"><span class="sec-title" style="margin:0">Preview</span>' +
+            '<a class="tiny" style="font-weight:800" href="' + esc(blobUrl) + '" target="_blank" rel="noreferrer">Open full size</a></div>' +
+            '<iframe src="' + esc(blobUrl) + '" title="' + esc(rec.title) + '"></iframe></section>'
+        : "") +
+
+      (more.length
+        ? "<section><h2 class=\"sec-title\">More from " + esc(mod.code) + "</h2>" +
+            '<div class="list">' + more.map((r) => resourceRow(r)).join("") + "</div></section>"
+        : "") +
+
+      '<details class="card" style="padding:14px">' +
+        '<summary class="small" style="font-weight:700;color:#a7b4c2;cursor:pointer">Report a problem with this file</summary>' +
+        '<form data-form="report" data-id="' + esc(rec.id) + '" style="margin-top:12px" class="row">' +
+          '<select name="reason" style="padding:8px 10px;border:1px solid #2b3745;border-radius:8px;font-size:12px;background:#101823;color:#e8eef5">' +
+            '<option value="broken_file">File will not open / is corrupted</option>' +
+            '<option value="wrong_module">Wrong module or subject</option>' +
+            '<option value="duplicate">Duplicate of another file</option>' +
+            '<option value="copyright">Should not be published</option>' +
+            '<option value="low_quality">Unreadable scan</option>' +
+            '<option value="other">Something else</option>' +
+          "</select>" +
+          '<input name="detail" placeholder="Optional detail" style="flex:1;min-width:170px;padding:8px 10px;border:1px solid #2b3745;border-radius:8px;font-size:12px;background:#101823;color:#e8eef5">' +
+          '<button class="btn ghost sm" type="submit">Send</button>' +
+        "</form>" +
+      "</details>" +
+    "</div>",
+    { active: "home" }
+  );
+}
+
+/* ================================================================= search */
+function searchView(meta, params) {
+  const term = (params.get("q") || "").trim();
+  const type = TYPES.indexOf(params.get("type")) >= 0 ? params.get("type") : null;
+  const q = term.toLowerCase();
+  const pub = published(visibleMeta(meta));
+
+  const score = (r) => {
+    const mod = moduleOf(r);
+    const t = r.title.toLowerCase();
+    let s = 0;
+    if (t === q) s += 100;
+    if (t.startsWith(q)) s += 40;
+    if (t.includes(q)) s += 20;
+    if ((mod.code || "").toLowerCase().includes(q)) s += 30;
+    if ((mod.title || "").toLowerCase().includes(q)) s += 15;
+    if ((r.subject || "").toLowerCase().includes(q)) s += 10;
+    if (String(r.examYear || "") === q) s += 25;
+    if (typeLabel(r.type).toLowerCase().includes(q)) s += 5;
+    return s;
+  };
+
+  const base = q
+    ? pub.map((r) => ({ r, s: score(r) })).filter((x) => x.s > 0)
+        .sort((a, b) => b.s - a.s || (b.r.downloads || 0) - (a.r.downloads || 0))
+        .map((x) => x.r)
+    : [];
+
+  const typeCounts = {};
+  base.forEach((r) => { typeCounts[r.type] = (typeCounts[r.type] || 0) + 1; });
+  const results = base.filter((r) => !type || r.type === type).slice(0, 60);
+
+  const typeLink = (t) => {
+    const p = new URLSearchParams();
+    p.set("q", term);
+    if (t) p.set("type", t);
+    return "#/search?" + p.toString();
+  };
+
+  const recent = pub.slice().sort((a, b) => (b.publishedAt || 0) - (a.publishedAt || 0)).slice(0, 5);
+
+  return layout(
+    '<div class="stack">' +
+      pageHead("Search", "Module code, topic, subject or exam year — one index for every file.") +
+
+      '<form data-form="search" class="row" style="gap:8px">' +
+        '<input name="q" value="' + esc(term) + '" placeholder="e.g. NEU-205 final, cranial nerves, MCQ 2024" ' +
+          'style="flex:1;min-width:200px;padding:11px 13px;border:1px solid #2b3745;border-radius:10px;font-size:14px;background:#101823;color:#e8eef5" autofocus>' +
+        '<button class="btn" type="submit">' + icon("search") + "Search</button>" +
+      "</form>" +
+
+      (term && base.length
+        ? '<div class="chips">' +
+            '<a class="chip' + (!type ? " on" : "") + '" href="' + typeLink(null) + '">All (' + base.length + ")</a>" +
+            TYPES.filter((t) => typeCounts[t]).map((t) =>
+              '<a class="chip' + (t === type ? " on" : "") + '" href="' + typeLink(t) + '">' + esc(typeLabel(t)) + " (" + typeCounts[t] + ")</a>").join("") +
+          "</div>"
+        : "") +
+
+      (!term
+        ? emptyState("Search the whole library", "Try a module code (NEU-205), a topic (cranial nerves) or a year (2024).") +
+          (recent.length ? '<section><h2 class="sec-title">Recently added</h2><div class="list">' +
+            recent.map((r) => resourceRow(r, { showModule: true })).join("") + "</div></section>" : "")
+        : results.length
+          ? '<p class="tiny mut">' + results.length + (results.length === 1 ? " result" : " results") +
+              " for <b style=\"color:#c3cedb\">“" + esc(term) + "”</b></p>" +
+            '<div class="list">' + results.map((r) => resourceRow(r, { showModule: true })).join("") + "</div>"
+          : emptyState('No files found for “' + term + '”',
+              type ? "Try clearing the type filter." : "If it exists in a Telegram channel it has not been catalogued yet — upload it and it becomes searchable.")) +
+
+      (term && !results.length && recent.length
+        ? '<section><h2 class="sec-title">Recently added instead</h2><div class="list">' +
+            recent.map((r) => resourceRow(r, { showModule: true })).join("") + "</div></section>"
+        : "") +
+    "</div>",
+    { active: "search", q: term }
+  );
+}
+/* =================================================================== chat */
+function messageHtml(m, prev) {
+  const mine = state.user && m.userId === state.user.id;
+  const isSys = m.userId === "system";
+  const showDay = !prev || dayKey(prev.ts) !== dayKey(m.ts);
+  const day = showDay ? '<div class="tiny" style="text-align:center;color:#42505f;margin:2px 0">' + esc(dayLabel(m.ts)) + "</div>" : "";
+
+  if (isSys) {
+    return day + '<div class="msg sys"><div class="mbubble">' + esc(m.text) + "</div></div>";
+  }
+  return day +
+    '<div class="msg' + (mine ? " me" : "") + '">' +
+      '<div class="mavatar" style="background:' + avatarColor(m.name) + '">' + esc(initials(m.name)) + "</div>" +
+      '<div class="mbody">' +
+        '<div class="mhead"><b>' + esc(mine ? "You" : m.name) + "</b><span>" + esc(timeShort(m.ts)) + "</span></div>" +
+        '<div class="mbubble">' + esc(m.text) + "</div>" +
+      "</div>" +
+    "</div>";
+}
+
+function messageListHtml(msgs) {
+  let prev = null;
+  return msgs.map((m) => { const h = messageHtml(m, prev); prev = m; return h; }).join("");
+}
+
+function chatView(meta) {
+  const msgs = (state.msgs || []).slice().sort((a, b) => a.ts - b.ts).slice(-300);
+  const members = loadUsers().length;
+
+  setLastRead(Date.now());
+
+  return layout(
+    '<div class="stack">' +
+      pageHead("Lounge", "One room for the batch. Ask, share, vent about the timetable.",
+        '<button class="btn ghost sm" data-action="meme-now">' + icon("smile") + "Meme break</button>") +
+
+      '<div class="chatwrap">' +
+        '<div class="chathead">' +
+          '<div class="hash">#</div>' +
+          '<div style="min-width:0;flex:1"><div style="font-size:13px;font-weight:800">general</div>' +
+            '<div class="tiny" style="color:#5f6d7d">' + members + (members === 1 ? " member" : " members") + " · local room</div></div>" +
+          '<span class="live"><i></i>live</span>' +
+        "</div>" +
+        '<div class="msglist" id="msglist">' + messageListHtml(msgs) + "</div>" +
+        '<form class="composer" data-form="chat">' +
+          '<textarea name="text" rows="1" maxlength="1200" placeholder="Message #general…" aria-label="Message"></textarea>' +
+          '<button class="btn" type="submit">Send</button>' +
+        "</form>" +
+      "</div>" +
+      '<p class="tiny mut">Messages are stored in this browser and sync live across tabs. A room shared between phones needs a server — the library already has one, chat would be the next piece.</p>' +
+    "</div>",
+    { active: "chat" }
+  );
+}
+
+/* ================================================================== memes */
+function memesView() {
+  const muted = state.prefs.memesMuted;
+  const admin = isAdminUser();
+  const ups = state.uploads || [];
+  const total = MEMES.length + ups.length;
+
+  const uploadsHtml = ups.length
+    ? '<div class="memegrid">' + ups.map((m) => {
+        const url = URL.createObjectURL(m.blob);
+        state.memeUrls.push(url);
+        return '<div class="meme">' +
+          '<img src="' + esc(url) + '" alt="' + esc(m.title || "Uploaded meme") + '" loading="lazy">' +
+          '<div class="macts">' +
+            '<button class="btn ghost sm" data-action="meme-open-up" data-id="' + esc(m.id) + '">View</button>' +
+            '<button class="btn ghost sm" data-action="meme-dl-up" data-id="' + esc(m.id) + '" title="Download" aria-label="Download">' + icon("download") + "</button>" +
+            (admin ? '<button class="btn danger sm" data-action="meme-del" data-id="' + esc(m.id) + '" title="Delete" aria-label="Delete">' + icon("trash") + "</button>" : "") +
+          "</div>" +
+        "</div>";
+      }).join("") + "</div>"
+    : emptyState("No memes uploaded yet", admin ? "Use the uploader above to add the batch's best screenshots." : "Only an admin can add memes. Ask them to upload the good ones.");
+
+  return layout(
+    '<div class="stack">' +
+      pageHead("Meme break", total + " memes — " + MEMES.length + " generated here" + (ups.length ? " and " + ups.length + " from the batch" : "") + ". One pops up every 5 minutes.",
+        '<button class="btn ghost sm" data-action="toggle-mute">' + icon(muted ? "close" : "smile") + (muted ? "Unmute popups" : "Mute popups") + "</button>" +
+        '<button class="btn sm" data-action="meme-now">' + icon("dice") + "Surprise me</button>") +
+
+      '<div class="alert ' + (muted ? "info" : "ok") + '">' +
+        (muted ? "Popups are muted. The gallery still works." : "Next popup in <b data-meme-timer>5:00</b>. Generated memes are drawn on canvas; uploaded ones are stored in this browser.") +
+      "</div>" +
+
+      (admin
+        ? '<details class="card" style="padding:16px">' +
+            '<summary class="small" style="font-weight:700;color:#c3d0c9;cursor:pointer">Upload a meme</summary>' +
+            '<form data-form="meme-upload" class="row" style="margin-top:14px;gap:10px;align-items:flex-end">' +
+              '<label class="field" style="flex:1;min-width:210px">Image<input name="file" type="file" accept="image/*" required></label>' +
+              '<label class="field" style="flex:1;min-width:190px">Caption (optional)<input name="title" maxlength="80" placeholder="e.g. 3am and the Krebs cycle"></label>' +
+              '<button class="btn" type="submit">' + icon("upload") + "Upload</button>" +
+            "</form>" +
+            '<p class="tiny mut" style="margin:10px 0 0">PNG, JPG, GIF or WebP up to 8 MB. Stored in this browser only.</p>' +
+          "</details>"
+        : "") +
+
+      "<section>" +
+        '<div class="between" style="margin-bottom:10px"><h2 class="sec-title" style="margin:0">From the batch' + (ups.length ? " · " + ups.length : "") + "</h2></div>" +
+        uploadsHtml +
+      "</section>" +
+
+      "<section>" +
+        '<h2 class="sec-title">Generated on this device · ' + MEMES.length + "</h2>" +
+        '<div class="memegrid">' +
+          MEMES.map((m, i) =>
+            '<div class="meme">' +
+              '<canvas data-meme="' + i + '" width="640" height="640" aria-label="' + esc(m.t + " " + m.b) + '"></canvas>' +
+              '<div class="macts"><button class="btn ghost sm" data-action="meme-download" data-i="' + i + '" title="Download" aria-label="Download">' + icon("download") + "</button>" +
+                '<button class="btn ghost sm" data-action="meme-open" data-i="' + i + '">View</button></div>' +
+            "</div>").join("") +
+        "</div>" +
+      "</section>" +
+
+      '<p class="tiny mut">Captions are original jokes about med school. Uploaded memes stay inside this browser — they are not sent anywhere.</p>' +
+    "</div>",
+    { active: "memes" }
+  );
+}
+
+/* ================================================================== saved */
+function savedView(meta) {
+  const ids = loadSaves();
+  const scoped = visibleMeta(meta);
+  const found = ids.map((id) => scoped.find((r) => r.id === id)).filter(Boolean);
+  const visible = found.filter((r) => r.status === "published");
+
+  return layout(
+    '<div class="stack">' +
+      pageHead("Saved", ids.length + (ids.length === 1 ? " file" : " files") + " kept for later on this device.",
+        visible.length ? '<a class="btn ghost sm" href="#/search">Find more</a>' : "") +
+      (visible.length
+        ? '<div class="list">' + visible.map((r) => resourceRow(r, { showModule: true })).join("") + "</div>"
+        : emptyState("Nothing saved yet", "Tap the star on any file and it lands here.")) +
+      (found.length > visible.length
+        ? '<p class="tiny mut">' + (found.length - visible.length) + " saved file(s) are no longer published.</p>"
+        : "") +
+    "</div>",
+    { active: "saved" }
+  );
+}
+
+/* ================================================================== gate */
+function adminGateView(message, active) {
+  return layout(
+    '<div class="stack" style="max-width:600px">' +
+      '<div class="gatehead">' +
+        '<span class="gate-icon">' + icon("lock") + "</span>" +
+        '<div><h1 style="font-family:var(--serif);font-size:30px;letter-spacing:-.02em">Admin access</h1>' +
+          '<p class="small mut" style="margin:7px 0 0">' + esc(message || "Uploading, moderation and exports are locked behind the staff password.") + "</p></div>" +
+      "</div>" +
+      '<form class="card" data-form="admin-unlock">' +
+        '<label class="field">Admin password<input name="pass" type="password" required autofocus autocomplete="off" placeholder="Staff password"></label>' +
+        (state.adminError ? '<div class="alert err" style="margin-top:12px">' + esc(state.adminError) + "</div>" : "") +
+        '<div class="row" style="margin-top:15px">' +
+          '<button class="btn" type="submit">' + icon("key") + "Unlock admin</button>" +
+          '<a class="btn ghost" href="#/">Back to library</a>' +
+        "</div>" +
+      "</form>" +
+      '<p class="tiny mut">Any signed-in account can unlock admin here with the password. It is a shared staff key for this device, not server-grade security.</p>' +
+    "</div>",
+    { active: active || "admin" }
+  );
+}
+
+function lockedView(title, message, active) {
+  return layout(
+    '<div class="stack" style="max-width:580px">' +
+      '<div class="gatehead">' +
+        '<span class="gate-icon">' + icon("lock") + "</span>" +
+        '<div><h1 style="font-family:var(--serif);font-size:30px;letter-spacing:-.02em">' + esc(title) + "</h1>" +
+          '<p class="small mut" style="margin:7px 0 0">' + esc(message) + "</p></div>" +
+      "</div>" +
+      '<div class="row">' +
+        '<a class="btn" href="#/">Back to library</a>' +
+        '<a class="btn ghost" href="#/search">Search</a>' +
+      "</div>" +
+    "</div>",
+    { active: active || "home" }
+  );
+}
+
+/* ================================================================= upload */
+function uploadView(meta, params) {
+  if (!isAdminUser()) return adminGateView("Uploading is admin-only. Enter the staff password to unlock it.", "upload");
+  const preset = params.get("module") || "";
+
+  return layout(
+    '<div class="stack" style="max-width:820px">' +
+      pageHead("Upload", "Admin only · PDF, 25 MB max. Duplicates are rejected by content hash.") +
+
+      '<form class="card" data-form="upload">' +
+        '<div class="formgrid">' +
+          '<label class="field full">Module<select name="module" required>' +
+            '<option value="">Select module…</option>' +
+            YEARS.map((y) => '<optgroup label="' + esc(y.label) + '">' +
+              MODULES.filter((m) => m.year === y.no).map((m) =>
+                '<option value="' + esc(m.code) + '"' + (preset === m.code ? " selected" : "") + ">" +
+                  esc(m.code) + (m.title ? " — " + esc(m.title) : "") + "</option>").join("") +
+              "</optgroup>").join("") +
+          "</select></label>" +
+
+          '<label class="field">Type<select name="type" required>' +
+            TYPES.map((t) => '<option value="' + t + '">' + esc(typeLabel(t)) + "</option>").join("") +
+          "</select></label>" +
+
+          '<label class="field">Exam year (optional)<input name="examYear" type="number" min="1980" max="2100" placeholder="2024"></label>' +
+
+          '<label class="field full">Title<input name="title" required maxlength="160" placeholder="Final 2024 — MCQ paper (with answer key)"></label>' +
+
+          '<label class="field">Subject (optional)<select name="subject">' +
+            '<option value="">Not specified</option>' +
+            SUBJECTS.map((s) => '<option value="' + esc(s) + '">' + esc(s) + "</option>").join("") +
+          "</select></label>" +
+
+          '<label class="field">PDF file<input name="file" type="file" accept="application/pdf,.pdf" required></label>' +
+
+          '<label class="check full"><input type="checkbox" name="publish" value="1" checked> Publish immediately (otherwise it waits in the review queue)</label>' +
+        "</div>" +
+        '<div class="row" style="margin-top:16px">' +
+          '<button class="btn" type="submit">' + icon("upload") + "Upload file</button>" +
+          '<span class="tiny mut">Nothing is visible to students until it is published.</span>' +
+        "</div>" +
+      "</form>" +
+    "</div>",
+    { active: "upload" }
+  );
+}
+
+/* ============================================================ site settings */
+function siteSettingsView() {
+  if (!isAdminUser()) return adminGateView("Site settings are admin-only.", "settings");
+  const themes = [["mint", "Mint"], ["ocean", "Ocean"], ["rose", "Rose"], ["amber", "Amber"], ["violet", "Violet"]];
+  return layout(
+    '<div class="stack" style="max-width:820px">' +
+      pageHead("Site settings", "Rename the library, pick a theme, post an announcement and rotate the staff key.",
+        '<a class="btn ghost sm" href="#/admin">' + icon("shield") + "Admin console</a>" +
+        '<a class="btn ghost sm" href="#/modules">' + icon("layers") + "Modules</a>") +
+
+      '<form class="card" data-form="site-settings">' +
+        '<div class="formgrid">' +
+          '<label class="field">Site name<input name="name" maxlength="40" required value="' + esc(SITE.name) + '" placeholder="Atlas"></label>' +
+          '<label class="field full">Tagline<textarea name="tagline" maxlength="180" rows="2" placeholder="A calm, searchable study library">' + esc(SITE.tagline) + '</textarea></label>' +
+          '<label class="field">Logo letter or emoji<input name="logo" maxlength="2" value="' + esc(SITE.logo || "") + '" placeholder="Leave empty for the Atlas mark"></label>' +
+          '<label class="field">Theme<select name="theme">' +
+            themes.map((t) => '<option value="' + t[0] + '"' + (SITE.theme === t[0] ? " selected" : "") + ">" + t[1] + "</option>").join("") +
+          '</select></label>' +
+          '<label class="field full">Announcement<textarea name="announcement" maxlength="240" rows="2" placeholder="Optional banner shown at the top of every page">' + esc(SITE.announcement) + '</textarea></label>' +
+          '<label class="field full">Footer note<input name="footer" maxlength="140" value="' + esc(SITE.footer) + '"></label>' +
+          '<label class="field full">Admin password<input name="adminPass" type="password" autocomplete="new-password" placeholder="Leave blank to keep the current password"></label>' +
+        '</div>' +
+        '<p class="tiny mut" style="margin:12px 0 0">The admin password is stored in this browser. Changing it does not sign out existing admins; it controls future sign-ups and admin unlocks.</p>' +
+        '<div class="row" style="margin-top:16px">' +
+          '<button class="btn" type="submit">' + icon("check") + "Save settings</button>" +
+          '<button class="btn ghost" type="button" data-action="reset-site">Reset to defaults</button>' +
+        '</div>' +
+      '</form>' +
+
+      '<section class="card" style="border-color:rgba(241,154,167,.24)">' +
+        '<h2 class="sec-title" style="color:#f4b3bd">Danger zone</h2>' +
+        '<p class="small mut" style="margin:0 0 12px">Factory reset removes every account, PDF, chat message, meme, sign-in record, preference, custom module and site setting from this browser. Use it before handing the device to someone else.</p>' +
+        '<div class="row">' +
+          '<button class="btn danger" type="button" data-action="factory-reset">' + icon("trash") + "Factory reset this device</button>" +
+        '</div>' +
+      '</section>' +
+    "</div>",
+    { active: "settings" }
+  );
+}
+
+/* ================================================================= modules */
+function modulesView(params) {
+  if (!isAdminUser()) return adminGateView("Module management is admin-only.", "modules");
+  const editSlug = params.get("edit") || "";
+  const editing = CUSTOM_MODULES.find((m) => slugify(m.code) === editSlug) || null;
+  const formTitle = editing ? "Edit " + editing.code : "Add a module";
+  const all = MODULES.slice().sort((a, b) => a.year - b.year || a.pos - b.pos);
+
+  const rows = all.map((m) => {
+    const isCustom = !!m.custom;
+    return '<div class="rrow">' +
+      '<div class="rbody">' +
+        '<div class="row" style="gap:6px">' +
+          '<span class="badge b-horz">Year ' + esc(m.year) + '</span>' +
+          '<span class="badge ' + (m.kind === "vertical" ? "b-vert" : "b-horz") + '">' + esc(m.kind) + '</span>' +
+          (m.sem ? '<span class="badge b-horz">Sem ' + esc(m.sem) + '</span>' : '') +
+          (isCustom ? '<span class="badge b-vert">custom</span>' : '') +
+        '</div>' +
+        '<div class="rtitle" style="margin-top:5px">' + esc(m.code) + (m.title ? ' — ' + esc(m.title) : '') + '</div>' +
+      '</div>' +
+      '<div class="racts">' +
+        (isCustom
+          ? '<a class="btn ghost sm" href="#/modules?edit=' + encodeURIComponent(m.slug) + '">Edit</a>' +
+            '<button class="btn danger sm" data-action="delete-module" data-slug="' + esc(m.slug) + '" title="Remove module">' + icon("trash") + '</button>'
+          : '<span class="tiny mut">built in</span>') +
+      '</div>' +
+    '</div>';
+  }).join("");
+
+  return layout(
+    '<div class="stack">' +
+      pageHead("Modules", "Add your own modules, edit them and choose the year they belong to. Built-in modules stay fixed.",
+        '<a class="btn ghost sm" href="#/settings">' + icon("settings") + "Site settings</a>") +
+
+      '<form class="card" data-form="module-save">' +
+        '<h2 class="sec-title" style="margin-bottom:14px">' + esc(formTitle) + '</h2>' +
+        (editing ? '<input type="hidden" name="edit" value="' + esc(slugify(editing.code)) + '">' : '') +
+        '<div class="formgrid">' +
+          '<label class="field">Module code<input name="code" required maxlength="24" value="' + esc(editing ? editing.code : "") + '" placeholder="e.g. SUR-401"></label>' +
+          '<label class="field">Title (optional)<input name="title" maxlength="120" value="' + esc(editing ? (editing.title || "") : "") + '" placeholder="e.g. Surgery"></label>' +
+          '<label class="field">Year<select name="year">' +
+            [1, 2, 3].map((n) => '<option value="' + n + '"' + (Number(editing ? editing.year : 1) === n ? " selected" : "") + ">Year " + n + "</option>").join("") +
+          '</select></label>' +
+          '<label class="field">Kind<select name="kind">' +
+            '<option value="horizontal"' + (!editing || editing.kind === "horizontal" ? " selected" : "") + '>Horizontal</option>' +
+            '<option value="vertical"' + (editing && editing.kind === "vertical" ? " selected" : "") + '>Vertical</option>' +
+          '</select></label>' +
+          '<label class="field">Semester (optional)<select name="sem">' +
+            '<option value="">No semester</option>' +
+            '<option value="1"' + (editing && Number(editing.sem) === 1 ? " selected" : "") + '>Semester 1</option>' +
+            '<option value="2"' + (editing && Number(editing.sem) === 2 ? " selected" : "") + '>Semester 2</option>' +
+          '</select></label>' +
+        '</div>' +
+        '<div class="row" style="margin-top:16px">' +
+          '<button class="btn" type="submit">' + icon(editing ? "check" : "plus") + (editing ? "Save changes" : "Add module") + '</button>' +
+          (editing ? '<a class="btn ghost" href="#/modules">Cancel</a>' : '') +
+        '</div>' +
+      '</form>' +
+
+      '<section>' +
+        '<div class="between" style="margin-bottom:10px"><h2 class="sec-title" style="margin:0">All modules · ' + MODULES.length + '</h2>' +
+          '<span class="tiny mut">' + CUSTOM_MODULES.length + ' custom</span></div>' +
+        '<div class="list">' + rows + '</div>' +
+      '</section>' +
+      '<p class="tiny mut">Custom modules are stored on this device with the rest of the library. They do not change the built-in curriculum list.</p>' +
+    "</div>",
+    { active: "modules" }
+  );
+}
+
+
+/* ================================================================== admin */
+async function adminView(meta) {
+  if (!isAdminUser()) return adminGateView();
+
+  const pending = meta.filter((r) => r.status === "pending_review").sort((a, b) => a.createdAt - b.createdAt);
+  const pub = meta.filter((r) => r.status === "published").sort((a, b) => (b.publishedAt || 0) - (a.publishedAt || 0));
+  const reported = meta.filter((r) => r.reported && r.status === "published");
+  const totalDownloads = meta.reduce((n, r) => n + (r.downloads || 0), 0);
+  const users = loadUsers();
+  const logins = await DB.allLogins();
+
+  const stat = (label, value, accent) =>
+    '<div class="stat' + (accent ? " stat-accent" : "") + '"><span>' + label + "</span><b>" + value + "</b></div>";
+  const LOG_LABEL = { signin: "signed in", signup: "account created", "admin-unlock": "admin unlocked" };
+
+  return layout(
+    '<div class="stack">' +
+      pageHead("Admin console", "Upload → review → publish. Nothing reaches students until you say so.",
+        '<a class="btn ghost sm" href="#/upload">' + icon("plus") + "Upload</a>" +
+        '<a class="btn ghost sm" href="#/settings">' + icon("settings") + "Site settings</a>" +
+        '<a class="btn ghost sm" href="#/modules">' + icon("layers") + "Modules</a>" +
+        '<button class="btn ghost sm" data-action="export">Export library</button>' +
+        '<label class="btn ghost sm" style="cursor:pointer;margin:0">Import<input type="file" accept="application/json,.json" data-import hidden></label>') +
+
+      '<section class="stats">' +
+        stat("Published", pub.length, true) +
+        stat("Pending", pending.length) +
+        stat("Downloads", totalDownloads) +
+        stat("Members", users.length) +
+      "</section>" +
+
+      "<section>" +
+        '<h2 class="sec-title">Review queue' + (pending.length ? " (" + pending.length + ")" : "") + "</h2>" +
+        (pending.length
+          ? '<div class="list">' + pending.map((r) => {
+              const mod = moduleOf(r);
+              return '<div class="rrow">' +
+                '<div class="rbody">' +
+                  '<div class="row" style="gap:6px">' + typeBadge(r.type) +
+                    '<span class="tiny mono" style="color:#7d8b9a">' + esc(mod ? mod.code : r.module) + "</span>" +
+                    (r.examYear ? '<span class="tiny mut">' + esc(r.examYear) + "</span>" : "") +
+                    '<span class="tiny mut">' + esc(fmtBytes(r.size)) + "</span>" +
+                  "</div>" +
+                  '<a class="rtitle" href="#/r/' + esc(r.id) + '">' + esc(r.title) + "</a>" +
+                  '<p class="rmeta">from ' + esc(r.uploader || "unknown") + " · " + esc(fmtDate(r.createdAt)) + "</p>" +
+                "</div>" +
+                '<div class="racts">' +
+                  '<button class="btn sm" data-action="approve" data-id="' + esc(r.id) + '">' + icon("check") + "Approve</button>" +
+                  '<button class="btn ghost sm" data-action="reject" data-id="' + esc(r.id) + '">Reject</button>' +
+                  '<button class="btn danger sm" data-action="delete" data-id="' + esc(r.id) + '">' + icon("trash") + "</button>" +
+                "</div>" +
+              "</div>";
+            }).join("") + "</div>"
+          : emptyState("Queue is clear", "New uploads land here.")) +
+      "</section>" +
+
+      (reported.length
+        ? "<section>" +
+            '<h2 class="sec-title">Reported files</h2>' +
+            '<div class="list">' + reported.map((r) =>
+              '<div class="rrow" style="border-color:rgba(251,113,133,.32)">' +
+                '<div class="rbody"><a class="rtitle" href="#/r/' + esc(r.id) + '">' + esc(r.title) + "</a>" +
+                  '<p class="rmeta">' + esc(r.module) + " · " + esc(r.reportReason || "flagged") + (r.reportDetail ? " — " + esc(r.reportDetail) : "") + "</p></div>" +
+                '<div class="racts">' +
+                  '<button class="btn ghost sm" data-action="clear-report" data-id="' + esc(r.id) + '">Dismiss</button>' +
+                  '<button class="btn danger sm" data-action="unpublish" data-id="' + esc(r.id) + '">Hide file</button>' +
+                "</div>" +
+              "</div>").join("") + "</div>" +
+          "</section>"
+        : "") +
+
+      "<section>" +
+        '<h2 class="sec-title">Recently published</h2>' +
+        '<div class="tblwrap"><table><thead><tr><th>Title</th><th>Module</th><th>Type</th><th>DL</th><th></th></tr></thead><tbody>' +
+        (pub.slice(0, 15).map((r) =>
+          '<tr><td style="max-width:300px"><a href="#/r/' + esc(r.id) + '">' + esc(r.title) + "</a>" +
+            "</td>" +
+          '<td class="mono" style="color:#9aa8b8">' + esc(r.module) + "</td><td>" + esc(typeLabel(r.type)) + "</td>" +
+          "<td>" + esc(r.downloads || 0) + "</td>" +
+          '<td style="text-align:right;white-space:nowrap"><button class="btn ghost sm" data-action="unpublish" data-id="' + esc(r.id) + '">Unpublish</button> ' +
+            '<button class="btn danger sm" data-action="delete" data-id="' + esc(r.id) + '">Delete</button></td></tr>').join("") ||
+          '<tr><td colspan="5" style="text-align:center;color:#5f6d7d;padding:20px">Nothing published yet.</td></tr>') +
+        "</tbody></table></div>" +
+      "</section>" +
+
+      "<section>" +
+        '<div class="between" style="margin-bottom:10px"><h2 class="sec-title" style="margin:0">Member database · ' + users.length + "</h2>" +
+          '<span class="tiny mut">stored in this browser</span></div>' +
+        '<div class="tblwrap"><table><thead><tr><th>Member</th><th>Username</th><th>Batch</th><th>Year</th><th>Role</th><th>Joined</th><th>Last seen</th><th>Sign-ins</th></tr></thead><tbody>' +
+        (users.map((u) =>
+          "<tr><td>" + esc(u.name || u.username) + '</td><td class="mono" style="color:#9aa8b8">' + esc(u.username) + "</td>" +
+          "<td>" + esc(u.batch || "—") + "</td>" +
+          "<td>Year " + esc(u.year || BATCH_YEAR[u.batch] || 1) + "</td>" +
+          '<td><span class="badge ' + (u.role === "admin" && u.adminVerified ? "b-vert" : "b-horz") + '">' + (u.role === "admin" && u.adminVerified ? "admin" : "student") + "</span></td>" +
+          "<td>" + esc(fmtDate(u.createdAt)) + "</td>" +
+          "<td>" + esc(u.lastLoginAt ? relTime(u.lastLoginAt) : "—") + "</td>" +
+          "<td>" + esc(u.loginCount || 0) + "</td></tr>").join("") ||
+          '<tr><td colspan="8" style="text-align:center;color:#5f6d7d;padding:20px">No accounts yet.</td></tr>') +
+        "</tbody></table></div>" +
+      "</section>" +
+
+      "<section>" +
+        '<div class="between" style="margin-bottom:10px"><h2 class="sec-title" style="margin:0">Sign-in log</h2>' +
+          '<span class="tiny mut">' + logins.length + " events</span></div>" +
+        (logins.length
+          ? '<div class="tblwrap"><table><thead><tr><th>Who</th><th>Event</th><th>When</th></tr></thead><tbody>' +
+              logins.slice().sort((a, b) => b.ts - a.ts).slice(0, 20).map((l) =>
+                "<tr><td>" + esc(l.name || l.username) + ' <span class="tiny mono" style="color:var(--dim)">@' + esc(l.username) + "</span></td>" +
+                '<td><span class="badge ' + (l.action === "admin-unlock" ? "b-vert" : "b-horz") + '">' + esc(LOG_LABEL[l.action] || l.action) + "</span></td>" +
+                "<td>" + esc(fmtDate(l.ts)) + " · " + esc(timeShort(l.ts)) + "</td></tr>").join("") +
+            "</tbody></table></div>"
+          : emptyState("No sign-ins recorded yet", "Every sign-in, sign-up and admin unlock on this device appears here.")) +
+      "</section>" +
+
+      '<p class="tiny mut">Import merges by content hash, so importing the same export twice is safe. Export includes the PDF bytes and can be large.</p>' +
+    "</div>",
+    { active: "admin" }
+  );
+}
+/* ================================================================= router */
+function currentRoute() {
+  const raw = (location.hash || "#/").replace(/^#/, "") || "/";
+  const qi = raw.indexOf("?");
+  const path = qi >= 0 ? raw.slice(0, qi) : raw;
+  return { path: path || "/", params: new URLSearchParams(qi >= 0 ? raw.slice(qi + 1) : "") };
+}
+function go(hash) {
+  if (location.hash === hash) render();
+  else location.hash = hash;
+}
+function revokePreview() {
+  if (state.previewUrl) {
+    try { URL.revokeObjectURL(state.previewUrl); } catch (e) {}
+    state.previewUrl = null;
+  }
+}
+function scrollChat() {
+  const list = document.getElementById("msglist");
+  if (list) list.scrollTop = list.scrollHeight;
+}
+
+async function render() {
+  revokePreview();
+  revokeMemeUrls();
+  await ensureUsers();
+  document.body.classList.toggle("navopen", state.navOpen);
+
+  const session = readSession();
+  if (!session) {
+    state.user = null;
+    state.msgs = await DB.allMessages();
+    state.loginMode = currentRoute().params.get("mode") === "signup" ? "signup" : "signin";
+    $app.innerHTML = authView();
+    return;
+  }
+  if (!state.user) {
+    const users = loadUsers();
+    state.user = users.find((u) => u.id === session.uid) || null;
+    if (!state.user) { clearSession(); $app.innerHTML = authView(); return; }
+  }
+
+  const meta = await DB.allMeta();
+  state.uploads = await DB.allMemes();
+  state.msgs = await DB.allMessages();
+  const { path, params } = currentRoute();
+  const parts = path.split("/").filter(Boolean);
+
+  let html;
+  try {
+    if (path === "/" || path === "") html = homeView(meta, params);
+    else if (parts[0] === "m" && parts[1]) {
+      const mp = new URLSearchParams(params);
+      mp.set("slug", decodeURIComponent(parts[1]));
+      html = moduleView(meta, mp);
+    } else if (parts[0] === "r" && parts[1]) {
+      html = await resourceView(meta, new URLSearchParams({ id: decodeURIComponent(parts[1]) }));
+    } else if (parts[0] === "search") html = searchView(meta, params);
+    else if (parts[0] === "chat") html = chatView(meta);
+    else if (parts[0] === "memes") html = memesView();
+    else if (parts[0] === "saved") html = savedView(meta);
+    else if (parts[0] === "upload") html = uploadView(meta, params);
+    else if (parts[0] === "admin") html = await adminView(meta);
+    else if (parts[0] === "settings") html = siteSettingsView();
+    else if (parts[0] === "modules") html = modulesView(params);
+    else if (parts[0] === "login") {
+      state.loginMode = params.get("mode") === "signup" ? "signup" : "signin";
+      html = authView();
+    } else html = layout(emptyState("Page not found", "Use the sidebar to get back."), { active: "home" });
+  } catch (err) {
+    html = layout('<div class="alert err">Something broke: ' + esc(err.message) + "</div>", { active: "home" });
+  }
+
+  $app.innerHTML = html;
+  paintMemes();
+  if (parts[0] === "chat") scrollChat();
+}
+
+/* ================================================================== saves */
+/* Native wrappers save through a bridge so blob downloads work inside the Android and iPhone apps. */
+function saveBlob(blob, filename) {
+  if (!blob) return;
+  const android = window.AtlasNative && typeof window.AtlasNative.saveFile === "function";
+  const ios = window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.atlas;
+  if (android || ios) {
+    const reader = new FileReader();
+    reader.onload = function () {
+      const dataUrl = String(reader.result || "");
+      const comma = dataUrl.indexOf(",");
+      const b64 = comma >= 0 ? dataUrl.slice(comma + 1) : "";
+      const mime = blob.type || "application/octet-stream";
+      try {
+        if (android) window.AtlasNative.saveFile(filename, mime, b64);
+        else window.webkit.messageHandlers.atlas.postMessage({ action: "save", name: filename, mime: mime, base64: b64 });
+        toast("Saving " + filename + "...");
+      } catch (e) {
+        toast("Could not save the file on this device.");
+      }
+    };
+    reader.onerror = function () { toast("Could not read the file."); };
+    reader.readAsDataURL(blob);
+    return;
+  }
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 30000);
+}
+function handleDownload(id) {
+  (async () => {
+    const meta = await DB.allMeta();
+    const rec = meta.find((r) => r.id === id);
+    if (!rec) return;
+    if (rec.status !== "published" && !isAdminUser()) { toast("That file is not published."); return; }
+    const mod = moduleOf(rec);
+    if (mod && !canSeeYear(mod.year)) { toast("Year " + mod.year + " is not open to Batch " + (state.user.batch || "—") + "."); return; }
+    const blob = await DB.getFile(id);
+    if (!blob) { toast("File missing on this device."); return; }
+
+    saveBlob(blob, slugify(rec.title) + ".pdf");
+
+    rec.downloads = (rec.downloads || 0) + 1;
+    await DB.putMeta(rec);
+    const node = document.querySelector("[data-dl-count]");
+    if (node) node.textContent = rec.downloads;
+    toast("Downloading…");
+  })();
+}
+
+/* ==================================================================== chat */
+let chatCh = null;
+try {
+  if ("BroadcastChannel" in window) {
+    chatCh = new BroadcastChannel("atlas-chat");
+    chatCh.onmessage = async () => {
+      state.msgs = await DB.allMessages();
+      if (document.getElementById("msglist")) await refreshChat();
+      else updateChatBadge();
+    };
+  }
+} catch (e) { chatCh = null; }
+
+function updateChatBadge() {
+  const n = unreadCount(state.msgs);
+  let b = document.querySelector("[data-chat-badge]");
+  if (!b && n) {
+    const link = document.querySelector('.nav-item[href="#/chat"]');
+    if (link) {
+      b = document.createElement("span");
+      b.className = "nbadge";
+      b.setAttribute("data-chat-badge", "");
+      link.appendChild(b);
+    }
+  }
+  if (b) {
+    b.textContent = n ? String(n) : "";
+    b.classList.toggle("hide", !n);
+  }
+}
+
+async function refreshChat() {
+  state.msgs = await DB.allMessages();
+  const list = document.getElementById("msglist");
+  if (list) {
+    const msgs = state.msgs.slice().sort((a, b) => a.ts - b.ts).slice(-300);
+    list.innerHTML = messageListHtml(msgs);
+    list.scrollTop = list.scrollHeight;
+    setLastRead(Date.now());
+  }
+  updateChatBadge();
+}
+
+async function handleChat(form) {
+  const ta = form.querySelector('textarea[name="text"]');
+  const text = (ta.value || "").trim();
+  if (!text) return;
+  if (!state.user) return;
+
+  const msg = {
+    id: uid(),
+    userId: state.user.id,
+    name: state.user.name || state.user.username,
+    role: state.user.role,
+    text: text.slice(0, 1200),
+    ts: Date.now()
+  };
+  await DB.putMessage(msg);
+  ta.value = "";
+  ta.style.height = "";
+  if (chatCh) { try { chatCh.postMessage({ type: "msg" }); } catch (e) {} }
+  await refreshChat();
+}
+
+/* =================================================================== memes */
+function downloadMeme(i) {
+  const c = document.createElement("canvas");
+  c.width = 640;
+  c.height = 640;
+  paintMeme(c, MEMES[i], i);
+  c.toBlob((blob) => {
+    if (!blob) return;
+    saveBlob(blob, "atlas-meme-" + String(i + 1).padStart(2, "0") + ".png");
+    toast("Meme saved.");
+  }, "image/png");
+}
+
+function memeExt(mime) {
+  const m = String(mime || "");
+  if (m.indexOf("png") >= 0) return ".png";
+  if (m.indexOf("gif") >= 0) return ".gif";
+  if (m.indexOf("webp") >= 0) return ".webp";
+  return ".jpg";
+}
+function downloadUploadedMeme(rec) {
+  if (!rec || !rec.blob) { toast("Meme missing."); return; }
+  saveBlob(rec.blob, (slugify(rec.title) || "atlas-meme") + memeExt(rec.mime));
+  toast("Meme saved.");
+}
+function downloadPopupMeme() {
+  const p = state.popupMeme;
+  if (!p) return;
+  if (p.kind === "upload") downloadUploadedMeme(p.rec);
+  else downloadMeme(p.index);
+}
+async function handleMemeUpload(form) {
+  if (!isAdminUser()) { toast("Admin access is required to upload memes."); return; }
+  const fd = new FormData(form);
+  const file = fd.get("file");
+  if (!(file instanceof File) || !file.size) { toast("Pick an image first."); return; }
+  if (!/^image\//.test(file.type)) { toast("Only image files — PNG, JPG, GIF or WebP."); return; }
+  if (file.size > 8 * 1024 * 1024) { toast("Keep memes under 8 MB."); return; }
+  const title = String(fd.get("title") || "").trim() || file.name.replace(/\.[^.]+$/, "");
+  await DB.putMeme({
+    id: uid(), title, uploader: state.user.name || state.user.username,
+    createdAt: Date.now(), blob: file, size: file.size, mime: file.type || "image/png"
+  });
+  state.uploads = await DB.allMemes();
+  toast("Meme uploaded.");
+  render();
+}
+
+/* ================================================================= upload */
+async function handleUpload(form) {
+  if (!isAdminUser()) { toast("Admin access is required to upload."); return; }
+  const fd = new FormData(form);
+  const file = fd.get("file");
+  const moduleCode = String(fd.get("module") || "");
+  const type = String(fd.get("type") || "");
+  const title = String(fd.get("title") || "").trim();
+  const examYearRaw = String(fd.get("examYear") || "").trim();
+  const subject = String(fd.get("subject") || "");
+  const publish = fd.get("publish") === "1";
+
+  if (!(file instanceof File) || !file.size) { toast("Attach a PDF first."); return; }
+  if (file.size > 25 * 1024 * 1024) { toast("File is larger than 25 MB."); return; }
+  if (!/\.pdf$/i.test(file.name) && file.type !== "application/pdf") { toast("Only PDF files are accepted."); return; }
+  if (!moduleCode) { toast("Pick a module."); return; }
+  if (!title) { toast("Give it a title."); return; }
+
+  const examYear = examYearRaw ? Number(examYearRaw) : null;
+  if (examYear !== null && (!Number.isInteger(examYear) || examYear < 1980 || examYear > 2100)) {
+    toast("Exam year looks wrong."); return;
+  }
+
+  const btn = form.querySelector('button[type="submit"]');
+  if (btn) { btn.disabled = true; btn.textContent = "Hashing…"; }
+
+  try {
+    const buf = await file.arrayBuffer();
+    const hash = await sha256Hex(buf);
+    const all = await DB.allMeta();
+    const dup = all.find((r) => r.sha256 === hash && r.status !== "rejected");
+    if (dup) {
+      toast("Duplicate — already in the library.");
+      go("#/r/" + dup.id);
+      return;
+    }
+
+    const id = uid();
+    const rec = {
+      id, module: moduleCode, type, title,
+      examYear, subject: subject || null,
+      status: publish ? "published" : "pending_review",
+      uploader: state.user.name || state.user.username,
+      createdAt: Date.now(),
+      publishedAt: publish ? Date.now() : null,
+      downloads: 0,
+      sha256: hash, size: file.size, mime: "application/pdf",
+      hasFile: true, reported: false
+    };
+
+    await DB.putFile(id, file);
+    await DB.putMeta(rec);
+    toast(publish ? "Published." : "Uploaded — waiting for review.");
+    go(publish ? "#/r/" + id : "#/upload");
+  } catch (err) {
+    toast("Upload failed: " + err.message);
+    if (btn) { btn.disabled = false; btn.textContent = "Upload file"; }
+  }
+}
+
+/* ================================================================== auth */
+async function handleSignIn(form) {
+  const fd = new FormData(form);
+  const username = String(fd.get("username") || "").trim();
+  const password = String(fd.get("password") || "");
+  const yearSel = Number(fd.get("year") || 0);
+  const users = loadUsers();
+  const user = users.find((u) => u.username.toLowerCase() === username.toLowerCase());
+
+  if (!user) { state.loginError = "No account with that username on this device."; await render(); return; }
+  if (await hashPassword(password, user.salt) !== user.pass) {
+    state.loginError = "Wrong password."; await render(); return;
+  }
+
+  const allowed = YEARS_FOR_BATCH[user.batch] || [1, 2, 3];
+  const storedYear = allowed.indexOf(Number(user.year)) >= 0 ? Number(user.year) : allowed[0];
+  user.year = allowed.indexOf(yearSel) >= 0 ? yearSel : storedYear;
+
+  setSession(user.id);
+  state.user = user;
+  state.loginError = "";
+  state.prefs.year = user.year;
+  savePrefs();
+  await recordLogin(user, "signin");
+  toast("Signed in as " + (user.name || user.username) + " · Year " + user.year);
+  go("#/");
+}
+
+async function handleSignUp(form) {
+  const fd = new FormData(form);
+  const name = String(fd.get("name") || "").trim();
+  const username = String(fd.get("username") || "").trim();
+  const password = String(fd.get("password") || "");
+  const staffPass = String(fd.get("adminPass") || "");
+  const batch = String(fd.get("batch") || BATCHES[0]);
+  const year = Number(fd.get("year") || 0);
+  const users = loadUsers();
+
+  if (username.length < 3) { state.loginError = "Username needs at least 3 characters."; await render(); return; }
+  if (users.some((u) => u.username.toLowerCase() === username.toLowerCase())) {
+    state.loginError = "That username already exists on this device."; await render(); return;
+  }
+  if (password.length < 6) { state.loginError = "Password needs at least 6 characters."; await render(); return; }
+  const allowed = YEARS_FOR_BATCH[batch] || [1, 2, 3];
+  if (allowed.indexOf(year) < 0) {
+    state.loginError = "Batch " + batch + " accounts join Year " + allowed.join(" or ") + ".";
+    await render(); return;
+  }
+  if (staffPass && staffPass !== adminPass()) {
+    state.loginError = "Admin password is not correct. Leave it empty to join as a student.";
+    await render(); return;
+  }
+
+  const salt = uid().slice(0, 12);
+  const wantsAdmin = staffPass === adminPass();
+  const user = {
+    id: uid(), username, name: name || username, batch, year,
+    role: wantsAdmin ? "admin" : "student",
+    adminVerified: wantsAdmin,
+    salt, pass: await hashPassword(password, salt), createdAt: Date.now()
+  };
+  users.push(user);
+  await saveUsers(users);
+  setSession(user.id);
+  state.user = user;
+  state.loginError = "";
+  state.prefs.batch = batch;
+  state.prefs.year = year;
+  savePrefs();
+  await recordLogin(user, "signup");
+  toast(wantsAdmin ? "Account created — admin access unlocked." : "Account created · Year " + year + ".");
+  go("#/");
+}
+
+/* ============================================================== admin gate */
+async function handleAdminUnlock(form) {
+  if (!state.user) return;
+  const pass = String(new FormData(form).get("pass") || "");
+  if (pass !== adminPass()) {
+    state.adminError = "That admin password is not correct.";
+    await render();
+    return;
+  }
+  state.user.role = "admin";
+  state.user.adminVerified = true;
+  await DB.putUser(state.user);
+  await recordLogin(state.user, "admin-unlock");
+  state.adminError = "";
+  toast("Admin access unlocked.");
+  go("#/admin");
+}
+
+/* ======================================================= site/module admin */
+async function handleSiteSettings(form) {
+  if (!isAdminUser()) { toast("Admin access is required."); return; }
+  const fd = new FormData(form);
+  const name = String(fd.get("name") || "").trim();
+  const pass = String(fd.get("adminPass") || "");
+  if (name.length < 2) { toast("Site name needs at least 2 characters."); return; }
+  if (pass && pass.length < 6) { toast("Admin password needs at least 6 characters."); return; }
+
+  SITE = Object.assign({}, SITE, {
+    name: name.slice(0, 40),
+    tagline: String(fd.get("tagline") || "").trim().slice(0, 180) || DEFAULT_SITE.tagline,
+    logo: String(fd.get("logo") || "").trim().slice(0, 2),
+    theme: String(fd.get("theme") || "mint"),
+    announcement: String(fd.get("announcement") || "").trim().slice(0, 240),
+    footer: String(fd.get("footer") || "").trim().slice(0, 140) || DEFAULT_SITE.footer
+  });
+  if (pass) SITE.adminPasscode = pass;
+  saveSite();
+  applySite();
+  toast("Site settings saved.");
+  render();
+}
+
+async function handleModuleSave(form) {
+  if (!isAdminUser()) { toast("Admin access is required."); return; }
+  const fd = new FormData(form);
+  const edit = String(fd.get("edit") || "");
+  const code = String(fd.get("code") || "").trim();
+  const title = String(fd.get("title") || "").trim();
+  const year = Number(fd.get("year") || 0);
+  const kind = String(fd.get("kind") || "horizontal") === "vertical" ? "vertical" : "horizontal";
+  const semRaw = String(fd.get("sem") || "");
+  const sem = semRaw === "1" ? 1 : semRaw === "2" ? 2 : null;
+
+  if (code.length < 2) { toast("Module code needs at least 2 characters."); return; }
+  if ([1, 2, 3].indexOf(year) < 0) { toast("Pick a year."); return; }
+  const slug = slugify(code);
+  if (!slug) { toast("Use letters or numbers in the code."); return; }
+
+  const clash = MODULES.find((m) => m.code.toLowerCase() === code.toLowerCase() && (!edit || m.slug !== edit));
+  if (clash) { toast("That module code is already in use."); return; }
+
+  const list = CUSTOM_MODULES.slice();
+  const idx = list.findIndex((m) => slugify(m.code) === edit);
+  if (idx >= 0 && list[idx].code !== code) {
+    const all = await DB.allMeta();
+    if (all.some((r) => r.module === list[idx].code)) {
+      toast("This module has files. Keep its code, or delete its files first.");
+      return;
+    }
+  }
+  const rec = {
+    code, title: title || null, year, kind, sem,
+    pos: idx >= 0 ? (Number(list[idx].pos) || 0) : Date.now()
+  };
+  if (idx >= 0) list[idx] = rec;
+  else list.push(rec);
+  saveCustomModules(list);
+  toast(idx >= 0 ? "Module updated." : "Module added.");
+  go("#/modules");
+}
+
+async function factoryReset() {
+  if (!isAdminUser()) { toast("Admin access is required."); return; }
+  if (!confirm("This deletes EVERY account, file, chat message, meme, sign-in record, preference, custom module and site setting in this browser. Continue?")) return;
+  const typed = prompt("Type RESET to confirm. This cannot be undone.");
+  if (typed !== "RESET") { toast("Factory reset cancelled."); return; }
+
+  try {
+    await DB._open();
+    if (DB._db) {
+      const stores = Array.from(DB._db.objectStoreNames);
+      await new Promise((resolve, reject) => {
+        const tx = DB._db.transaction(stores, "readwrite");
+        tx.oncomplete = resolve;
+        tx.onerror = () => reject(tx.error);
+        stores.forEach((s) => tx.objectStore(s).clear());
+      });
+    }
+  } catch (e) {}
+
+  DB._meta.clear();
+  DB._files.clear();
+  DB._msgs.length = 0;
+  DB._users.clear();
+  DB._logins.length = 0;
+  DB._memes.clear();
+
+  try {
+    Object.keys(localStorage).filter((k) => k.indexOf("sh.") === 0).forEach((k) => localStorage.removeItem(k));
+  } catch (e) {}
+
+  state.users = [];
+  state.usersReady = false;
+  state.user = null;
+  state.msgs = [];
+  state.uploads = [];
+  try { location.hash = "#/login"; } catch (e) {}
+  location.reload();
+}
+
+
+/* ============================================================ import/export */
+function blobToBase64(blob) {
+  return new Promise((resolve, reject) => {
+    const fr = new FileReader();
+    fr.onload = () => resolve(String(fr.result).split(",")[1] || "");
+    fr.onerror = () => reject(fr.error);
+    fr.readAsDataURL(blob);
+  });
+}
+function base64ToBlob(b64, mime) {
+  const bin = atob(b64);
+  const u8 = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) u8[i] = bin.charCodeAt(i);
+  return new Blob([u8], { type: mime || "application/pdf" });
+}
+
+function exportJson(meta) {
+  toast("Preparing export…", 4000);
+  (async () => {
+    const records = [];
+    for (const rec of meta) {
+      const entry = Object.assign({}, rec);
+      if (rec.hasFile) {
+        const blob = await DB.getFile(rec.id);
+        if (blob) entry.fileB64 = await blobToBase64(blob);
+      }
+      records.push(entry);
+    }
+    const siteExport = Object.assign({}, SITE);
+    delete siteExport.adminPasscode;
+    const payload = { app: "atlas", version: 2, exportedAt: new Date().toISOString(), resources: records, modules: CUSTOM_MODULES, site: siteExport };
+    const blob = new Blob([JSON.stringify(payload)], { type: "application/json" });
+    saveBlob(blob, "atlas-library-" + new Date().toISOString().slice(0, 10) + ".json");
+    toast("Exported " + records.length + " files.");
+  })();
+}
+
+async function importJson(file) {
+  let payload;
+  try { payload = JSON.parse(await file.text()); }
+  catch (e) { toast("That is not a valid export file."); return; }
+  if (!payload || !Array.isArray(payload.resources)) { toast("That is not a valid library export."); return; }
+
+  if (Array.isArray(payload.modules)) {
+    const codes = new Set(MODULES.map((m) => m.code.toLowerCase()));
+    const merged = CUSTOM_MODULES.slice();
+    for (const raw of payload.modules) {
+      if (!raw || !raw.code || [1, 2, 3].indexOf(Number(raw.year)) < 0) continue;
+      const code = String(raw.code).slice(0, 24);
+      if (codes.has(code.toLowerCase())) continue;
+      merged.push({
+        code,
+        title: raw.title ? String(raw.title).slice(0, 120) : null,
+        year: Number(raw.year),
+        kind: raw.kind === "vertical" ? "vertical" : "horizontal",
+        sem: raw.sem === 1 || raw.sem === 2 ? Number(raw.sem) : null,
+        pos: Number(raw.pos) || 0
+      });
+      codes.add(code.toLowerCase());
+    }
+    if (merged.length !== CUSTOM_MODULES.length) saveCustomModules(merged);
+  }
+  if (payload.site && confirm("Restore the site branding and settings from this backup? Your current admin password will be kept.")) {
+    const keepPass = SITE.adminPasscode;
+    const imported = Object.assign({}, DEFAULT_SITE, payload.site);
+    SITE = {
+      name: String(imported.name || DEFAULT_SITE.name).slice(0, 40),
+      tagline: String(imported.tagline || DEFAULT_SITE.tagline).slice(0, 180),
+      logo: String(imported.logo || "").slice(0, 2),
+      theme: ["mint", "ocean", "rose", "amber", "violet"].indexOf(imported.theme) >= 0 ? imported.theme : "mint",
+      announcement: String(imported.announcement || "").slice(0, 240),
+      footer: String(imported.footer || DEFAULT_SITE.footer).slice(0, 140),
+      adminPasscode: keepPass
+    };
+    saveSite();
+    applySite();
+  }
+
+  const existing = await DB.allMeta();
+  const hashes = new Set(existing.map((r) => r.sha256).filter(Boolean));
+  let added = 0, skipped = 0;
+
+  for (const raw of payload.resources) {
+    if (!raw || !raw.id || !raw.title) continue;
+    if (raw.sha256 && hashes.has(raw.sha256)) { skipped++; continue; }
+    const rec = Object.assign({}, raw);
+    delete rec.fileB64;
+    rec.status = raw.status === "published" ? "published" : "pending_review";
+    rec.uploader = rec.uploader || "import";
+    rec.createdAt = rec.createdAt || Date.now();
+    rec.downloads = rec.downloads || 0;
+    rec.hasFile = Boolean(raw.fileB64);
+    if (raw.fileB64) {
+      const blob = base64ToBlob(raw.fileB64, raw.mime);
+      await DB.putFile(rec.id, blob);
+      rec.size = blob.size;
+    }
+    if (rec.sha256) hashes.add(rec.sha256);
+    await DB.putMeta(rec);
+    added++;
+  }
+  toast(added + " added, " + skipped + " duplicates skipped.", 4000);
+  render();
+}
+
+/* =============================================================== listeners */
+document.addEventListener("submit", async (e) => {
+  const form = e.target.closest("form[data-form]");
+  if (!form) return;
+  e.preventDefault();
+  const kind = form.dataset.form;
+
+  if (kind === "search") {
+    const q = String(new FormData(form).get("q") || "").trim();
+    go("#/search?q=" + encodeURIComponent(q));
+    return;
+  }
+  if (kind === "signin") { await handleSignIn(form); return; }
+  if (kind === "signup") { await handleSignUp(form); return; }
+  if (kind === "upload") { await handleUpload(form); return; }
+  if (kind === "meme-upload") { await handleMemeUpload(form); return; }
+  if (kind === "admin-unlock") { await handleAdminUnlock(form); return; }
+  if (kind === "site-settings") { await handleSiteSettings(form); return; }
+  if (kind === "module-save") { await handleModuleSave(form); return; }
+  if (kind === "chat") { await handleChat(form); return; }
+  if (kind === "report") {
+    const id = form.dataset.id;
+    const fd = new FormData(form);
+    const rec = (await DB.allMeta()).find((r) => r.id === id);
+    if (rec) {
+      rec.reported = true;
+      rec.reportReason = String(fd.get("reason") || "other");
+      rec.reportDetail = String(fd.get("detail") || "");
+      await DB.putMeta(rec);
+    }
+    toast("Reported — an admin will look at it.");
+    return;
+  }
+});
+
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape") {
+    hideMemePopup();
+    if (state.navOpen) { state.navOpen = false; document.body.classList.remove("navopen"); }
+    return;
+  }
+  const ta = e.target;
+  if (ta && ta.matches('form[data-form="chat"] textarea') && e.key === "Enter" && !e.shiftKey) {
+    e.preventDefault();
+    ta.closest("form").dispatchEvent(new Event("submit", { bubbles: true, cancelable: true }));
+  }
+});
+
+document.addEventListener("input", (e) => {
+  const ta = e.target;
+  if (ta && ta.matches('form[data-form="chat"] textarea')) {
+    ta.style.height = "auto";
+    ta.style.height = Math.min(120, ta.scrollHeight) + "px";
+  }
+
+  const uname = ta && ta.closest('form[data-form="signin"] input[name="username"]');
+  if (uname) {
+    const u = loadUsers().find((x) => x.username.toLowerCase() === uname.value.trim().toLowerCase());
+    const ysel = uname.form.elements.year;
+    if (u && ysel) {
+      const years = YEARS_FOR_BATCH[u.batch] || [1, 2, 3];
+      const y = u.year && years.indexOf(Number(u.year)) >= 0 ? Number(u.year) : years[0];
+      ysel.innerHTML = years.map((n) => '<option value="' + n + '">Year ' + n + "</option>").join("");
+      ysel.value = String(y);
+    }
+  }
+});
+
+document.addEventListener("click", async (e) => {
+  if (e.target && e.target.id === "memeLayer") { hideMemePopup(); return; }
+
+  const el = e.target.closest("[data-action]");
+  if (!el) return;
+  const action = el.dataset.action;
+  const id = el.dataset.id;
+
+  if (action === "toggle-nav") {
+    state.navOpen = !state.navOpen;
+    document.body.classList.toggle("navopen", state.navOpen);
+    return;
+  }
+  if (action === "close-nav") {
+    state.navOpen = false;
+    document.body.classList.remove("navopen");
+    return;
+  }
+  if (action === "signout") {
+    clearSession();
+    state.user = null;
+    state.loginMode = "signin";
+    state.loginError = "";
+    state.adminError = "";
+    state.navOpen = false;
+    toast("Signed out.");
+    go("#/login");
+    return;
+  }
+  if (action === "download") { handleDownload(id); return; }
+
+  if (action === "toggle-save") {
+    toggleSave(id);
+    render();
+    return;
+  }
+
+  if (action === "react") {
+    if (!state.user) return;
+    const emoji = el.dataset.emoji;
+    const rec = (await DB.allMeta()).find((r) => r.id === id);
+    if (!rec) return;
+    rec.reactions = rec.reactions || {};
+    if (rec.reactions[state.user.id] === emoji) delete rec.reactions[state.user.id];
+    else rec.reactions[state.user.id] = emoji;
+    await DB.putMeta(rec);
+
+    const counts = reactionCounts(rec);
+    const mine = rec.reactions[state.user.id] || null;
+    document.querySelectorAll('[data-reactions="' + id + '"]').forEach((bar) => {
+      bar.querySelectorAll(".react").forEach((b) => {
+        const em = b.dataset.emoji;
+        const on = em === mine;
+        b.classList.toggle("on", on);
+        b.setAttribute("aria-pressed", String(on));
+        let c = b.querySelector(".rc");
+        const n = counts[em] || 0;
+        if (n) {
+          if (!c) { c = document.createElement("span"); c.className = "rc"; b.appendChild(c); }
+          c.textContent = n;
+        } else if (c) c.remove();
+      });
+    });
+    el.classList.remove("bump");
+    void el.offsetWidth;
+    el.classList.add("bump");
+    return;
+  }
+
+  if (action === "meme-now" || action === "meme-next") { showMemePopup(); return; }
+  if (action === "meme-open") { showMemePopup(Number(el.dataset.i)); return; }
+  if (action === "meme-close") { hideMemePopup(); return; }
+  if (action === "meme-download") { downloadMeme(Number(el.dataset.i)); return; }
+  if (action === "meme-download-popup") { downloadPopupMeme(); return; }
+  if (action === "meme-open-up") {
+    const rec = (state.uploads || []).find((m) => m.id === id);
+    if (rec) showUploadedMeme(rec);
+    return;
+  }
+  if (action === "meme-dl-up") {
+    const rec = (state.uploads || []).find((m) => m.id === id);
+    if (rec) downloadUploadedMeme(rec);
+    return;
+  }
+  if (action === "meme-del") {
+    if (!isAdminUser()) { toast("Admin access is required."); return; }
+    const rec = (state.uploads || []).find((m) => m.id === id);
+    if (!rec) return;
+    if (!confirm('Delete meme "' + rec.title + '" permanently?')) return;
+    await DB.delMeme(id);
+    state.uploads = await DB.allMemes();
+    toast("Meme deleted.");
+    render();
+    return;
+  }
+  if (action === "toggle-mute") {
+    state.prefs.memesMuted = !state.prefs.memesMuted;
+    savePrefs();
+    render();
+    toast(state.prefs.memesMuted ? "Meme popups muted." : "Meme popups every 5 minutes.");
+    return;
+  }
+
+  if (["approve", "reject", "unpublish", "delete", "clear-report"].indexOf(action) >= 0) {
+    if (!isAdminUser()) { toast("Admin access is required."); return; }
+    const meta = await DB.allMeta();
+    const rec = meta.find((r) => r.id === id);
+    if (!rec) return;
+
+    if (action === "approve") { rec.status = "published"; rec.publishedAt = rec.publishedAt || Date.now(); }
+    if (action === "reject") { rec.status = "rejected"; }
+    if (action === "unpublish") { rec.status = "archived"; rec.reported = false; }
+    if (action === "clear-report") { rec.reported = false; }
+    if (action === "delete") {
+      if (!confirm('Delete "' + rec.title + '" permanently?')) return;
+      await DB.delMeta(rec.id);
+      await DB.delFile(rec.id);
+      toast("Deleted.");
+      render();
+      return;
+    }
+    await DB.putMeta(rec);
+    toast(
+      action === "approve" ? "Published." :
+      action === "reject" ? "Rejected." :
+      action === "unpublish" ? "Hidden from students." : "Report dismissed."
+    );
+    render();
+    return;
+  }
+
+  if (action === "reset-site") {
+    if (!isAdminUser()) { toast("Admin access is required."); return; }
+    if (!confirm("Reset site name, theme, announcement, footer and admin password to defaults?")) return;
+    SITE = Object.assign({}, DEFAULT_SITE);
+    saveSite();
+    applySite();
+    toast("Site settings reset.");
+    render();
+    return;
+  }
+  if (action === "factory-reset") { await factoryReset(); return; }
+  if (action === "delete-module") {
+    if (!isAdminUser()) { toast("Admin access is required."); return; }
+    const slug = el.dataset.slug;
+    const rec = CUSTOM_MODULES.find((m) => slugify(m.code) === slug);
+    if (!rec) return;
+    const meta = await DB.allMeta();
+    if (meta.some((r) => r.module === rec.code)) { toast("Move or delete this module's files first."); return; }
+    if (!confirm('Remove module "' + rec.code + '"?')) return;
+    saveCustomModules(CUSTOM_MODULES.filter((m) => slugify(m.code) !== slug));
+    toast("Module removed.");
+    render();
+    return;
+  }
+  if (action === "export") {
+    if (!isAdminUser()) { toast("Admin access is required."); return; }
+    exportJson(await DB.allMeta());
+    return;
+  }
+});
+
+document.addEventListener("change", async (e) => {
+  const bsel = e.target.closest('form[data-form="signup"] select[name="batch"]');
+  if (bsel) {
+    const years = YEARS_FOR_BATCH[bsel.value] || [1, 2, 3];
+    const ysel = bsel.form.elements.year;
+    if (ysel) {
+      ysel.innerHTML = years.map((n) => '<option value="' + n + '">Year ' + n + "</option>").join("");
+      const preferred = BATCH_YEAR[bsel.value];
+      ysel.value = String(years.indexOf(preferred) >= 0 ? preferred : years[0]);
+    }
+    const hint = bsel.form.querySelector("[data-batch-hint]");
+    if (hint) hint.textContent = "Batch " + bsel.value + " can join " + yearsLabel(years) + ".";
+    return;
+  }
+
+  const input = e.target.closest("input[data-import]");
+  if (!input || !input.files || !input.files[0]) return;
+  if (!isAdminUser()) { toast("Admin access is required."); return; }
+  await importJson(input.files[0]);
+  input.value = "";
+});
+
+window.addEventListener("hashchange", () => {
+  state.loginError = "";
+  state.adminError = "";
+  state.navOpen = false;
+  document.body.classList.remove("navopen");
+  render().then(() => window.scrollTo({ top: 0 }));
+});
+
+/* ==================================================================== boot */
+(async function boot() {
+  applySite();
+  await seedChat();
+  await ensureUsers();
+
+  const session = readSession();
+  if (session) {
+    const users = loadUsers();
+    state.user = users.find((u) => u.id === session.uid) || null;
+    if (!state.user) clearSession();
+  }
+  state.uploads = await DB.allMemes();
+  state.msgs = await DB.allMessages();
+  for (const m of state.msgs) {
+    if (m.role === "system" && /StudyHub/.test((m.name || "") + " " + (m.text || ""))) {
+      m.name = "Atlas";
+      m.text = (m.text || "").replace(/StudyHub/g, "Atlas");
+      await DB.putMessage(m);
+    }
+  }
+
+  if (!location.hash) location.hash = state.user ? "#/" : "#/login";
+  await render();
+  if (partsChat()) scrollChat();
+
+  setInterval(memeTick, 1000);
+})();
+
+function partsChat() {
+  return currentRoute().path.indexOf("/chat") === 0 && document.getElementById("msglist");
+}
+
+</script>
+</body>
+</html>

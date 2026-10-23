@@ -1,0 +1,23 @@
+name: Atlas
+options:
+  bundleIdPrefix: com.atlas
+  deploymentTarget:
+    iOS: "15.0"
+targets:
+  Atlas:
+    type: application
+    platform: iOS
+    sources:
+      - path: Atlas
+        excludes:
+          - "Info.plist"
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.atlas.study
+        INFOPLIST_FILE: Atlas/Info.plist
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        SWIFT_VERSION: "5.0"
+        TARGETED_DEVICE_FAMILY: "1,2"
+        CODE_SIGNING_REQUIRED: "NO"
+        CODE_SIGNING_ALLOWED: "NO"
+        CODE_SIGN_IDENTITY: ""

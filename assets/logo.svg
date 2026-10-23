@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" role="img" aria-label="Atlas logo">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0e1714"/>
+      <stop offset="0.55" stop-color="#0a0f0d"/>
+      <stop offset="1" stop-color="#060908"/>
+    </linearGradient>
+    <linearGradient id="mint" x1="0.15" y1="0" x2="0.85" y2="1">
+      <stop offset="0" stop-color="#d7fff4"/>
+      <stop offset="0.45" stop-color="#9ff0dd"/>
+      <stop offset="1" stop-color="#5cc9b2"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.5" cy="0.05" r="0.9">
+      <stop offset="0" stop-color="#9ff0dd" stop-opacity="0.22"/>
+      <stop offset="0.55" stop-color="#9ff0dd" stop-opacity="0.04"/>
+      <stop offset="1" stop-color="#9ff0dd" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="soft" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="10"/>
+    </filter>
+  </defs>
+
+  <rect width="1024" height="1024" rx="224" fill="url(#bg)"/>
+  <rect width="1024" height="1024" rx="224" fill="url(#glow)"/>
+  <rect x="58" y="58" width="908" height="908" rx="188" fill="none" stroke="#e9fff6" stroke-opacity="0.10" stroke-width="8"/>
+  <circle cx="512" cy="512" r="356" fill="none" stroke="#9ff0dd" stroke-opacity="0.06" stroke-width="4"/>
+
+  <path d="M278 748 512 244l234 504" fill="none" stroke="#9ff0dd" stroke-opacity="0.18" stroke-width="54" stroke-linecap="round" stroke-linejoin="round" filter="url(#soft)"/>
+  <path d="M278 748 512 244l234 504" fill="none" stroke="url(#mint)" stroke-width="42" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M386 590h252" stroke="#d8b98a" stroke-width="34" stroke-linecap="round"/>
+  <circle cx="512" cy="244" r="17" fill="#d8b98a"/>
+
+  <path d="M196 812h632" stroke="#e9fff6" stroke-opacity="0.12" stroke-width="8" stroke-linecap="round"/>
+  <circle cx="512" cy="812" r="9" fill="#9ff0dd" fill-opacity="0.75"/>
+</svg>
