@@ -28,6 +28,9 @@ npm start
 
 No dependencies. Node 18+ only. The server is optional; the file works on its own.
 
+If port 4321 is busy, use `$env:PORT=4322; npm start` in PowerShell or
+`PORT=4322 npm start` on macOS/Linux.
+
 ## First-run checklist
 
 - [ ] Open `atlas.html` and create the admin account.

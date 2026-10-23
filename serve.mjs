@@ -55,7 +55,9 @@ const server = http.createServer((req, res) => {
 
 server.on("error", (err) => {
   if (err.code === "EADDRINUSE") {
-    console.error(`Port ${port} is already in use. Try: PORT=4322 npm start`);
+    console.error(`Port ${port} is already in use. Set PORT to another value, for example:`);
+    console.error(`  PowerShell:  $env:PORT=4322; npm start`);
+    console.error(`  macOS/Linux: PORT=4322 npm start`);
   } else {
     console.error(err);
   }
