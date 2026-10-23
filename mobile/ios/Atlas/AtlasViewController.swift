@@ -3,6 +3,7 @@ import WebKit
 
 final class AtlasViewController: UIViewController, WKUIDelegate, WKNavigationDelegate, WKScriptMessageHandler {
     private var webView: WKWebView!
+    private var server: LocalServer?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -22,9 +23,30 @@ final class AtlasViewController: UIViewController, WKUIDelegate, WKNavigationDel
         webView.backgroundColor = .clear
         view.addSubview(webView)
 
-        if let url = Bundle.main.url(forResource: "atlas", withExtension: "html") {
-            webView.loadFileURL(url, allowingReadAccessTo: url.deletingLastPathComponent())
+        guard let url = Bundle.main.url(forResource: "atlas", withExtension: "html"),
+              let html = try? Data(contentsOf: url) else {
+            return
         }
+
+        let localServer = LocalServer(html: html)
+        server = localServer
+        localServer.onReady = { [weak self] port in
+            guard let self = self else { return }
+            guard let url = URL(string: "http://127.0.0.1:\(port)/") else { return }
+            self.webView.load(URLRequest(url: url))
+        }
+        localServer.onFailure = { [weak self] in
+            guard let self = self else { return }
+            // If the loopback server cannot start, at least show the app.
+            if let fileURL = Bundle.main.url(forResource: "atlas", withExtension: "html") {
+                self.webView.loadFileURL(fileURL, allowingReadAccessTo: fileURL.deletingLastPathComponent())
+            }
+        }
+        localServer.start()
+    }
+
+    deinit {
+        server?.stop()
     }
 
     override var preferredStatusBarStyle: UIStatusBarStyle {
