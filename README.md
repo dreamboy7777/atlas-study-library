@@ -43,6 +43,8 @@ The repo includes a [download page](download.html) with the same app packaged fo
 
 The Android APK and iPhone IPA are built by [`.github/workflows/build-mobile.yml`](.github/workflows/build-mobile.yml). The wrappers live in [`mobile/`](mobile/). Both load the same `atlas.html`, so your library stays local to the device. For iPhone without a computer, host the folder and use **Share → Add to Home Screen** in Safari.
 
+> When you update `atlas.html`, copy it into `mobile/android/app/src/main/assets/` and `mobile/ios/Atlas/` before rebuilding the mobile apps.
+
 > The iPhone IPA is unsigned because signing requires an Apple Developer account. It will not install by tapping it in Safari; use a sideloading tool.
 
 Checksums for all three files are in [`downloads/SHA256SUMS.txt`](downloads/SHA256SUMS.txt).
