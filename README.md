@@ -1,187 +1,124 @@
-# Atlas
+<p align="center">
+  <img src="assets/banner.svg" alt="Atlas — a local-first study library for medical students" width="100%">
+</p>
 
-A calm, searchable study library for medical students — one stable home per file instead of an endless Telegram scroll.
+<p align="center">
+  <a href="https://github.com/dreamboy7777/atlas-study-library/releases/tag/v1.0.0"><img src="https://img.shields.io/github/v/release/dreamboy7777/atlas-study-library?style=for-the-badge&labelColor=0c1210&color=9ff0dd" alt="Latest release"></a>
+  <img src="https://img.shields.io/badge/platform-Windows%20%7C%20Android%20%7C%20iOS-9ff0dd?style=for-the-badge&labelColor=0c1210" alt="Windows, Android, iOS">
+  <img src="https://img.shields.io/badge/data-local--first-5cc9b2?style=for-the-badge&labelColor=0c1210" alt="Local-first">
+  <img src="https://img.shields.io/badge/account-none-d8b98a?style=for-the-badge&labelColor=0c1210" alt="No account required">
+</p>
 
-The product is **[`atlas.html`](atlas.html)**: one self-contained file you open in Chrome or Edge. No install, no server, no accounts with a cloud provider. The optional Next.js prototype in [`web/`](web/) is kept for reference.
+<h1 align="center">Atlas</h1>
 
-## Quick start
+<p align="center">
+  <b>A calm, local-first study library for medical students.</b><br>
+  One stable home for PDFs, past papers, notes, chat, and memes — instead of an endless Telegram scroll.
+</p>
 
-### Option A — the single file (recommended)
+<p align="center">
+  <a href="https://github.com/dreamboy7777/atlas-study-library/releases/download/v1.0.0/atlas-windows.zip"><img src="https://img.shields.io/badge/Download-Windows-9ff0dd?style=for-the-badge&logo=windows&logoColor=07110e&labelColor=0c1210" alt="Download for Windows"></a>
+  <a href="https://github.com/dreamboy7777/atlas-study-library/releases/download/v1.0.0/atlas-android.apk"><img src="https://img.shields.io/badge/Download-Android-9ff0dd?style=for-the-badge&logo=android&logoColor=07110e&labelColor=0c1210" alt="Download for Android"></a>
+  <a href="https://github.com/dreamboy7777/atlas-study-library/releases/download/v1.0.0/atlas-ios.ipa"><img src="https://img.shields.io/badge/Download-iPhone-9ff0dd?style=for-the-badge&logo=apple&logoColor=07110e&labelColor=0c1210" alt="Download for iPhone"></a>
+</p>
 
-1. Download or clone this repository.
-2. Open **`atlas.html`** in Chrome or Edge.
-3. Create the first account. Use the admin password **`kellyisthecutest`** to make yourself the admin. Accounts without it join as students.
-4. Go to **Admin console → Site settings** and change the admin password immediately.
+<p align="center">
+  <a href="https://dreamboy7777.github.io/atlas-study-library/"><b>Download page</b></a> ·
+  <a href="https://github.com/dreamboy7777/atlas-study-library/releases/tag/v1.0.0">Release notes</a> ·
+  <a href="https://dreamboy7777.github.io/atlas-study-library/downloads/SHA256SUMS.txt">Checksums</a>
+</p>
 
-Everything — accounts, PDFs, memes, chat, reactions, sign-in history and preferences — is stored in that browser's IndexedDB. Sign-in lasts 30 days. The library starts empty, ready for real material.
+---
 
-> **Important:** if you received this as a ZIP, extract it first. Opening `atlas.html` from inside the ZIP will not persist data correctly.
+## Download
 
-### Option B — tiny local server
+| Platform | File | Size | Notes |
+|---|---|---:|---|
+| **Windows 10/11** | [`atlas-windows.zip`](https://github.com/dreamboy7777/atlas-study-library/releases/download/v1.0.0/atlas-windows.zip) | 102 KB | Portable ZIP. Unzip, then double-click `Start Atlas.bat`. |
+| **Android 7+** | [`atlas-android.apk`](https://github.com/dreamboy7777/atlas-study-library/releases/download/v1.0.0/atlas-android.apk) | 1.2 MB | Debug-signed APK. Allow installs from your browser or Files app. |
+| **iPhone / iPad 15+** | [`atlas-ios.ipa`](https://github.com/dreamboy7777/atlas-study-library/releases/download/v1.0.0/atlas-ios.ipa) | 596 KB | Unsigned IPA. Sideload with AltStore or Sideloadly. |
 
-If you prefer a normal `http://` address:
+All three packages open the same single-file Atlas app and keep your library on the device.
 
-```bash
-npm start
-# http://127.0.0.1:4321
-```
+## Install
 
-No dependencies. Node 18+ only. The server is optional; the file works on its own.
+### Windows
 
-If port 4321 is busy, use `$env:PORT=4322; npm start` in PowerShell or
-`PORT=4322 npm start` on macOS/Linux.
+1. Download the portable ZIP.
+2. Unzip it anywhere you like.
+3. Double-click **`Start Atlas.bat`**.
+4. Use Chrome or Edge on the same machine to keep your library.
 
-## Download the apps
+There is no installer and no admin rights required.
 
-The repo includes a [download page](download.html) with the same app packaged for each platform:
+### Android
 
-| Platform | File | Notes |
-|---|---|---|
-| **Windows 10/11** | [`downloads/atlas-windows.zip`](downloads/atlas-windows.zip) | Portable. Unzip, then double-click `Start Atlas.bat`. |
-| **Android 7+** | [`downloads/atlas-android.apk`](downloads/atlas-android.apk) | Debug-signed APK. Allow installs from your browser or Files app. |
-| **iPhone / iPad 15+** | [`downloads/atlas-ios.ipa`](downloads/atlas-ios.ipa) | Unsigned IPA. Sideload with AltStore or Sideloadly. |
+1. Download the APK.
+2. Open it and allow installs from your browser or Files app when prompted.
+3. Open Atlas and create your first account.
 
-The Android APK and iPhone IPA are built by [`.github/workflows/build-mobile.yml`](.github/workflows/build-mobile.yml). The wrappers live in [`mobile/`](mobile/). Both load the same `atlas.html`, so your library stays local to the device. For iPhone without a computer, host the folder and use **Share → Add to Home Screen** in Safari.
+The APK is debug-signed and is not distributed through the Play Store.
 
-> When you update `atlas.html`, copy it into `mobile/android/app/src/main/assets/` and `mobile/ios/Atlas/` before rebuilding the mobile apps.
+### iPhone / iPad
 
-> The iPhone IPA is unsigned because signing requires an Apple Developer account. It will not install by tapping it in Safari; use a sideloading tool.
+1. Download the IPA.
+2. Install AltStore or Sideloadly on a computer.
+3. Connect your iPhone and sideload **`atlas-ios.ipa`**.
+4. Trust the developer profile in **Settings → General → VPN & Device Management**.
 
-Checksums for all three files are in [`downloads/SHA256SUMS.txt`](downloads/SHA256SUMS.txt).
+> **The iPhone IPA is unsigned.** It will not install by tapping it in Safari, and there is no App Store build. A sideloading tool and a computer are required.
 
-## First-run checklist
+## First run
 
-- [ ] Open `atlas.html` and create the admin account.
-- [ ] **Site settings → Admin password** — replace `kellyisthecutest`.
-- [ ] **Site settings** — set the site name, tagline, logo letter/emoji, theme, announcement and footer.
-- [ ] **Modules** — add the modules your batch actually uses. You can add as many as you need.
-- [ ] **Upload a file** — add the first slides or past paper and publish it.
-- [ ] **Admin console → Export library** — save a backup once you have real files.
-- [ ] Invite students. They create their own accounts; they do not need the admin password.
+- Create the first account using the admin passcode in [`SETUP.md`](SETUP.md).
+- **Change the admin passcode immediately** in **Site settings**.
+- Set your site name, tagline, logo, theme, announcement, and footer.
+- Add the modules your batch actually uses, then upload the first files.
+- Export a JSON backup from **Admin console → Export library** once you have real material.
+
+Students create their own accounts; they do not need the admin passcode.
 
 ## What is inside
 
-| Area | What it does |
-|---|---|
-| **Library** | Batches 198/199/200, Years 1–3, 28 built-in modules plus unlimited custom modules, semester grouping, type/subject filters, search, PDF preview. |
-| **Batch access** | **198 → Years 1–3**, **199 → Years 1–2**, **200 → Year 1**. The batch selector only shows allowed years; admins see all years. |
-| **Accounts** | IndexedDB user table, salted SHA-256 passwords, batch + year, last-seen and sign-in counts. Choose a year at sign-up; confirm or switch it at sign-in. |
-| **Admin gate** | The staff password upgrades the current account. Uploading, moderation, exports and settings are locked without it. |
-| **Upload** | Admin-only PDFs, 25 MB max, publish now or send to the review queue; SHA-256 duplicate rejection. |
-| **Reactions** | 👍 🔥 ❤️ 🤯 on every file, counted on rows and stored per account. |
-| **Lounge chat** | One room, synced live between tabs with `BroadcastChannel`, unread badge. |
-| **Meme break** | 36 canvas-drawn memes plus admin image uploads, a popup every 5 minutes (mutable), gallery and download. |
-| **Saved** | Star files for later, stored per account. |
-| **Admin console** | Review queue, reports, unpublish/delete, member database, sign-in log, export/import JSON. |
-| **Site settings** | Rename the site, change the tagline/logo/theme/announcement/footer, rotate the admin password, factory reset. |
-| **Modules** | Add, edit and remove custom modules. Built-in modules stay fixed. Files block deletion or a code change until they are moved/removed. |
+- **Library** — batches, years, modules, semester grouping, type/subject filters, search, and PDF preview.
+- **Batch access** — 198 → Years 1–3, 199 → Years 1–2, 200 → Year 1. Admins see all years.
+- **Admin tools** — upload and review queue, member database, sign-in log, unpublish/delete, JSON export/import.
+- **Customization** — site name, tagline, logo letter/emoji, five themes, announcement banner, footer note, admin passcode.
+- **Modules** — 28 built-in modules plus unlimited custom modules, with safe deletion rules.
+- **Social** — reactions, saved files, lounge chat synced between tabs, and a meme break.
+- **Local-first** — accounts, PDFs, chat, memes, and settings live in IndexedDB and `localStorage` on your device. No cloud account and no Atlas server.
 
-## Admin guide
+## Privacy
 
-### Customize the site
+Atlas does not upload your library anywhere. There is no cloud account, no telemetry, and no Atlas server.
 
-Go to **Site settings** in the sidebar (admins only).
+- Clearing browser or app data deletes the library. Export a backup first.
+- The admin passcode gates the admin UI; it is not disk encryption. Do not reuse a real password.
+- The default passcode is public in the source. Change it on first run.
 
-- **Site name** — replaces “Atlas” in the header, sidebar, auth screen and page title.
-- **Tagline** — shown on the sign-in/sign-up screen.
-- **Logo letter or emoji** — leave blank for the Atlas mark, or use one or two characters.
-- **Theme** — Mint, Ocean, Rose, Amber or Violet. The whole UI re-tints from CSS variables.
-- **Announcement** — a banner at the top of every page. Leave blank to hide it.
-- **Footer note** — the small line at the bottom of the sidebar.
-- **Admin password** — leave blank to keep the current one. Changing it affects future sign-ups and admin unlocks; existing admin sessions stay signed in.
+## Docs and source
 
-### Add modules
+- [`SETUP.md`](SETUP.md) — first-run, admin, modules, backups, and troubleshooting.
+- [`DATA_MODEL.md`](DATA_MODEL.md) — taxonomy rules and the data model.
+- [`atlas.html`](atlas.html) — the single-file app.
+- [`mobile/`](mobile/) — Android and iPhone WebView wrappers.
+- [`downloads/`](downloads/) — built ZIP, APK, IPA, and `SHA256SUMS.txt`.
+- [`.github/workflows/build-mobile.yml`](.github/workflows/build-mobile.yml) — CI build for the APK and unsigned IPA.
 
-Go to **Modules** in the sidebar (admins only).
+> When you update `atlas.html`, copy it into `mobile/android/app/src/main/assets/` and `mobile/ios/Atlas/` before rebuilding the mobile apps.
 
-1. Enter a unique code (for example `SUR-401`), an optional title, a year, kind and semester.
-2. Click **Add module**.
-3. Use **Edit** on a custom module to rename it or change its year/semester.
-4. Use the trash button to remove a custom module. If any uploaded file uses that module, deletion is blocked until the file is removed.
+## Verify a download
 
-Custom modules are stored in this browser alongside the library. Built-in modules cannot be edited or deleted.
+Every artifact has a SHA-256 checksum in [`downloads/SHA256SUMS.txt`](downloads/SHA256SUMS.txt). The same hashes are shown on the [download page](https://dreamboy7777.github.io/atlas-study-library/).
 
-### Upload and publish
-
-1. **Upload a file**.
-2. Pick a module, type, title, optional exam year and subject.
-3. Leave **Publish immediately** checked to go live, or uncheck it to send the file to the review queue.
-4. Approve, reject, unpublish or delete from **Admin console**.
-
-### Backup and restore
-
-**Admin console → Export library** downloads a JSON file containing the metadata, PDF bytes, custom modules and site branding. It can be large.
-
-**Import** merges by content hash, so importing the same backup twice is safe. It also merges any missing custom modules and can restore the site branding. Use it to move the library to another browser or to restore after clearing browser data.
-
-> Export does not include accounts, passwords or the admin passcode. Students create accounts on the new device; the current admin password is kept on import.
-
-### Factory reset
-
-**Site settings → Danger zone → Factory reset this device** deletes every account, PDF, chat message, meme, sign-in record, preference, custom module and site setting in this browser. Type `RESET` to confirm.
-
-Use this before handing the device or browser profile to someone else.
-
-## Batch access rules
-
-| Batch | Open years |
-|---|---|
-| 198 | Years 1, 2 and 3 |
-| 199 | Years 1 and 2 |
-| 200 | Year 1 |
-
-The rules live in `atlas.html` in `YEARS_FOR_BATCH`. Students can browse every year their batch is allowed. Admins can browse all years.
-
-## Where data lives
-
-| Data | Storage |
-|---|---|
-| Accounts, PDFs, chat, memes, sign-in log | IndexedDB database `studyhub` |
-| Site name, theme, announcement, footer, admin password | `localStorage` key `sh.site` |
-| Custom modules | `localStorage` key `sh.modules` |
-| Session, preferences, saved files, last-read markers | `localStorage` keys starting with `sh.` |
-
-Clearing site data for `atlas.html` in the browser wipes the library. Export a backup first.
-
-## Security note
-
-This is a local-first build, not a server. The admin password gates the UI only; anyone with the file and access to the browser profile can read its data. Do not reuse a real password. For a multi-device, multi-user deployment with real security, use the Next.js/Postgres prototype in `web/` or a proper backend.
-
-## File map
-
-| Path | What it is |
-|---|---|
-| [`atlas.html`](atlas.html) | **The app** — single file, no build step |
-| [`SETUP.md`](SETUP.md) | Step-by-step setup for the person receiving the project |
-| [`ACTION_PLAN.md`](ACTION_PLAN.md) | Product plan: phases, backlog, ingestion, costs, risks, metrics |
-| [`DATA_MODEL.md`](DATA_MODEL.md) | Taxonomy rules, Postgres DDL, RLS, search, storage flow |
-| [`seed/catalog.json`](seed/catalog.json) | Batches, years, modules and subjects as data |
-| [`seed/module_subjects.csv`](seed/module_subjects.csv) | Module → subject mapping — fill in when known |
-| [`serve.mjs`](serve.mjs) | Optional zero-dependency static server |
-| [`web/`](web/) | Optional Next.js + Postgres prototype |
-| [`download.html`](download.html) | Download page for Windows, Android and iPhone |
-| [`downloads/`](downloads/) | Built ZIP, APK and IPA artifacts |
-| [`assets/`](assets/) | Logo source and generated icons |
-| [`mobile/`](mobile/) | Android and iPhone WebView wrappers |
-| [`.github/workflows/build-mobile.yml`](.github/workflows/build-mobile.yml) | CI build for the APK and unsigned IPA |
-| `studyhub.html` | Tiny redirect for old links |
-| `studyhub-v1.html` | Earlier light-theme build, kept as a legacy fallback |
-
-## Optional Next.js prototype
-
-```bash
-cd web
-npm install
-npm run db:setup      # schema + curriculum catalogue, no demo files
-npm run dev           # http://localhost:3000
+```text
+A637D6FFE604305ABD97B87AFE4DA452E335B56DDC4DFEA279D5AE7EA8A1BE4C  atlas-windows.zip
+AFEDE5DDCE77A7687AA6F396555F76ECADFA37DE5675567A4D5B655F03109B74  atlas-android.apk
+D0E1351DCD3563F2CEFAD4328CB1803187426E7661EFD81B1F8D05E51952142B  atlas-ios.ipa
 ```
 
-See [`web/README.md`](web/README.md). The prototype uses a local PGlite database by default, so it needs no Docker or cloud credentials. It is not the handoff app; `atlas.html` is.
+---
 
-## Troubleshooting
-
-- **“Storage is blocked”** — use Chrome or Edge in a normal window, not private/incognito mode. If you opened the file from a ZIP, extract it first.
-- **PDF will not preview** — use **Open in tab** or **Download**. Some browsers block embedded PDFs from `file://`.
-- **I cleared browser data and lost the library** — restore the last JSON export from **Admin console → Import**.
-- **The admin password is wrong** — the default is `kellyisthecutest`. If it was changed, use the current value. A factory reset restores the default but deletes all data.
-- **I want a fresh start** — **Site settings → Factory reset**, type `RESET`.
+<p align="center">
+  <sub>Built with one HTML file, Android WebView, iOS WKWebView, and GitHub Actions. No paid services.</sub>
+</p>

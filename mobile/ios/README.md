@@ -47,8 +47,6 @@ An unsigned IPA cannot be installed by tapping it in Safari. Use one of these si
 
 The tool signs the app with your Apple ID. Free Apple ID signing usually expires after 7 days; a paid Apple Developer account gives longer-lived signatures.
 
-If you do not want to sideload, host the Atlas folder on a local server or static host, open it in Safari, and use **Share -> Add to Home Screen**. That gives you an app-like icon without an IPA.
-
 ## What the wrapper handles
 
 - Full-screen WKWebView loading the bundled `atlas.html`
@@ -56,3 +54,4 @@ If you do not want to sideload, host the Atlas folder on a local server or stati
 - Document picker for PDF uploads
 - `window.webkit.messageHandlers.atlas` bridge for PDF, meme, and JSON downloads; saved files open in the iOS share sheet
 - Dark launch screen and app icon
+

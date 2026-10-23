@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 360" role="img" aria-label="Atlas — a local-first study library for medical students">
+  <defs>
+    <linearGradient id="banner-bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0b1210"/>
+      <stop offset="0.55" stop-color="#070a09"/>
+      <stop offset="1" stop-color="#0a0f0d"/>
+    </linearGradient>
+    <linearGradient id="banner-mint" x1="0.15" y1="0" x2="0.85" y2="1">
+      <stop offset="0" stop-color="#d7fff4"/>
+      <stop offset="0.45" stop-color="#9ff0dd"/>
+      <stop offset="1" stop-color="#5cc9b2"/>
+    </linearGradient>
+    <radialGradient id="banner-glow" cx="0.12" cy="0.1" r="0.85">
+      <stop offset="0" stop-color="#9ff0dd" stop-opacity="0.18"/>
+      <stop offset="0.5" stop-color="#9ff0dd" stop-opacity="0.035"/>
+      <stop offset="1" stop-color="#9ff0dd" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="banner-gold" cx="0.92" cy="0.18" r="0.55">
+      <stop offset="0" stop-color="#d8b98a" stop-opacity="0.14"/>
+      <stop offset="1" stop-color="#d8b98a" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="banner-grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M40 0H0v40" fill="none" stroke="#e9fff6" stroke-opacity="0.035" stroke-width="1"/>
+    </pattern>
+    <filter id="banner-soft" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="9"/>
+    </filter>
+  </defs>
+
+  <rect width="1200" height="360" rx="30" fill="url(#banner-bg)"/>
+  <rect width="1200" height="360" rx="30" fill="url(#banner-grid)"/>
+  <rect width="1200" height="360" rx="30" fill="url(#banner-glow)"/>
+  <rect width="1200" height="360" rx="30" fill="url(#banner-gold)"/>
+  <rect x="1" y="1" width="1198" height="358" rx="29" fill="none" stroke="#e9fff6" stroke-opacity="0.10"/>
+
+  <g transform="translate(64 58) scale(0.23828125)">
+    <rect width="1024" height="1024" rx="224" fill="#0b1210"/>
+    <rect width="1024" height="1024" rx="224" fill="#9ff0dd" opacity="0.03"/>
+    <rect x="58" y="58" width="908" height="908" rx="188" fill="none" stroke="#e9fff6" stroke-opacity="0.10" stroke-width="8"/>
+    <circle cx="512" cy="512" r="356" fill="none" stroke="#9ff0dd" stroke-opacity="0.06" stroke-width="4"/>
+    <path d="M278 748 512 244l234 504" fill="none" stroke="#9ff0dd" stroke-opacity="0.18" stroke-width="54" stroke-linecap="round" stroke-linejoin="round" filter="url(#banner-soft)"/>
+    <path d="M278 748 512 244l234 504" fill="none" stroke="url(#banner-mint)" stroke-width="42" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M386 590h252" stroke="#d8b98a" stroke-width="34" stroke-linecap="round"/>
+    <circle cx="512" cy="244" r="17" fill="#d8b98a"/>
+    <path d="M196 812h632" stroke="#e9fff6" stroke-opacity="0.12" stroke-width="8" stroke-linecap="round"/>
+    <circle cx="512" cy="812" r="9" fill="#9ff0dd" fill-opacity="0.75"/>
+  </g>
+
+  <text x="340" y="138" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="78" font-weight="800" letter-spacing="-3" fill="#e9fff6">Atlas</text>
+  <text x="343" y="180" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="23" font-weight="500" fill="#9aa8b6">A calm, local-first study library for medical students.</text>
+
+  <g font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="14" font-weight="650">
+    <rect x="343" y="214" width="126" height="38" rx="19" fill="#9ff0dd" fill-opacity="0.10" stroke="#9ff0dd" stroke-opacity="0.22"/>
+    <text x="406" y="238" text-anchor="middle" fill="#9ff0dd">Windows</text>
+    <rect x="479" y="214" width="126" height="38" rx="19" fill="#9ff0dd" fill-opacity="0.10" stroke="#9ff0dd" stroke-opacity="0.22"/>
+    <text x="542" y="238" text-anchor="middle" fill="#9ff0dd">Android</text>
+    <rect x="615" y="214" width="126" height="38" rx="19" fill="#9ff0dd" fill-opacity="0.10" stroke="#9ff0dd" stroke-opacity="0.22"/>
+    <text x="678" y="238" text-anchor="middle" fill="#9ff0dd">iPhone</text>
+  </g>
+
+  <g font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif">
+    <rect x="343" y="272" width="250" height="34" rx="17" fill="#d8b98a" fill-opacity="0.08" stroke="#d8b98a" stroke-opacity="0.20"/>
+    <circle cx="362" cy="289" r="4" fill="#d8b98a"/>
+    <text x="376" y="294" font-size="12.5" font-weight="650" letter-spacing="0.4" fill="#d8b98a">v1.0.0 · public release</text>
+    <text x="612" y="294" font-size="12.5" font-weight="500" fill="#5c6b79">No account · No server · Works offline</text>
+  </g>
+
+  <g transform="translate(948 84)" opacity="0.95">
+    <rect width="188" height="192" rx="22" fill="#0c1210" stroke="#e9fff6" stroke-opacity="0.10"/>
+    <rect x="18" y="18" width="152" height="1" fill="#e9fff6" fill-opacity="0.08"/>
+    <circle cx="30" cy="30" r="4" fill="#9ff0dd" fill-opacity="0.55"/>
+    <circle cx="44" cy="30" r="4" fill="#d8b98a" fill-opacity="0.45"/>
+    <path d="M94 62v52" stroke="#9ff0dd" stroke-width="7" stroke-linecap="round"/>
+    <path d="m70 96 24 24 24-24" fill="none" stroke="#9ff0dd" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M58 138h72" stroke="#e9fff6" stroke-opacity="0.18" stroke-width="6" stroke-linecap="round"/>
+    <text x="94" y="168" text-anchor="middle" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="11" font-weight="700" letter-spacing="1.6" fill="#8d9bab">DOWNLOAD</text>
+  </g>
+</svg>

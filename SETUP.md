@@ -1,14 +1,22 @@
 # Atlas — setup guide
 
-This guide is for the person receiving the project. No coding, server or paid account is required for the main app.
+This guide is for the person setting up Atlas. No coding, server or paid account is required for the main app.
 
-## 1. Open the app
+## 1. Get Atlas
 
-1. If you received a ZIP file, **extract it first**.
-2. Open the folder and double-click **`atlas.html`**.
-3. Use **Chrome** or **Edge**. A normal window is best — private/incognito mode can block storage.
+Download the package for your device from the [download page](https://dreamboy7777.github.io/atlas-study-library/):
 
-The app runs entirely on your computer. Your files and accounts stay in that browser.
+| Platform | File | First step |
+|---|---|---|
+| **Windows 10/11** | [`atlas-windows.zip`](https://github.com/dreamboy7777/atlas-study-library/releases/download/v1.0.0/atlas-windows.zip) | Unzip it, then double-click **`Start Atlas.bat`**. |
+| **Android 7+** | [`atlas-android.apk`](https://github.com/dreamboy7777/atlas-study-library/releases/download/v1.0.0/atlas-android.apk) | Open the APK and allow installs from your browser or Files app. |
+| **iPhone / iPad 15+** | [`atlas-ios.ipa`](https://github.com/dreamboy7777/atlas-study-library/releases/download/v1.0.0/atlas-ios.ipa) | Sideload with AltStore or Sideloadly. |
+
+The iPhone IPA is **unsigned**. It will not install by tapping it in Safari, and there is no App Store build. Use a sideloading tool, then trust the developer profile in **Settings → General → VPN & Device Management**.
+
+If you have the repository, you can also open **`atlas.html`** directly in Chrome or Edge. Use a normal window; private/incognito mode can block storage.
+
+Everything stays on your device. The app does not need a server.
 
 ## 2. Create the admin account
 
@@ -16,7 +24,7 @@ The app runs entirely on your computer. Your files and accounts stay in that bro
 2. Enter your name, a username and a password (at least 6 characters).
 3. In **Admin password**, enter:
 
-   ```
+   ```text
    kellyisthecutest
    ```
 
@@ -110,44 +118,20 @@ If you want to give someone a completely fresh app:
 
 This deletes every account, file, chat message, meme, sign-in record, custom module and setting in that browser. The app returns to the first-run screen with the default Atlas branding and the default admin password.
 
-## Optional: install the mobile apps
+## Verify your downloads
 
-The repository includes a [download page](download.html) with three packages:
-
-- **Windows** — [`downloads/atlas-windows.zip`](downloads/atlas-windows.zip). Unzip it, then double-click `Start Atlas.bat`.
-- **Android** — [`downloads/atlas-android.apk`](downloads/atlas-android.apk). Install it directly after allowing installs from your browser or Files app.
-- **iPhone / iPad** — [`downloads/atlas-ios.ipa`](downloads/atlas-ios.ipa). This IPA is unsigned. Sideload it with AltStore or Sideloadly, then trust the developer profile in **Settings → General → VPN & Device Management**.
-
-The mobile apps are WebView wrappers around the same `atlas.html`. Data stays in the app on the device. Export a JSON backup before uninstalling.
-
-> No computer for the iPhone? Host this folder on a local server or static host, open it in Safari, and choose **Share → Add to Home Screen**.
-
-## Optional: run it on a local address
-
-If you prefer `http://127.0.0.1:4321` instead of double-clicking the file:
-
-1. Install [Node.js](https://nodejs.org/) 18 or newer.
-2. Open a terminal in this folder.
-3. Run:
-
-   ```bash
-   npm start
-   ```
-
-4. Open <http://127.0.0.1:4321>.
-
-This is optional. The app works without it.
+Checksums for all three files are in [`downloads/SHA256SUMS.txt`](downloads/SHA256SUMS.txt). The [download page](https://dreamboy7777.github.io/atlas-study-library/) also shows the SHA-256 for each file and has copy buttons.
 
 ## Common questions
 
 **Where are my files stored?**
-In this browser's local storage (IndexedDB). They are not uploaded anywhere. Clearing browser data deletes them, so keep backups.
+In this browser's or app's local storage (IndexedDB). They are not uploaded anywhere. Clearing browser or app data deletes them, so keep backups.
 
 **Can I use it on my phone?**
-Yes. Use the Android APK or the iPhone IPA from [download.html](download.html), or host the folder and add it to your Home Screen. The APK is debug-signed; the IPA is unsigned and needs a sideloading tool.
+Yes. Use the Android APK or the iPhone IPA from the [download page](https://dreamboy7777.github.io/atlas-study-library/). The APK is debug-signed; the IPA is unsigned and needs a sideloading tool.
 
 **Can two people use it at the same time?**
-The single-file app is local to one browser profile. Multiple tabs on the same device can chat live. For multiple devices, use the `web/` prototype or a real backend.
+The single-file app is local to one browser profile. Multiple tabs on the same device can chat live. For multiple devices, you would need a real backend.
 
 **I forgot the admin password.**
 The default is `kellyisthecutest`. If it was changed, a factory reset restores the default but deletes all data. Export a backup first if possible.
