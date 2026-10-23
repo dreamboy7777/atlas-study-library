@@ -15,8 +15,11 @@ import android.webkit.JavascriptInterface;
 import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
+import android.webkit.WebResourceRequest;
+import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import androidx.webkit.WebViewAssetLoader;
 import android.widget.Toast;
 
 import java.io.File;
@@ -55,7 +58,15 @@ public class MainActivity extends Activity {
         settings.setBuiltInZoomControls(false);
 
         webView.addJavascriptInterface(new AtlasBridge(), "AtlasNative");
-        webView.setWebViewClient(new WebViewClient());
+        final WebViewAssetLoader assetLoader = new WebViewAssetLoader.Builder()
+                .addPathHandler("/assets/", new WebViewAssetLoader.AssetsPathHandler(this))
+                .build();
+        webView.setWebViewClient(new WebViewClient() {
+            @Override
+            public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
+                return assetLoader.shouldInterceptRequest(request.getUrl());
+            }
+        });
         webView.setWebChromeClient(new WebChromeClient() {
             @Override
             public boolean onShowFileChooser(WebView view, ValueCallback<Uri[]> callback, FileChooserParams params) {
@@ -77,7 +88,7 @@ public class MainActivity extends Activity {
         });
 
         setContentView(webView);
-        webView.loadUrl("file:///android_asset/atlas.html");
+        webView.loadUrl("https://appassets.androidplatform.net/assets/atlas.html");
     }
 
     @Override
