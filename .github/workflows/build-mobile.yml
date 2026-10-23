@@ -63,7 +63,7 @@ jobs:
 
   ios:
     name: iPhone IPA
-    runs-on: macos-latest
+    runs-on: macos-15
     steps:
       - uses: actions/checkout@v4
 

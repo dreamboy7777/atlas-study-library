@@ -42,6 +42,7 @@ public class MainActivity extends Activity {
 
         webView = new WebView(this);
         webView.setBackgroundColor(0xFF070A09);
+        webView.setFitsSystemWindows(true);
 
         WebSettings settings = webView.getSettings();
         settings.setJavaScriptEnabled(true);
