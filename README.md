@@ -6,7 +6,7 @@
   <a href="https://github.com/dreamboy7777/atlas-study-library/releases/tag/v1.0.0"><img src="https://img.shields.io/github/v/release/dreamboy7777/atlas-study-library?style=for-the-badge&labelColor=0c1210&color=9ff0dd" alt="Latest release"></a>
   <img src="https://img.shields.io/badge/platform-Windows%20%7C%20Android%20%7C%20iOS-9ff0dd?style=for-the-badge&labelColor=0c1210" alt="Windows, Android, iOS">
   <img src="https://img.shields.io/badge/data-local--first-5cc9b2?style=for-the-badge&labelColor=0c1210" alt="Local-first">
-  <img src="https://img.shields.io/badge/account-none-d8b98a?style=for-the-badge&labelColor=0c1210" alt="No account required">
+  <img src="https://img.shields.io/badge/cloud-none-d8b98a?style=for-the-badge&labelColor=0c1210" alt="No cloud account">
 </p>
 
 <p align="center">
