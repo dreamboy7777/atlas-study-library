@@ -1,0 +1,1481 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>StudyHub — study materials, organised</title>
+<style>
+  :root{
+    --ink:#0f172a; --mut:#64748b; --line:#e2e8f0; --bg:#f8fafc;
+    --brand:#0f766e; --brand-d:#115e59; --brand-l:#ccfbf1;
+    --danger:#be123c; --amber:#b45309; --white:#fff;
+    --radius:12px;
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    -webkit-font-smoothing:antialiased; line-height:1.45;
+  }
+  a{color:var(--brand); text-decoration:none}
+  a:hover{text-decoration:underline}
+  h1,h2,h3{margin:0; line-height:1.2}
+  ::selection{background:#a7f3d0}
+
+  /* header */
+  .top{position:sticky; top:0; z-index:30; background:rgba(255,255,255,.93);
+       backdrop-filter:blur(8px); border-bottom:1px solid var(--line)}
+  .topin{max-width:1040px; margin:0 auto; padding:10px 16px; display:flex; align-items:center; gap:10px}
+  .brand{display:flex; align-items:center; gap:8px; font-weight:700; color:var(--ink); text-decoration:none; flex:none}
+  .brand:hover{text-decoration:none}
+  .mark{width:32px; height:32px; border-radius:9px; background:var(--brand); color:#fff;
+        display:grid; place-items:center; font-size:13px; font-weight:800; letter-spacing:.3px}
+  .name{display:none}
+  .search{margin-left:auto; width:100%; max-width:380px}
+  .search input{width:100%; padding:9px 12px; border:1px solid #cbd5e1; border-radius:9px;
+    font-size:14px; background:#fff; color:var(--ink)}
+  .search input:focus{outline:none; border-color:var(--brand); box-shadow:0 0 0 3px rgba(15,118,110,.15)}
+  .nav{display:flex; align-items:center; gap:6px; flex:none}
+  .who{font-size:12px; font-weight:600; color:#475569; max-width:120px; overflow:hidden;
+       text-overflow:ellipsis; white-space:nowrap; display:none}
+
+  /* layout */
+  .wrap{max-width:1040px; margin:0 auto; padding:22px 16px 64px}
+  .foot{max-width:1040px; margin:0 auto; padding:0 16px 40px; font-size:11px; color:#94a3b8}
+  .stack{display:flex; flex-direction:column; gap:18px}
+  .row{display:flex; flex-wrap:wrap; align-items:center; gap:8px}
+  .between{display:flex; flex-wrap:wrap; align-items:baseline; justify-content:space-between; gap:8px}
+  .mut{color:var(--mut)}
+  .small{font-size:12px}
+  .tiny{font-size:11px}
+  .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+
+  /* hero */
+  .hero{background:linear-gradient(135deg,#fff 0%,#f0fdfa 100%); border:1px solid var(--line);
+        border-radius:16px; padding:18px}
+  .hero h1{font-size:20px; letter-spacing:-.02em}
+  .hero p{margin:6px 0 0; font-size:13px; color:var(--mut); max-width:62ch}
+
+  /* chips */
+  .chips{display:flex; flex-wrap:wrap; gap:6px; align-items:center}
+  .chip{display:inline-flex; align-items:center; gap:4px; padding:5px 11px; border-radius:999px;
+        border:1px solid #cbd5e1; background:#fff; color:#475569; font-size:12px; font-weight:600;
+        white-space:nowrap}
+  .chip:hover{border-color:#94a3b8; text-decoration:none}
+  .chip.on{background:var(--brand); border-color:var(--brand); color:#fff}
+  .chip.on:hover{text-decoration:none}
+
+  /* module grid */
+  .grid{display:grid; grid-template-columns:1fr; gap:10px}
+  .tile{display:flex; flex-direction:column; gap:6px; padding:14px; background:#fff;
+        border:1px solid var(--line); border-radius:var(--radius); color:inherit}
+  .tile:hover{border-color:#5eead4; box-shadow:0 1px 2px rgba(15,23,42,.06); text-decoration:none}
+  .tile .code{font-family:ui-monospace,Menlo,Consolas,monospace; font-weight:700; font-size:14px}
+  .tile .title{font-size:13px; color:#475569; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+  .tile .meta{font-size:11px; color:#94a3b8; margin-top:auto}
+
+  /* badges */
+  .badge{display:inline-flex; align-items:center; padding:2px 7px; border-radius:999px;
+         font-size:10px; font-weight:800; letter-spacing:.02em; text-transform:uppercase}
+  .b-vert{background:#fef3c7; color:#92400e}
+  .b-horz{background:#f1f5f9; color:#475569}
+  .b-demo{background:#fef3c7; color:#92400e}
+  .b-type{background:#f1f5f9; color:#334155; text-transform:none; letter-spacing:0; font-weight:700; font-size:10px}
+  .t-slides{background:#e0f2fe; color:#0369a1}
+  .t-past_paper{background:#fef3c7; color:#92400e}
+  .t-mcq{background:#ede9fe; color:#6d28d9}
+  .t-summary_note{background:#d1fae5; color:#047857}
+  .t-practical_guide{background:#ffe4e6; color:#be123c}
+  .t-syllabus{background:#e2e8f0; color:#475569}
+  .t-reference{background:#e2e8f0; color:#475569}
+
+  /* resource rows */
+  .list{display:flex; flex-direction:column; gap:8px}
+  .rrow{display:flex; gap:12px; align-items:flex-start; padding:12px 14px; background:#fff;
+        border:1px solid var(--line); border-radius:var(--radius)}
+  .rrow:hover{border-color:#5eead4}
+  .rrow .body{min-width:0; flex:1}
+  .rtitle{display:block; font-size:14px; font-weight:600; color:var(--ink); overflow:hidden;
+          text-overflow:ellipsis; white-space:nowrap}
+  .rtitle:hover{color:var(--brand); text-decoration:none}
+  .rmeta{margin:2px 0 0; font-size:11px; color:#94a3b8; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+
+  /* buttons */
+  .btn{display:inline-flex; align-items:center; justify-content:center; gap:6px; padding:8px 13px;
+       border-radius:9px; border:1px solid transparent; background:var(--brand); color:#fff;
+       font-size:13px; font-weight:600; cursor:pointer; font-family:inherit; white-space:nowrap}
+  .btn:hover{background:var(--brand-d); text-decoration:none}
+  .btn.ghost{background:#fff; border-color:#cbd5e1; color:#475569}
+  .btn.ghost:hover{border-color:#94a3b8; color:var(--ink)}
+  .btn.danger{background:#fff; border-color:#fecdd3; color:var(--danger)}
+  .btn.danger:hover{background:#fff1f2}
+  .btn.sm{padding:5px 10px; font-size:12px}
+  .btn.block{width:100%}
+  .btn:disabled{opacity:.5; cursor:not-allowed}
+
+  /* cards / forms */
+  .card{background:#fff; border:1px solid var(--line); border-radius:var(--radius); padding:18px}
+  .field{display:flex; flex-direction:column; gap:5px; font-size:12px; font-weight:600; color:#475569}
+  .field input,.field select,.field textarea{
+    padding:9px 11px; border:1px solid #cbd5e1; border-radius:8px; font-size:14px;
+    font-weight:400; color:var(--ink); background:#fff; font-family:inherit; width:100%}
+  .field input:focus,.field select:focus,.field textarea:focus{
+    outline:none; border-color:var(--brand); box-shadow:0 0 0 3px rgba(15,118,110,.14)}
+  .formgrid{display:grid; grid-template-columns:1fr; gap:12px}
+  .check{display:flex; align-items:center; gap:8px; font-size:12px; font-weight:600; color:#475569}
+  .check input{width:16px; height:16px; accent-color:var(--brand)}
+
+  .alert{border-radius:9px; padding:9px 12px; font-size:12px; border:1px solid}
+  .err{background:#fff1f2; border-color:#fecdd3; color:#9f1239}
+  .ok{background:#ecfdf5; border-color:#a7f3d0; color:#065f46}
+  .warn{background:#fffbeb; border-color:#fde68a; color:#92400e}
+  .info{background:#f0f9ff; border-color:#bae6fd; color:#075985}
+
+  /* auth */
+  .auth{min-height:100vh; display:grid; place-items:center; padding:24px 16px;
+        background:linear-gradient(160deg,#f0fdfa 0%,#f8fafc 45%,#f8fafc 100%)}
+  .authcard{width:100%; max-width:380px; background:#fff; border:1px solid var(--line);
+            border-radius:16px; padding:24px; box-shadow:0 12px 30px -18px rgba(15,23,42,.35)}
+  .authcard .mark{width:40px; height:40px; font-size:15px; border-radius:11px; margin-bottom:12px}
+  .authcard h1{font-size:19px; letter-spacing:-.02em}
+  .authcard .sub{font-size:12px; color:var(--mut); margin:6px 0 16px}
+  .authcard form{display:flex; flex-direction:column; gap:11px}
+  .switch{font-size:12px; color:var(--mut); text-align:center; margin-top:14px}
+
+  /* tables */
+  table{width:100%; border-collapse:collapse; font-size:12px}
+  thead{background:#f8fafc; color:#64748b}
+  th{text-align:left; font-weight:600; padding:8px 10px}
+  td{padding:8px 10px; border-top:1px solid #f1f5f9; vertical-align:middle}
+  .tblwrap{overflow-x:auto; border:1px solid var(--line); border-radius:var(--radius); background:#fff}
+
+  /* empty */
+  .empty{border:1px dashed #cbd5e1; background:rgba(255,255,255,.6); border-radius:var(--radius);
+         padding:34px 18px; text-align:center}
+  .empty b{display:block; font-size:13px; color:#334155}
+  .empty span{font-size:12px; color:#94a3b8}
+
+  /* resource detail */
+  .detail-head{background:#fff; border:1px solid var(--line); border-radius:16px; padding:18px}
+  dl.facts{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin:14px 0 0; font-size:11px}
+  dl.facts dt{color:#94a3b8}
+  dl.facts dd{margin:2px 0 0; font-weight:700; font-size:12px; color:#1e293b}
+  .preview{border:1px solid var(--line); border-radius:var(--radius); overflow:hidden; background:#fff}
+  .preview .ph{display:flex; justify-content:space-between; align-items:center; gap:8px;
+              padding:8px 12px; border-bottom:1px solid var(--line)}
+  .preview iframe{display:block; width:100%; height:68vh; border:0; background:#f1f5f9}
+
+  .toastwrap{position:fixed; z-index:60; left:50%; bottom:18px; transform:translateX(-50%);
+             display:flex; flex-direction:column; gap:8px; align-items:center; pointer-events:none}
+  .toast{background:#0f172a; color:#fff; font-size:12px; font-weight:600; padding:9px 14px;
+         border-radius:999px; box-shadow:0 8px 22px -10px rgba(0,0,0,.5); max-width:90vw}
+
+  .sep{height:1px; background:var(--line); margin:4px 0}
+  .pill-ok{background:#d1fae5; color:#065f46; border-radius:999px; padding:1px 7px; font-size:10px; font-weight:800}
+  .pill-warn{background:#fef3c7; color:#92400e; border-radius:999px; padding:1px 7px; font-size:10px; font-weight:800}
+  .pill-bad{background:#ffe4e6; color:#9f1239; border-radius:999px; padding:1px 7px; font-size:10px; font-weight:800}
+
+  @media (min-width:560px){
+    .grid{grid-template-columns:1fr 1fr}
+    .formgrid{grid-template-columns:1fr 1fr}
+    .formgrid .full{grid-column:1/-1}
+    .name{display:block; font-size:15px; letter-spacing:-.01em}
+    dl.facts{grid-template-columns:repeat(4,1fr)}
+  }
+  @media (min-width:860px){
+    .grid{grid-template-columns:repeat(3,1fr)}
+    .who{display:block}
+  }
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div class="toastwrap" id="toasts"></div>
+
+<script>
+"use strict";
+
+/* ------------------------------------------------------------------ utils */
+const $app = document.getElementById("app");
+const esc = (s) => String(s == null ? "" : s).replace(/[&<>"']/g, (c) => (
+  { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]
+));
+const slugify = (s) => String(s).toLowerCase().replace(/&/g, " ").replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+const uid = () => (window.crypto && crypto.randomUUID ? crypto.randomUUID()
+  : "id-" + Date.now().toString(36) + "-" + Math.random().toString(36).slice(2, 10));
+
+const fmtBytes = (n) => {
+  if (!n && n !== 0) return "—";
+  if (n < 1024) return n + " B";
+  if (n < 1048576) return Math.round(n / 1024) + " KB";
+  return (n / 1048576).toFixed(1) + " MB";
+};
+const fmtDate = (ts) => ts ? new Date(ts).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" }) : "—";
+
+async function sha256Hex(input) {
+  try {
+    if (window.crypto && crypto.subtle) {
+      const buf = await crypto.subtle.digest("SHA-256", input);
+      return Array.from(new Uint8Array(buf)).map((b) => b.toString(16).padStart(2, "0")).join("");
+    }
+  } catch (e) { /* fall through */ }
+  const u8 = input instanceof Uint8Array ? input : new Uint8Array(input);
+  let h = 0x811c9dc5;
+  for (let i = 0; i < u8.length; i++) { h ^= u8[i]; h = Math.imul(h, 0x01000193) >>> 0; }
+  return "fnv" + h.toString(16) + u8.length.toString(16);
+}
+
+function toast(msg, ms) {
+  const el = document.createElement("div");
+  el.className = "toast";
+  el.textContent = msg;
+  document.getElementById("toasts").appendChild(el);
+  setTimeout(() => el.remove(), ms || 2600);
+}
+
+/* ---------------------------------------------------------------- catalog */
+const BATCHES = ["199", "200"];
+
+const SUBJECTS = [
+  "Anatomy", "Physiology", "Histology", "Biochemistry", "Pathology", "Pharmacology",
+  "EPE", "Critical thinking", "Communication skills", "Medical Terminology",
+  "Behavioural science", "MPE", "EPE-2", "Medical research & EBM-1", "Computer"
+];
+
+const YEARS = [
+  {
+    no: 1, label: "Year 1",
+    modules: [
+      ["ISK-101", "horizontal", null], ["INT-102", "horizontal", null],
+      ["BMS-103", "horizontal", null], ["CPS-104", "horizontal", null],
+      ["INT-108", "vertical", null], ["EPE", "vertical", "EPE"],
+      ["Critical thinking", "vertical", "Critical thinking"],
+      ["Communication skills", "vertical", "Communication skills"],
+      ["Medical Terminology", "vertical", "Medical Terminology"]
+    ]
+  },
+  {
+    no: 2, label: "Year 2",
+    modules: [
+      ["NEU-205", "horizontal", null], ["DIG-206", "horizontal", null],
+      ["END-207", "horizontal", null], ["INT-208", "horizontal", null],
+      ["PAT-210", "horizontal", null], ["PSY-213", "horizontal", null],
+      ["RES-234", "horizontal", null], ["EPE-2", "vertical", "EPE-2"],
+      ["MPE", "vertical", "MPE"], ["Computer", "vertical", "Computer"]
+    ]
+  }
+];
+
+const MODULES = [];
+YEARS.forEach((y) => y.modules.forEach(([code, kind, title]) => {
+  MODULES.push({ code, slug: slugify(code), kind, title, year: y.no, sem: null });
+}));
+
+const moduleBySlug = (slug) => MODULES.find((m) => m.slug === slug);
+const moduleByCode = (code) => MODULES.find((m) => m.code === code);
+
+const TYPES = ["slides", "past_paper", "mcq", "summary_note", "syllabus", "practical_guide", "reference"];
+const TYPE_LABEL = {
+  slides: "Slides", past_paper: "Past paper", mcq: "MCQ", summary_note: "Summary note",
+  syllabus: "Syllabus", practical_guide: "Practical", reference: "Reference", video_link: "Video"
+};
+const typeLabel = (t) => TYPE_LABEL[t] || String(t).replace(/_/g, " ");
+
+/* ---------------------------------------------------------------- storage */
+const LS = {
+  users: "sh.users", session: "sh.session", prefs: "sh.prefs", seeded: "sh.seeded"
+};
+const readJSON = (k, fallback) => {
+  try { const v = JSON.parse(localStorage.getItem(k)); return v == null ? fallback : v; }
+  catch (e) { return fallback; }
+};
+const writeJSON = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} };
+
+const DB = {
+  mode: "idb",
+  _openPromise: null,
+  _db: null,
+  _meta: new Map(),
+  _files: new Map(),
+
+  _open() {
+    if (this._openPromise) return this._openPromise;
+    this._openPromise = new Promise((resolve) => {
+      let settled = false;
+      const fallback = () => {
+        if (settled) return;
+        settled = true;
+        this.mode = "memory";
+        this._db = null;
+        resolve(null);
+      };
+      try {
+        if (!("indexedDB" in window)) return fallback();
+        const req = indexedDB.open("studyhub", 1);
+        req.onupgradeneeded = () => {
+          const d = req.result;
+          if (!d.objectStoreNames.contains("meta")) d.createObjectStore("meta", { keyPath: "id" });
+          if (!d.objectStoreNames.contains("files")) d.createObjectStore("files", { keyPath: "id" });
+        };
+        req.onsuccess = () => { if (settled) return; settled = true; this._db = req.result; resolve(req.result); };
+        req.onerror = fallback;
+        req.onblocked = fallback;
+        setTimeout(fallback, 4000);
+      } catch (e) { fallback(); }
+    });
+    return this._openPromise;
+  },
+
+  async allMeta() {
+    await this._open();
+    if (!this._db) return Array.from(this._meta.values());
+    return new Promise((resolve) => {
+      try {
+        const r = this._db.transaction("meta").objectStore("meta").getAll();
+        r.onsuccess = () => resolve(r.result || []);
+        r.onerror = () => resolve(Array.from(this._meta.values()));
+      } catch (e) { resolve(Array.from(this._meta.values())); }
+    });
+  },
+
+  async putMeta(rec) {
+    this._meta.set(rec.id, rec);
+    await this._open();
+    if (!this._db) return;
+    await new Promise((resolve) => {
+      try {
+        const t = this._db.transaction("meta", "readwrite");
+        t.objectStore("meta").put(rec);
+        t.oncomplete = resolve; t.onerror = resolve; t.onabort = resolve;
+      } catch (e) { resolve(); }
+    });
+  },
+
+  async delMeta(id) {
+    this._meta.delete(id);
+    await this._open();
+    if (!this._db) return;
+    await new Promise((resolve) => {
+      try {
+        const t = this._db.transaction("meta", "readwrite");
+        t.objectStore("meta").delete(id);
+        t.oncomplete = resolve; t.onerror = resolve;
+      } catch (e) { resolve(); }
+    });
+  },
+
+  async getFile(id) {
+    await this._open();
+    if (!this._db) return this._files.get(id) || null;
+    return new Promise((resolve) => {
+      try {
+        const r = this._db.transaction("files").objectStore("files").get(id);
+        r.onsuccess = () => resolve(r.result ? r.result.blob : (this._files.get(id) || null));
+        r.onerror = () => resolve(this._files.get(id) || null);
+      } catch (e) { resolve(this._files.get(id) || null); }
+    });
+  },
+
+  async putFile(id, blob) {
+    this._files.set(id, blob);
+    await this._open();
+    if (!this._db) return;
+    await new Promise((resolve) => {
+      try {
+        const t = this._db.transaction("files", "readwrite");
+        t.objectStore("files").put({ id, blob });
+        t.oncomplete = resolve; t.onerror = resolve;
+      } catch (e) { resolve(); }
+    });
+  },
+
+  async delFile(id) {
+    this._files.delete(id);
+    await this._open();
+    if (!this._db) return;
+    await new Promise((resolve) => {
+      try {
+        const t = this._db.transaction("files", "readwrite");
+        t.objectStore("files").delete(id);
+        t.oncomplete = resolve; t.onerror = resolve;
+      } catch (e) { resolve(); }
+    });
+  }
+};
+
+/* ------------------------------------------------------------------- auth */
+const SESSION_DAYS = 30;
+
+const loadUsers = () => readJSON(LS.users, []);
+const saveUsers = (u) => writeJSON(LS.users, u);
+
+function setSession(userId) {
+  writeJSON(LS.session, { uid: userId, exp: Date.now() + SESSION_DAYS * 86400000 });
+}
+function clearSession() { try { localStorage.removeItem(LS.session); } catch (e) {} }
+function readSession() {
+  const s = readJSON(LS.session, null);
+  if (!s || !s.exp || s.exp < Date.now()) return null;
+  return s;
+}
+
+async function hashPassword(password, salt) {
+  const bytes = new TextEncoder().encode(salt + "::" + password);
+  return sha256Hex(bytes);
+}
+
+/* ------------------------------------------------------------------ state */
+const state = {
+  user: null,
+  prefs: readJSON(LS.prefs, { batch: "200", year: 2, sem: null }),
+  previewUrl: null,
+  loginError: "",
+  loginMode: "signin"
+};
+
+/* ------------------------------------------------------------------- pdf */
+function makePdf(title, lines) {
+  const clean = (s) => String(s).replace(/[^\x20-\x7E]/g, "-").replace(/([\\()])/g, "\\$1");
+  const body = [
+    "BT /F1 20 Tf 72 760 Td (" + clean(title) + ") Tj ET",
+    "BT /F1 11 Tf 72 720 Td 18 TL " +
+      lines.map((l) => "(" + clean(l) + ") Tj T*").join(" ") + " ET"
+  ].join("\n");
+  const objs = [
+    "<< /Type /Catalog /Pages 2 0 R >>",
+    "<< /Type /Pages /Kids [3 0 R] /Count 1 >>",
+    "<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 5 0 R >> >> /Contents 4 0 R >>",
+    "<< /Length " + body.length + " >>\nstream\n" + body + "\nendstream",
+    "<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>"
+  ];
+  let out = "%PDF-1.4\n";
+  const offs = [];
+  objs.forEach((o, i) => { offs.push(out.length); out += (i + 1) + " 0 obj\n" + o + "\nendobj\n"; });
+  const xref = out.length;
+  out += "xref\n0 " + (objs.length + 1) + "\n0000000000 65535 f \n";
+  offs.forEach((o) => { out += String(o).padStart(10, "0") + " 00000 n \n"; });
+  out += "trailer\n<< /Size " + (objs.length + 1) + " /Root 1 0 R >>\nstartxref\n" + xref + "\n%%EOF\n";
+  return new Blob([out], { type: "application/pdf" });
+}
+
+/* ------------------------------------------------------------- demo seed */
+const DEMO = [
+  ["NEU-205", "slides", "Cranial nerves — lecture deck", "Anatomy", null, 0],
+  ["NEU-205", "past_paper", "Final 2024 — MCQ paper", "Anatomy", 2024, 3],
+  ["NEU-205", "mcq", "Final 2023 — MCQ answer key", "Anatomy", 2023, 6],
+  ["NEU-205", "summary_note", "Neuro exam quick sheet", "Physiology", null, 9],
+  ["DIG-206", "slides", "GIT anatomy overview", "Anatomy", null, 12],
+  ["DIG-206", "past_paper", "Final 2024 — written paper", "Pathology", 2024, 15],
+  ["DIG-206", "summary_note", "Pharmacology of acid suppression", "Pharmacology", null, 18],
+  ["PAT-210", "summary_note", "General pathology — cell injury", "Pathology", null, 21],
+  ["PAT-210", "mcq", "MCQ bank 2024", "Pathology", 2024, 24],
+  ["PSY-213", "slides", "Introduction to behavioural science", "Behavioural science", null, 27]
+];
+
+async function seedDemo() {
+  if (localStorage.getItem(LS.seeded) === "1") return false;
+  const existing = await DB.allMeta();
+  if (existing.length) { try { localStorage.setItem(LS.seeded, "1"); } catch (e) {} return false; }
+
+  const now = Date.now();
+  for (let i = 0; i < DEMO.length; i++) {
+    const [code, type, title, subject, examYear, daysAgo] = DEMO[i];
+    const mod = moduleByCode(code);
+    if (!mod) continue;
+    const blob = makePdf(title, [
+      "Module: " + code,
+      "Type: " + typeLabel(type),
+      "",
+      "Placeholder generated by StudyHub so the browse,",
+      "search and download flows can be exercised.",
+      "Delete it from the Admin console and add real material.",
+      "",
+      "This is NOT real course content."
+    ]);
+    const buf = await blob.arrayBuffer();
+    const id = uid();
+    const rec = {
+      id,
+      module: code,
+      type,
+      title,
+      examYear: examYear || null,
+      subject: subject || null,
+      status: "published",
+      uploader: "demo seeder",
+      createdAt: now - daysAgo * 86400000,
+      publishedAt: now - daysAgo * 86400000,
+      downloads: 4 + ((i * 7) % 31),
+      isDemo: true,
+      sha256: await sha256Hex(buf),
+      size: blob.size,
+      mime: "application/pdf",
+      hasFile: true,
+      reported: false
+    };
+    await DB.putMeta(rec);
+    await DB.putFile(id, blob);
+  }
+  if (DB.mode !== "memory") {
+    try { localStorage.setItem(LS.seeded, "1"); } catch (e) {}
+  }
+  return true;
+}
+
+/* ---------------------------------------------------------------- helpers */
+const published = (list) => list.filter((r) => r.status === "published");
+const moduleOf = (rec) => moduleByCode(rec.module);
+
+function typeBadge(type) {
+  return '<span class="badge b-type t-' + esc(type) + '">' + esc(typeLabel(type)) + "</span>";
+}
+
+function resourceRow(rec, opts) {
+  opts = opts || {};
+  const mod = moduleOf(rec);
+  const bits = [
+    opts.showModule ? null : rec.subject,
+    rec.examYear || null,
+    rec.size ? fmtBytes(rec.size) : null,
+    rec.downloads ? rec.downloads + " downloads" : null
+  ].filter(Boolean);
+
+  return '<div class="rrow">' +
+    '<div class="body">' +
+      '<div class="row" style="gap:6px">' +
+        typeBadge(rec.type) +
+        (rec.examYear ? '<span class="tiny mono" style="color:#64748b;font-weight:700">' + esc(rec.examYear) + "</span>" : "") +
+        (opts.showModule && mod ? '<a class="tiny mono" style="font-weight:700" href="#/m/' + esc(mod.slug) + '">' + esc(mod.code) + "</a>" : "") +
+        (rec.isDemo ? '<span class="badge b-demo">demo</span>' : "") +
+        (rec.reported ? '<span class="pill-bad">reported</span>' : "") +
+      "</div>" +
+      '<a class="rtitle" href="#/r/' + esc(rec.id) + '">' + esc(rec.title) + "</a>" +
+      (bits.length ? '<p class="rmeta">' + esc(bits.join(" · ")) + "</p>" : "") +
+    "</div>" +
+    (rec.hasFile
+      ? '<button class="btn ghost sm" data-action="download" data-id="' + esc(rec.id) + '">Download</button>'
+      : '<span class="tiny mut" style="align-self:center">no file</span>') +
+  "</div>";
+}
+
+function emptyState(title, sub) {
+  return '<div class="empty"><b>' + esc(title) + "</b>" + (sub ? "<span>" + esc(sub) + "</span>" : "") + "</div>";
+}
+
+function layout(content, opts) {
+  opts = opts || {};
+  const isAdmin = state.user && state.user.role === "admin";
+  return '' +
+  '<header class="top"><div class="topin">' +
+    '<a class="brand" href="#/"><span class="mark">SH</span><span class="name">StudyHub</span></a>' +
+    '<form class="search" data-form="search" role="search">' +
+      '<input name="q" type="search" autocomplete="off" aria-label="Search materials" ' +
+        'placeholder="Search papers, slides, notes…" value="' + esc(opts.q || "") + '">' +
+    "</form>" +
+    '<nav class="nav">' +
+      '<a class="btn ghost sm" href="#/upload">Upload</a>' +
+      (isAdmin ? '<a class="btn ghost sm" href="#/admin">Admin</a>' : "") +
+      '<span class="who" title="' + esc(state.user.username) + '">' + esc(state.user.name || state.user.username) + "</span>" +
+      '<button class="btn ghost sm" data-action="signout" title="Sign out">Sign out</button>' +
+    "</nav>" +
+  "</div></header>" +
+  '<main class="wrap">' +
+    (DB.mode === "memory"
+      ? '<div class="alert warn" style="margin-bottom:14px">Storage is blocked in this browser, so uploads disappear when you reload. Chrome or Edge opened normally (not in private mode) works best.</div>'
+      : "") +
+    content +
+  "</main>" +
+  '<footer class="foot">StudyHub · single-file build. Your library lives in this browser (IndexedDB), not on a server. ' +
+    "Accounts are local to this device and are not security — do not reuse a real password.</footer>";
+}
+
+/* ------------------------------------------------------------------ views */
+function authView() {
+  const users = loadUsers();
+  const firstRun = users.length === 0;
+  const mode = firstRun ? "signup" : state.loginMode;
+  const signup = mode === "signup";
+
+  const form = signup
+    ? '<form data-form="signup">' +
+        '<label class="field">Full name<input name="name" required maxlength="60" placeholder="e.g. Ayesha Rahman"></label>' +
+        '<label class="field">Username<input name="username" required maxlength="24" autocapitalize="none" placeholder="ayesha"></label>' +
+        '<label class="field">Batch<select name="batch">' +
+          BATCHES.map((b) => '<option value="' + b + '"' + (b === state.prefs.batch ? " selected" : "") + ">Batch " + b + "</option>").join("") +
+        "</select></label>" +
+        '<label class="field">Password<input name="password" type="password" required minlength="6" placeholder="At least 6 characters"></label>' +
+        '<button class="btn block" type="submit">' + (firstRun ? "Create admin account" : "Create account") + "</button>" +
+      "</form>"
+    : '<form data-form="signin">' +
+        '<label class="field">Username<input name="username" required autocapitalize="none" autofocus></label>' +
+        '<label class="field">Password<input name="password" type="password" required></label>' +
+        '<button class="btn block" type="submit">Sign in</button>' +
+      "</form>";
+
+  const sw = firstRun
+    ? '<p class="switch">First account on this device becomes the <b>admin</b> (can approve uploads).</p>'
+    : '<p class="switch">' + (signup ? 'Already have an account? <a href="#/login">Sign in</a>'
+        : 'New here? <a href="#/login?mode=signup">Create an account</a>') + "</p>";
+
+  return '<div class="auth"><div class="authcard">' +
+    '<div class="mark">SH</div>' +
+    "<h1>" + (firstRun ? "Set up StudyHub" : signup ? "Create your account" : "Welcome back") + "</h1>" +
+    '<p class="sub">Slides, past papers, MCQs and notes — one link per file, no endless scrolling.</p>' +
+    (state.loginError ? '<div class="alert err" style="margin-bottom:12px">' + esc(state.loginError) + "</div>" : "") +
+    form + sw +
+    '<p class="switch" style="margin-top:10px">You stay signed in on this device for ' + SESSION_DAYS + " days.</p>" +
+  "</div></div>";
+}
+
+function homeView(meta, params) {
+  const batch = params.get("b") || state.prefs.batch || BATCHES[0];
+  const yearNo = Number(params.get("y") || state.prefs.year || 2);
+  const semRaw = params.get("sem");
+  const sem = semRaw === "1" ? 1 : semRaw === "2" ? 2 : null;
+  const year = YEARS.find((y) => y.no === yearNo) || YEARS[YEARS.length - 1];
+
+  state.prefs = { batch, year: year.no, sem };
+  writeJSON(LS.prefs, state.prefs);
+
+  const mods = MODULES.filter((m) => m.year === year.no);
+  const pub = published(meta);
+  const semesterMapped = mods.some((m) => m.sem !== null);
+  const visible = mods.filter((m) => sem === null || m.sem === null || m.sem === sem);
+
+  const counts = {};
+  pub.forEach((r) => {
+    const c = counts[r.module] || (counts[r.module] = { total: 0, papers: 0, slides: 0 });
+    c.total++;
+    if (r.type === "past_paper") c.papers++;
+    if (r.type === "slides") c.slides++;
+  });
+
+  const homeHref = (o) => {
+    const p = new URLSearchParams();
+    p.set("b", o.b || batch);
+    p.set("y", String(o.y || year.no));
+    const s = o.sem === undefined ? sem : o.sem;
+    if (s) p.set("sem", String(s));
+    return "#/?" + p.toString();
+  };
+
+  const chips = (label, items) =>
+    '<div class="row" style="margin-top:10px;gap:6px"><span class="tiny" style="font-weight:800;color:#94a3b8;text-transform:uppercase;letter-spacing:.05em">' + label + "</span>" +
+    items.join("") + "</div>";
+
+  const totalFiles = visible.reduce((n, m) => n + ((counts[m.code] || {}).total || 0), 0);
+
+  const grid = visible.map((m) => {
+    const c = counts[m.code] || { total: 0, papers: 0, slides: 0 };
+    const bits = [c.total + (c.total === 1 ? " file" : " files")];
+    if (c.papers) bits.push(c.papers + " papers");
+    if (c.slides) bits.push(c.slides + " decks");
+    return '<a class="tile" href="#/m/' + esc(m.slug) + '">' +
+      '<div class="row" style="justify-content:space-between;flex-wrap:nowrap">' +
+        '<span class="code">' + esc(m.code) + "</span>" +
+        '<span class="badge ' + (m.kind === "vertical" ? "b-vert" : "b-horz") + '">' + (m.kind === "vertical" ? "Vertical" : "Horizontal") + "</span>" +
+      "</div>" +
+      '<span class="title">' + (m.title ? esc(m.title) : '<i style="color:#cbd5e1">Title not set</i>') + "</span>" +
+      '<span class="meta">' + esc(bits.join(" · ")) + "</span>" +
+    "</a>";
+  }).join("");
+
+  const recent = pub.slice().sort((a, b) => (b.publishedAt || b.createdAt) - (a.publishedAt || a.createdAt)).slice(0, 4);
+
+  return layout(
+    '<div class="stack">' +
+      '<section class="hero">' +
+        "<h1>Your semester, minus the 8,000 messages.</h1>" +
+        "<p>Pick your batch and year. Every file has one home, one link, and a download button that works.</p>" +
+        chips("Batch", BATCHES.map((b) =>
+          '<a class="chip' + (b === batch ? " on" : "") + '" href="' + homeHref({ b }) + '">' + b + "</a>")) +
+        chips("Year", YEARS.map((y) =>
+          '<a class="chip' + (y.no === year.no ? " on" : "") + '" href="' + homeHref({ y: y.no }) + '">' + esc(y.label) + "</a>")) +
+        chips("Semester", [
+          '<a class="chip' + (sem === null ? " on" : "") + '" href="' + homeHref({ sem: null }) + '">All</a>',
+          '<a class="chip' + (sem === 1 ? " on" : "") + '" href="' + homeHref({ sem: 1 }) + '">1st</a>',
+          '<a class="chip' + (sem === 2 ? " on" : "") + '" href="' + homeHref({ sem: 2 }) + '">2nd</a>'
+        ]) +
+        (semesterMapped ? "" :
+          '<div class="alert warn" style="margin-top:12px">Semester mapping is not set for ' + esc(year.label) +
+          " yet, so this filter does not narrow anything. Add it in the Admin console when you know which modules run when.</div>") +
+      "</section>" +
+
+      "<section>" +
+        '<div class="between" style="margin-bottom:10px">' +
+          '<h2 class="small" style="text-transform:uppercase;letter-spacing:.06em;color:#64748b">' + esc(year.label) + " · " + visible.length + " modules</h2>" +
+          '<span class="tiny mut">' + totalFiles + " files published</span>" +
+        "</div>" +
+        (visible.length ? '<div class="grid">' + grid + "</div>" : emptyState("No modules for this selection")) +
+      "</section>" +
+
+      (recent.length
+        ? "<section>" +
+            '<div class="between" style="margin-bottom:10px">' +
+              '<h2 class="small" style="text-transform:uppercase;letter-spacing:.06em;color:#64748b">Recently added</h2>' +
+              '<a class="tiny" href="#/search?q=" style="font-weight:700">Browse everything</a>' +
+            "</div>" +
+            '<div class="list">' + recent.map((r) => resourceRow(r, { showModule: true })).join("") + "</div>" +
+          "</section>"
+        : "") +
+    "</div>",
+    { q: "" }
+  );
+}
+
+function moduleView(meta, params) {
+  const slug = params.get("slug");
+  const mod = moduleBySlug(slug);
+  if (!mod) return layout(emptyState("Module not found", "Check the link or go back to your year."));
+
+  const all = meta.filter((r) => r.module === mod.code && r.status === "published");
+  const type = TYPES.indexOf(params.get("type")) >= 0 ? params.get("type") : null;
+  const subject = params.get("subject") || null;
+
+  const subjects = Array.from(new Set(all.map((r) => r.subject).filter(Boolean))).sort();
+  const counts = {};
+  all.forEach((r) => { counts[r.type] = (counts[r.type] || 0) + 1; });
+
+  const list = all
+    .filter((r) => (!type || r.type === type) && (!subject || r.subject === subject))
+    .sort((a, b) => (b.publishedAt || 0) - (a.publishedAt || 0));
+
+  const href = (o) => {
+    const p = new URLSearchParams();
+    const t = o.type === undefined ? type : o.type;
+    const s = o.subject === undefined ? subject : o.subject;
+    if (t) p.set("type", t);
+    if (s) p.set("subject", s);
+    const qs = p.toString();
+    return "#/m/" + mod.slug + (qs ? "?" + qs : "");
+  };
+
+  return layout(
+    '<div class="stack">' +
+      '<nav class="tiny mut"><a href="#/?y=' + mod.year + '">Year ' + mod.year + "</a> <span style=\"margin:0 6px\">/</span>" +
+        '<span class="mono" style="color:#334155">' + esc(mod.code) + "</span></nav>" +
+
+      '<header class="card">' +
+        '<div class="row">' +
+          '<h1 class="mono" style="font-size:22px">' + esc(mod.code) + "</h1>" +
+          '<span class="badge ' + (mod.kind === "vertical" ? "b-vert" : "b-horz") + '">' + (mod.kind === "vertical" ? "Vertical" : "Horizontal") + "</span>" +
+          '<span class="tiny mut">' + all.length + (all.length === 1 ? " file" : " files") + "</span>" +
+        "</div>" +
+        '<p class="small mut" style="margin:6px 0 0">' + (mod.title ? esc(mod.title) : '<i style="color:#cbd5e1">Title not set yet</i>') + "</p>" +
+        (subjects.length
+          ? '<div class="row" style="margin-top:14px"><span class="tiny" style="font-weight:800;color:#94a3b8;text-transform:uppercase;letter-spacing:.05em">Subject</span>' +
+            '<a class="chip' + (!subject ? " on" : "") + '" href="' + href({ subject: null }) + '">All</a>' +
+            subjects.map((s) => '<a class="chip' + (s === subject ? " on" : "") + '" href="' + href({ subject: s }) + '">' + esc(s) + "</a>").join("") +
+            "</div>"
+          : "") +
+      "</header>" +
+
+      (Object.keys(counts).length
+        ? '<div class="chips" style="overflow-x:auto;padding-bottom:2px">' +
+            '<a class="chip' + (!type ? " on" : "") + '" href="' + href({ type: null }) + '">All (' + all.length + ")</a>" +
+            TYPES.filter((t) => counts[t]).map((t) =>
+              '<a class="chip' + (t === type ? " on" : "") + '" href="' + href({ type: t }) + '">' + esc(typeLabel(t)) + " (" + counts[t] + ")</a>").join("") +
+          "</div>"
+        : "") +
+
+      (list.length
+        ? '<div class="list">' + list.map((r) => resourceRow(r)).join("") + "</div>"
+        : emptyState("No files match this filter",
+            all.length ? "Try a different type or subject." : "Nothing published for this module yet. Upload the slides and past papers.")) +
+
+      '<p class="tiny mut">Last updated ' + fmtDate(list[0] ? (list[0].publishedAt || list[0].createdAt) : null) +
+        ' · <a href="#/upload?module=' + encodeURIComponent(mod.code) + '">contribute a file</a></p>' +
+    "</div>"
+  );
+}
+
+async function resourceView(meta, params) {
+  const id = params.get("id");
+  const rec = meta.find((r) => r.id === id);
+  if (!rec) return layout(emptyState("File not found", "It may have been removed."));
+  if (rec.status !== "published" && state.user.role !== "admin") {
+    return layout(emptyState("Not published", "This file is still waiting for review."));
+  }
+
+  const mod = moduleOf(rec);
+  let blobUrl = "";
+  let blob = null;
+  if (rec.hasFile) {
+    blob = await DB.getFile(rec.id);
+    if (blob) {
+      blobUrl = URL.createObjectURL(blob);
+      state.previewUrl = blobUrl;
+    }
+  }
+
+  return layout(
+    '<div class="stack">' +
+      '<nav class="tiny mut"><a href="#/m/' + esc(mod.slug) + '">' + esc(mod.code) + "</a>" +
+        '<span style="margin:0 6px">/</span><span style="color:#334155">' + esc(rec.title) + "</span></nav>" +
+
+      (rec.status !== "published"
+        ? '<div class="alert warn">Not published — only admins can see this. Status: <b>' + esc(rec.status) + "</b></div>"
+        : "") +
+
+      '<header class="detail-head">' +
+        '<div class="row" style="gap:6px">' + typeBadge(rec.type) +
+          (rec.examYear ? '<span class="tiny mono" style="font-weight:700;color:#64748b">' + esc(rec.examYear) + "</span>" : "") +
+          (rec.isDemo ? '<span class="badge b-demo">demo</span>' : "") +
+        "</div>" +
+        '<h1 style="font-size:20px;margin-top:8px">' + esc(rec.title) + "</h1>" +
+        (rec.description ? '<p class="small mut">' + esc(rec.description) + "</p>" : "") +
+        '<dl class="facts">' +
+          "<div><dt>Module</dt><dd>" + esc(mod.code) + "</dd></div>" +
+          "<div><dt>Subject</dt><dd>" + esc(rec.subject || "—") + "</dd></div>" +
+          "<div><dt>Size · pages</dt><dd>" + esc(fmtBytes(rec.size)) + "</dd></div>" +
+          "<div><dt>Downloads</dt><dd data-dl-count>" + esc(rec.downloads || 0) + "</dd></div>" +
+        "</dl>" +
+        '<div class="row" style="margin-top:16px">' +
+          (rec.hasFile && blobUrl
+            ? '<button class="btn" data-action="download" data-id="' + esc(rec.id) + '">Download ' + esc(fmtBytes(rec.size)) + "</button>"
+            : rec.hasFile
+              ? '<span class="btn" style="background:#e2e8f0;color:#64748b;cursor:not-allowed">File missing</span>'
+              : '<span class="btn" style="background:#e2e8f0;color:#64748b;cursor:not-allowed">No file attached</span>') +
+          (blobUrl ? '<a class="btn ghost" href="' + esc(blobUrl) + '" target="_blank" rel="noreferrer">Open in new tab</a>' : "") +
+          '<span class="tiny mut">added ' + esc(fmtDate(rec.publishedAt || rec.createdAt)) +
+            (rec.uploader ? " by " + esc(rec.uploader) : "") + "</span>" +
+        "</div>" +
+      "</header>" +
+
+      (blobUrl
+        ? '<section class="preview"><div class="ph"><span class="tiny" style="font-weight:800;color:#94a3b8;text-transform:uppercase;letter-spacing:.05em">Preview</span>' +
+            '<a class="tiny" style="font-weight:700" href="' + esc(blobUrl) + '" target="_blank" rel="noreferrer">Open full size</a></div>' +
+            '<iframe src="' + esc(blobUrl) + '" title="' + esc(rec.title) + '"></iframe></section>'
+        : "") +
+
+      '<details class="card" style="padding:14px">' +
+        '<summary class="small" style="font-weight:700;color:#475569;cursor:pointer">Report a problem with this file</summary>' +
+        '<form data-form="report" data-id="' + esc(rec.id) + '" style="margin-top:12px" class="row">' +
+          '<select name="reason" class="field" style="padding:8px 10px;border:1px solid #cbd5e1;border-radius:8px;font-size:13px">' +
+            '<option value="broken_file">File will not open / is corrupted</option>' +
+            '<option value="wrong_module">Wrong module or subject</option>' +
+            '<option value="duplicate">Duplicate of another file</option>' +
+            '<option value="copyright">Should not be published</option>' +
+            '<option value="low_quality">Unreadable scan</option>' +
+            '<option value="other">Something else</option>' +
+          "</select>" +
+          '<input name="detail" placeholder="Optional detail" style="flex:1;min-width:180px;padding:8px 10px;border:1px solid #cbd5e1;border-radius:8px;font-size:13px">' +
+          '<button class="btn ghost sm" type="submit">Send</button>' +
+        "</form>" +
+      "</details>" +
+    "</div>",
+    { q: "" }
+  );
+}
+
+function searchView(meta, params) {
+  const term = (params.get("q") || "").trim();
+  const pub = published(meta);
+  const q = term.toLowerCase();
+
+  const score = (r) => {
+    const mod = moduleOf(r);
+    const t = r.title.toLowerCase();
+    let s = 0;
+    if (t === q) s += 100;
+    if (t.startsWith(q)) s += 40;
+    if (t.includes(q)) s += 20;
+    if ((mod.code || "").toLowerCase().includes(q)) s += 30;
+    if ((mod.title || "").toLowerCase().includes(q)) s += 15;
+    if ((r.subject || "").toLowerCase().includes(q)) s += 10;
+    if (String(r.examYear || "") === q) s += 25;
+    if (typeLabel(r.type).toLowerCase().includes(q)) s += 5;
+    return s;
+  };
+
+  const results = q
+    ? pub.map((r) => ({ r, s: score(r) }))
+        .filter((x) => x.s > 0)
+        .sort((a, b) => b.s - a.s || (b.r.downloads || 0) - (a.r.downloads || 0))
+        .slice(0, 40)
+        .map((x) => x.r)
+    : [];
+
+  const recent = pub.slice().sort((a, b) => (b.publishedAt || 0) - (a.publishedAt || 0)).slice(0, 4);
+
+  return layout(
+    '<div class="stack">' +
+      '<form data-form="search" class="row" style="gap:8px">' +
+        '<input name="q" value="' + esc(term) + '" placeholder="e.g. NEU-205 final, cranial nerves, MCQ 2024" ' +
+          'style="flex:1;min-width:200px;padding:10px 12px;border:1px solid #cbd5e1;border-radius:9px;font-size:14px" autofocus>' +
+        '<button class="btn" type="submit">Search</button>' +
+      "</form>" +
+
+      (!term
+        ? emptyState("Search the whole library", "Try a module code (NEU-205), a topic (cranial nerves) or a year (2024).")
+        : results.length
+          ? '<p class="tiny mut">' + results.length + (results.length === 1 ? " result" : " results") +
+              " for <b style=\"color:#334155\">“" + esc(term) + "”</b></p>" +
+            '<div class="list">' + results.map((r) => resourceRow(r, { showModule: true })).join("") + "</div>"
+          : emptyState('No files found for “' + term + '”', "If it exists in a Telegram channel it has not been catalogued yet — upload it and it becomes searchable.")) +
+
+      (term && !results.length && recent.length
+        ? "<section><h2 class=\"tiny\" style=\"text-transform:uppercase;letter-spacing:.06em;color:#94a3b8\">Recently added instead</h2><div class=\"list\" style=\"margin-top:8px\">" +
+            recent.map((r) => resourceRow(r, { showModule: true })).join("") + "</div></section>"
+        : "") +
+    "</div>",
+    { q: term }
+  );
+}
+
+function uploadView(meta, params) {
+  const preset = params.get("module") || "";
+  const mod = moduleByCode(preset);
+  const isAdmin = state.user.role === "admin";
+
+  return layout(
+    '<div class="stack" style="max-width:760px">' +
+      "<div>" +
+        '<h1 style="font-size:20px">Upload a file</h1>' +
+        '<p class="small mut">PDF only, 25 MB max. Duplicates are rejected by content hash. ' +
+          (isAdmin ? "As an admin you can publish immediately or send it to the queue." : "Your upload goes to the review queue and appears once an admin approves it.") + "</p>" +
+      "</div>" +
+
+      '<form class="card" data-form="upload">' +
+        '<div class="formgrid">' +
+          '<label class="field full">Module<select name="module" required>' +
+            '<option value="">Select module…</option>' +
+            YEARS.map((y) =>
+              '<optgroup label="' + esc(y.label) + '">' +
+                MODULES.filter((m) => m.year === y.no).map((m) =>
+                  '<option value="' + esc(m.code) + '"' + (preset === m.code ? " selected" : "") + ">" +
+                    esc(m.code) + (m.title ? " — " + esc(m.title) : "") + "</option>").join("") +
+              "</optgroup>").join("") +
+          "</select></label>" +
+
+          '<label class="field">Type<select name="type" required>' +
+            TYPES.map((t) => '<option value="' + t + '">' + esc(typeLabel(t)) + "</option>").join("") +
+          "</select></label>" +
+
+          '<label class="field">Exam year <span style="font-weight:400;color:#94a3b8">(optional)</span>' +
+            '<input name="examYear" type="number" min="1980" max="2100" placeholder="2024"></label>' +
+
+          '<label class="field full">Title<input name="title" required maxlength="160" placeholder="Final 2024 — MCQ paper (with answer key)"></label>' +
+
+          '<label class="field">Subject <span style="font-weight:400;color:#94a3b8">(optional)</span><select name="subject">' +
+            '<option value="">Not specified</option>' +
+            SUBJECTS.map((s) => '<option value="' + esc(s) + '">' + esc(s) + "</option>").join("") +
+          "</select></label>" +
+
+          '<label class="field">PDF file<input name="file" type="file" accept="application/pdf,.pdf" required></label>' +
+
+          (isAdmin
+            ? '<label class="check full"><input type="checkbox" name="publish" value="1"> Publish immediately (skip the queue)</label>'
+            : "") +
+        "</div>" +
+        '<div class="row" style="margin-top:14px">' +
+          '<button class="btn" type="submit">Upload</button>' +
+          '<span class="tiny mut">Nothing is visible to students until it is published.</span>' +
+        "</div>" +
+      "</form>" +
+
+      (mod ? '<p class="tiny mut">Uploading into <b class="mono">' + esc(mod.code) + "</b>.</p>" : "") +
+    "</div>"
+  );
+}
+
+function adminView(meta) {
+  if (state.user.role !== "admin") {
+    return layout(emptyState("Admins only", "Sign in with the admin account to review uploads."));
+  }
+
+  const pending = meta.filter((r) => r.status === "pending_review").sort((a, b) => a.createdAt - b.createdAt);
+  const pub = meta.filter((r) => r.status === "published").sort((a, b) => (b.publishedAt || 0) - (a.publishedAt || 0));
+  const reported = meta.filter((r) => r.reported && r.status === "published");
+  const demoCount = meta.filter((r) => r.isDemo).length;
+  const totalDownloads = meta.reduce((n, r) => n + (r.downloads || 0), 0);
+
+  const stat = (label, value) =>
+    '<div class="card" style="padding:12px"><div class="tiny" style="font-weight:800;color:#94a3b8;text-transform:uppercase;letter-spacing:.05em">' +
+    label + '</div><div style="font-size:20px;font-weight:800;margin-top:2px">' + value + "</div></div>";
+
+  return layout(
+    '<div class="stack">' +
+      '<div class="between">' +
+        "<div><h1 style=\"font-size:20px\">Admin console</h1>" +
+          '<p class="tiny mut">Upload → review → publish. Nothing reaches students until you say so.</p></div>' +
+        '<div class="row"><a class="btn ghost sm" href="#/upload">Upload</a>' +
+          '<button class="btn ghost sm" data-action="export">Export library</button>' +
+          '<label class="btn ghost sm" style="cursor:pointer">Import<input type="file" accept="application/json,.json" data-import hidden></label>' +
+        "</div>" +
+      "</div>" +
+
+      (demoCount
+        ? '<div class="alert warn">' + demoCount + ' demo files are published so the app is not empty. ' +
+          '<button class="btn ghost sm" data-action="remove-demo" style="margin-left:6px">Remove demo files</button></div>'
+        : "") +
+
+      '<section class="grid" style="grid-template-columns:repeat(2,1fr)">' +
+        stat("Published", pub.length) + stat("Pending review", pending.length) +
+        stat("Modules", MODULES.length) + stat("Downloads", totalDownloads) +
+      "</section>" +
+
+      "<section>" +
+        '<h2 class="small" style="font-weight:800;margin-bottom:8px">Review queue' + (pending.length ? " (" + pending.length + ")" : "") + "</h2>" +
+        (pending.length
+          ? '<div class="list">' + pending.map((r) => {
+              const mod = moduleOf(r);
+              return '<div class="rrow">' +
+                '<div class="body">' +
+                  '<div class="row" style="gap:6px">' + typeBadge(r.type) +
+                    '<span class="tiny mono" style="color:#64748b">' + esc(mod ? mod.code : r.module) + "</span>" +
+                    (r.examYear ? '<span class="tiny mut">' + esc(r.examYear) + "</span>" : "") +
+                    '<span class="tiny mut">' + esc(fmtBytes(r.size)) + "</span>" +
+                  "</div>" +
+                  '<a class="rtitle" href="#/r/' + esc(r.id) + '">' + esc(r.title) + "</a>" +
+                  '<p class="rmeta">from ' + esc(r.uploader || "unknown") + " · " + esc(fmtDate(r.createdAt)) + "</p>" +
+                "</div>" +
+                '<div class="row" style="gap:6px;flex-wrap:nowrap">' +
+                  '<button class="btn sm" data-action="approve" data-id="' + esc(r.id) + '">Approve</button>' +
+                  '<button class="btn ghost sm" data-action="reject" data-id="' + esc(r.id) + '">Reject</button>' +
+                  '<button class="btn danger sm" data-action="delete" data-id="' + esc(r.id) + '">Delete</button>' +
+                "</div>" +
+              "</div>";
+            }).join("") + "</div>"
+          : emptyState("Queue is clear", "New uploads land here.")) +
+      "</section>" +
+
+      (reported.length
+        ? "<section>" +
+            '<h2 class="small" style="font-weight:800;margin-bottom:8px">Reported files</h2>' +
+            '<div class="list">' + reported.map((r) =>
+              '<div class="rrow" style="border-color:#fecdd3;background:#fff1f2">' +
+                '<div class="body"><a class="rtitle" href="#/r/' + esc(r.id) + '">' + esc(r.title) + "</a>" +
+                  '<p class="rmeta">' + esc(r.module) + " · flagged by a student</p></div>" +
+                '<div class="row" style="gap:6px;flex-wrap:nowrap">' +
+                  '<button class="btn ghost sm" data-action="clear-report" data-id="' + esc(r.id) + '">Dismiss</button>' +
+                  '<button class="btn danger sm" data-action="unpublish" data-id="' + esc(r.id) + '">Hide file</button>' +
+                "</div>" +
+              "</div>").join("") + "</div>" +
+          "</section>"
+        : "") +
+
+      "<section>" +
+        '<h2 class="small" style="font-weight:800;margin-bottom:8px">Recently published</h2>' +
+        '<div class="tblwrap"><table><thead><tr><th>Title</th><th>Module</th><th>Type</th><th>DL</th><th></th></tr></thead><tbody>' +
+        (pub.slice(0, 15).map((r) =>
+          '<tr><td style="max-width:280px"><a href="#/r/' + esc(r.id) + '">' + esc(r.title) + "</a>" +
+            (r.isDemo ? ' <span class="badge b-demo">demo</span>' : "") + "</td>" +
+          '<td class="mono">' + esc(r.module) + "</td><td>" + esc(typeLabel(r.type)) + "</td>" +
+          "<td>" + esc(r.downloads || 0) + "</td>" +
+          '<td style="text-align:right"><button class="btn ghost sm" data-action="unpublish" data-id="' + esc(r.id) + '">Unpublish</button> ' +
+            '<button class="btn danger sm" data-action="delete" data-id="' + esc(r.id) + '">Delete</button></td></tr>').join("") ||
+          '<tr><td colspan="5" style="text-align:center;color:#94a3b8;padding:18px">Nothing published yet.</td></tr>') +
+        "</tbody></table></div>" +
+      "</section>" +
+
+      '<p class="tiny mut">Import merges by content hash, so importing the same export twice is safe. ' +
+        "Export includes the PDF bytes and can be large.</p>" +
+    "</div>"
+  );
+}
+
+/* ----------------------------------------------------------------- router */
+function currentRoute() {
+  const raw = (location.hash || "#/").replace(/^#/, "") || "/";
+  const qi = raw.indexOf("?");
+  const path = qi >= 0 ? raw.slice(0, qi) : raw;
+  const params = new URLSearchParams(qi >= 0 ? raw.slice(qi + 1) : "");
+  return { path: path || "/", params };
+}
+
+function go(hash) {
+  if (location.hash === hash) render();
+  else location.hash = hash;
+}
+
+function revokePreview() {
+  if (state.previewUrl) {
+    try { URL.revokeObjectURL(state.previewUrl); } catch (e) {}
+    state.previewUrl = null;
+  }
+}
+
+async function render() {
+  revokePreview();
+
+  const session = readSession();
+  if (!session) {
+    state.user = null;
+    const loggedOutRoute = currentRoute();
+    state.loginMode = loggedOutRoute.params.get("mode") === "signup" ? "signup" : "signin";
+    $app.innerHTML = authView();
+    return;
+  }
+  if (!state.user) {
+    const users = loadUsers();
+    state.user = users.find((u) => u.id === session.uid) || null;
+    if (!state.user) { clearSession(); $app.innerHTML = authView(); return; }
+  }
+
+  const meta = await DB.allMeta();
+  const { path, params } = currentRoute();
+  const parts = path.split("/").filter(Boolean); // e.g. ['m','neu-205']
+
+  let html;
+  try {
+    if (path === "/" || path === "") html = homeView(meta, params);
+    else if (parts[0] === "m" && parts[1]) {
+      const mp = new URLSearchParams(params);
+      mp.set("slug", decodeURIComponent(parts[1]));
+      html = moduleView(meta, mp);
+    }
+    else if (parts[0] === "r" && parts[1]) html = await resourceView(meta, new URLSearchParams({ id: decodeURIComponent(parts[1]) }));
+    else if (parts[0] === "search") html = searchView(meta, params);
+    else if (parts[0] === "upload") html = uploadView(meta, params);
+    else if (parts[0] === "admin") html = adminView(meta);
+    else if (parts[0] === "login") {
+      state.loginMode = params.get("mode") === "signup" ? "signup" : "signin";
+      $app.innerHTML = authView();
+      return;
+    } else html = layout(emptyState("Page not found", "Use the header to get back."));
+  } catch (err) {
+    html = layout('<div class="alert err">Something broke: ' + esc(err.message) + "</div>");
+  }
+
+  $app.innerHTML = html;
+}
+
+/* ------------------------------------------------------------- interactions */
+function syncFormState() {
+  state.loginError = "";
+}
+
+async function handleSignIn(form) {
+  const fd = new FormData(form);
+  const username = String(fd.get("username") || "").trim();
+  const password = String(fd.get("password") || "");
+  const users = loadUsers();
+  const user = users.find((u) => u.username.toLowerCase() === username.toLowerCase());
+
+  if (!user) { state.loginError = "No account with that username on this device."; await render(); return; }
+  const pass = await hashPassword(password, user.salt);
+  if (pass !== user.pass) { state.loginError = "Wrong password."; await render(); return; }
+
+  setSession(user.id);
+  state.user = user;
+  state.loginError = "";
+  toast("Signed in as " + (user.name || user.username));
+  go("#/");
+}
+
+async function handleSignUp(form) {
+  const fd = new FormData(form);
+  const name = String(fd.get("name") || "").trim();
+  const username = String(fd.get("username") || "").trim();
+  const password = String(fd.get("password") || "");
+  const batch = String(fd.get("batch") || BATCHES[0]);
+  const users = loadUsers();
+
+  if (username.length < 3) { state.loginError = "Username needs at least 3 characters."; await render(); return; }
+  if (users.some((u) => u.username.toLowerCase() === username.toLowerCase())) {
+    state.loginError = "That username already exists on this device."; await render(); return;
+  }
+  if (password.length < 6) { state.loginError = "Password needs at least 6 characters."; await render(); return; }
+
+  const salt = uid().slice(0, 12);
+  const user = {
+    id: uid(), username, name: name || username, batch,
+    role: users.length === 0 ? "admin" : "student",
+    salt, pass: await hashPassword(password, salt), createdAt: Date.now()
+  };
+  users.push(user);
+  saveUsers(users);
+  setSession(user.id);
+  state.user = user;
+  state.loginError = "";
+  toast("Account created — you are the " + user.role);
+  go("#/");
+}
+
+async function handleUpload(form) {
+  const fd = new FormData(form);
+  const file = fd.get("file");
+  const moduleCode = String(fd.get("module") || "");
+  const type = String(fd.get("type") || "");
+  const title = String(fd.get("title") || "").trim();
+  const examYearRaw = String(fd.get("examYear") || "").trim();
+  const subject = String(fd.get("subject") || "");
+  const publish = state.user.role === "admin" && fd.get("publish") === "1";
+
+  if (!(file instanceof File) || !file.size) { toast("Attach a PDF first."); return; }
+  if (file.size > 25 * 1024 * 1024) { toast("File is larger than 25 MB."); return; }
+  if (!/\.pdf$/i.test(file.name) && file.type !== "application/pdf") { toast("Only PDF files are accepted."); return; }
+  if (!moduleCode) { toast("Pick a module."); return; }
+  if (!title) { toast("Give it a title."); return; }
+
+  const examYear = examYearRaw ? Number(examYearRaw) : null;
+  if (examYear !== null && (!Number.isInteger(examYear) || examYear < 1980 || examYear > 2100)) {
+    toast("Exam year looks wrong."); return;
+  }
+
+  const btn = form.querySelector('button[type="submit"]');
+  if (btn) { btn.disabled = true; btn.textContent = "Hashing…"; }
+
+  try {
+    const buf = await file.arrayBuffer();
+    const hash = await sha256Hex(buf);
+
+    const all = await DB.allMeta();
+    const dup = all.find((r) => r.sha256 === hash && r.status !== "rejected");
+    if (dup) {
+      toast("Duplicate — already in the library.");
+      if (btn) { btn.disabled = false; btn.textContent = "Upload"; }
+      go("#/r/" + dup.id);
+      return;
+    }
+
+    const id = uid();
+    const rec = {
+      id, module: moduleCode, type, title,
+      examYear, subject: subject || null,
+      status: publish ? "published" : "pending_review",
+      uploader: state.user.name || state.user.username,
+      createdAt: Date.now(),
+      publishedAt: publish ? Date.now() : null,
+      downloads: 0,
+      isDemo: false,
+      sha256: hash,
+      size: file.size,
+      mime: "application/pdf",
+      hasFile: true,
+      reported: false
+    };
+
+    await DB.putFile(id, file);
+    await DB.putMeta(rec);
+
+    toast(publish ? "Published." : "Uploaded — waiting for review.");
+    go(publish ? "#/r/" + id : "#/upload");
+  } catch (err) {
+    toast("Upload failed: " + err.message);
+    if (btn) { btn.disabled = false; btn.textContent = "Upload"; }
+  }
+}
+
+async function handleDownload(id) {
+  const meta = await DB.allMeta();
+  const rec = meta.find((r) => r.id === id);
+  if (!rec) return;
+
+  const blob = await DB.getFile(id);
+  if (!blob) { toast("File missing on this device."); return; }
+
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = slugify(rec.title) + ".pdf";
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 30000);
+
+  rec.downloads = (rec.downloads || 0) + 1;
+  await DB.putMeta(rec);
+  const node = document.querySelector("[data-dl-count]");
+  if (node) node.textContent = rec.downloads;
+  toast("Downloading…");
+}
+
+function exportJson(meta) {
+  toast("Preparing export…", 4000);
+  (async () => {
+    const records = [];
+    for (const rec of meta) {
+      const entry = Object.assign({}, rec);
+      if (rec.hasFile) {
+        const blob = await DB.getFile(rec.id);
+        if (blob) entry.fileB64 = await blobToBase64(blob);
+      }
+      records.push(entry);
+    }
+    const payload = { app: "studyhub", version: 1, exportedAt: new Date().toISOString(), resources: records };
+    const blob = new Blob([JSON.stringify(payload)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "studyhub-library-" + new Date().toISOString().slice(0, 10) + ".json";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 30000);
+    toast("Exported " + records.length + " files.");
+  })();
+}
+
+function blobToBase64(blob) {
+  return new Promise((resolve, reject) => {
+    const fr = new FileReader();
+    fr.onload = () => resolve(String(fr.result).split(",")[1] || "");
+    fr.onerror = () => reject(fr.error);
+    fr.readAsDataURL(blob);
+  });
+}
+
+function base64ToBlob(b64, mime) {
+  const bin = atob(b64);
+  const u8 = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) u8[i] = bin.charCodeAt(i);
+  return new Blob([u8], { type: mime || "application/pdf" });
+}
+
+async function importJson(file) {
+  let payload;
+  try { payload = JSON.parse(await file.text()); }
+  catch (e) { toast("That is not a valid export file."); return; }
+  if (!payload || !Array.isArray(payload.resources)) { toast("That is not a StudyHub export."); return; }
+
+  const existing = await DB.allMeta();
+  const hashes = new Set(existing.map((r) => r.sha256).filter(Boolean));
+  let added = 0, skipped = 0;
+
+  for (const raw of payload.resources) {
+    if (!raw || !raw.id || !raw.title) continue;
+    if (raw.sha256 && hashes.has(raw.sha256)) { skipped++; continue; }
+    const rec = Object.assign({}, raw);
+    delete rec.fileB64;
+    rec.status = raw.status === "published" ? "published" : "pending_review";
+    rec.uploader = rec.uploader || "import";
+    rec.createdAt = rec.createdAt || Date.now();
+    rec.downloads = rec.downloads || 0;
+    rec.hasFile = Boolean(raw.fileB64);
+    if (raw.fileB64) {
+      const blob = base64ToBlob(raw.fileB64, raw.mime);
+      await DB.putFile(rec.id, blob);
+      rec.size = blob.size;
+    }
+    if (rec.sha256) hashes.add(rec.sha256);
+    await DB.putMeta(rec);
+    added++;
+  }
+
+  toast(added + " added, " + skipped + " duplicates skipped.", 4000);
+  render();
+}
+
+/* --------------------------------------------------------------- listeners */
+document.addEventListener("submit", async (e) => {
+  const form = e.target.closest("form[data-form]");
+  if (!form) return;
+  e.preventDefault();
+  const kind = form.dataset.form;
+
+  if (kind === "search") {
+    const q = String(new FormData(form).get("q") || "").trim();
+    go("#/search?q=" + encodeURIComponent(q));
+    return;
+  }
+  if (kind === "signin") { await handleSignIn(form); return; }
+  if (kind === "signup") { await handleSignUp(form); return; }
+  if (kind === "upload") { await handleUpload(form); return; }
+  if (kind === "report") {
+    const id = form.dataset.id;
+    const fd = new FormData(form);
+    const instance = (await DB.allMeta()).find((r) => r.id === id);
+    if (instance) {
+      instance.reported = true;
+      instance.reportReason = String(fd.get("reason") || "other");
+      instance.reportDetail = String(fd.get("detail") || "");
+      await DB.putMeta(instance);
+    }
+    toast("Reported — an admin will look at it.");
+    return;
+  }
+});
+
+document.addEventListener("click", async (e) => {
+  const el = e.target.closest("[data-action]");
+  if (!el) return;
+  const action = el.dataset.action;
+  const id = el.dataset.id;
+
+  if (action === "signout") {
+    clearSession();
+    state.user = null;
+    state.loginMode = "signin";
+    toast("Signed out.");
+    go("#/login");
+    return;
+  }
+
+  if (action === "download") { await handleDownload(id); return; }
+
+  if (action === "approve" || action === "reject" || action === "unpublish" || action === "delete" || action === "clear-report") {
+    const meta = await DB.allMeta();
+    const rec = meta.find((r) => r.id === id);
+    if (!rec) return;
+
+    if (action === "approve") { rec.status = "published"; rec.publishedAt = rec.publishedAt || Date.now(); }
+    if (action === "reject") { rec.status = "rejected"; }
+    if (action === "unpublish") { rec.status = "archived"; rec.reported = false; }
+    if (action === "clear-report") { rec.reported = false; }
+    if (action === "delete") {
+      if (!confirm("Delete “" + rec.title + "” permanently?")) return;
+      await DB.delMeta(rec.id);
+      await DB.delFile(rec.id);
+      toast("Deleted.");
+      render();
+      return;
+    }
+    await DB.putMeta(rec);
+    toast(
+      action === "approve" ? "Published." :
+      action === "reject" ? "Rejected." :
+      action === "unpublish" ? "Hidden from students." : "Report dismissed."
+    );
+    render();
+    return;
+  }
+
+  if (action === "remove-demo") {
+    if (!confirm("Delete all demo files? Your own uploads stay.")) return;
+    const meta = await DB.allMeta();
+    const demos = meta.filter((r) => r.isDemo);
+    for (const rec of demos) { await DB.delMeta(rec.id); await DB.delFile(rec.id); }
+    toast("Removed " + demos.length + " demo files.");
+    render();
+    return;
+  }
+
+  if (action === "export") {
+    const meta = await DB.allMeta();
+    exportJson(meta);
+    return;
+  }
+});
+
+document.addEventListener("change", async (e) => {
+  const input = e.target.closest("input[data-import]");
+  if (!input || !input.files || !input.files[0]) return;
+  await importJson(input.files[0]);
+  input.value = "";
+});
+
+window.addEventListener("hashchange", () => {
+  state.loginError = "";
+  render().then(() => window.scrollTo({ top: 0 }));
+});
+
+/* -------------------------------------------------------------------- boot */
+(async function boot() {
+  await seedDemo();
+  const session = readSession();
+  if (session) {
+    const users = loadUsers();
+    state.user = users.find((u) => u.id === session.uid) || null;
+    if (!state.user) clearSession();
+  }
+
+  if (!location.hash) location.hash = state.user ? "#/" : "#/login";
+  syncFormState();
+  await render();
+})();
+</script>
+</body>
+</html>

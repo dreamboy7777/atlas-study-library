@@ -1,0 +1,106 @@
+{
+  "version": "0.2-draft",
+  "generated": "2026-10-22",
+  "source": "student-provided curriculum outline (unverified)",
+  "program": "MBBS",
+  "semesters": [1, 2],
+  "batches": [
+    { "label": "198", "started_year": null, "is_active": true },
+    { "label": "199", "started_year": null, "is_active": true },
+    { "label": "200", "started_year": null, "is_active": true }
+  ],
+  "years": [
+    {
+      "year_no": 1,
+      "label": "Year 1",
+      "semester_hint": null,
+      "modules": [
+        { "code": "ISK-101", "title": null, "kind": "horizontal", "position": 10 },
+        { "code": "INT-102", "title": null, "kind": "horizontal", "position": 20 },
+        { "code": "BMS-103", "title": null, "kind": "horizontal", "position": 30 },
+        { "code": "CPS-104", "title": null, "kind": "horizontal", "position": 40 },
+        { "code": "INT-108", "title": null, "kind": "vertical", "position": 50 },
+        { "code": "EPE", "title": "EPE", "kind": "vertical", "position": 60 },
+        { "code": "Critical thinking", "title": "Critical thinking", "kind": "vertical", "position": 70 },
+        { "code": "Communication skills", "title": "Communication skills", "kind": "vertical", "position": 80 },
+        { "code": "Medical Terminology", "title": "Medical Terminology", "kind": "vertical", "position": 90 }
+      ],
+      "subjects": [
+        { "name": "Anatomy", "slug": "anatomy" },
+        { "name": "Physiology", "slug": "physiology" },
+        { "name": "Histology", "slug": "histology" },
+        { "name": "Biochemistry", "slug": "biochemistry" },
+        { "name": "Pathology", "slug": "pathology" },
+        { "name": "Pharmacology", "slug": "pharmacology" },
+        { "name": "EPE", "slug": "epe-y1" },
+        { "name": "Critical thinking", "slug": "critical-thinking" },
+        { "name": "Communication skills", "slug": "communication-skills" },
+        { "name": "Medical Terminology", "slug": "medical-terminology" }
+      ]
+    },
+    {
+      "year_no": 2,
+      "label": "Year 2",
+      "semester_hint": null,
+      "modules": [
+        { "code": "NEU-205", "title": null, "kind": "horizontal", "position": 10 },
+        { "code": "DIG-206", "title": null, "kind": "horizontal", "position": 20 },
+        { "code": "END-207", "title": null, "kind": "horizontal", "position": 30 },
+        { "code": "INT-208", "title": null, "kind": "horizontal", "position": 40 },
+        { "code": "PAT-210", "title": null, "kind": "horizontal", "position": 50 },
+        { "code": "PSY-213", "title": null, "kind": "horizontal", "position": 60 },
+        { "code": "RES-234", "title": null, "kind": "horizontal", "position": 70 },
+        { "code": "EPE-2", "title": "EPE-2", "kind": "vertical", "position": 80 },
+        { "code": "MPE", "title": "MPE", "kind": "vertical", "position": 90 },
+        { "code": "Computer", "title": "Computer", "kind": "vertical", "position": 100 }
+      ],
+      "subjects": [
+        { "name": "Anatomy", "slug": "anatomy" },
+        { "name": "Physiology", "slug": "physiology" },
+        { "name": "Biochemistry", "slug": "biochemistry" },
+        { "name": "Histology", "slug": "histology" },
+        { "name": "Pharmacology", "slug": "pharmacology" },
+        { "name": "Pathology", "slug": "pathology" },
+        { "name": "Behavioural science", "slug": "behavioural-science" },
+        { "name": "MPE", "slug": "mpe" },
+        { "name": "EPE-2", "slug": "epe-2" },
+        { "name": "Medical research & EBM-1", "slug": "medical-research-ebm-1" },
+        { "name": "Computer", "slug": "computer" }
+      ]
+    },
+    {
+      "year_no": 3,
+      "label": "Year 3",
+      "semester_hint": null,
+      "modules": [
+        { "code": "INF-309", "title": "Parasitology and microbiology", "kind": "horizontal", "semester_hint": 1, "position": 10 },
+        { "code": "PAT-310", "title": "Pharmacology and pathology", "kind": "horizontal", "semester_hint": 1, "position": 20 },
+        { "code": "IMN-311", "title": "Immunology", "kind": "horizontal", "semester_hint": 1, "position": 30 },
+        { "code": "INV-314", "title": "Radiology", "kind": "horizontal", "semester_hint": 1, "position": 40 },
+        { "code": "OPH-315", "title": "Eye disorders", "kind": "horizontal", "semester_hint": 2, "position": 50 },
+        { "code": "ENT-316", "title": "Ear, nose and throat", "kind": "horizontal", "semester_hint": 2, "position": 60 },
+        { "code": "TOX-317", "title": "Clinical toxicology and legal medicine", "kind": "horizontal", "semester_hint": 2, "position": 70 },
+        { "code": "NTR-319", "title": "Nutrition", "kind": "horizontal", "semester_hint": 2, "position": 80 },
+        { "code": "MPC-326", "title": "Medical professionalism and communication skills-2", "kind": "vertical", "semester_hint": 2, "position": 90 }
+      ],
+      "subjects": [
+        { "name": "Parasitology and microbiology", "slug": "parasitology-and-microbiology" },
+        { "name": "Pharmacology and pathology", "slug": "pharmacology-and-pathology" },
+        { "name": "Immunology", "slug": "immunology" },
+        { "name": "Radiology", "slug": "radiology" },
+        { "name": "Eye disorders", "slug": "eye-disorders" },
+        { "name": "Ear, nose and throat", "slug": "ear-nose-and-throat" },
+        { "name": "Clinical toxicology and legal medicine", "slug": "clinical-toxicology-and-legal-medicine" },
+        { "name": "Nutrition", "slug": "nutrition" },
+        { "name": "Medical professionalism and communication skills-2", "slug": "medical-professionalism-and-communication-skills-2" }
+      ]
+    }
+  ],
+  "open_items": [
+    "Module titles are null for Years 1–2 where the outline supplies only a code. Year 3 titles are filled from the module → subject mapping.",
+    "semester_hint is set for Year 3 (1st/2nd); Years 1–2 still group modules by year only.",
+    "Subject slugs for 'EPE' (year 1) and 'EPE-2' differ from the module codes on purpose: subjects and modules are separate tables with separate unique keys.",
+    "Module → subject mapping is filled for Year 3 (confirmed by a batch rep); Years 1–2 remain open.",
+    "Confirm whether Batches 198, 199 and 200 share the same module codes. Model assumes they do (curriculum is per year, not per batch)."
+  ]
+}
