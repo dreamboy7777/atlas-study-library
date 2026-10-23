@@ -9,13 +9,6 @@
   <img src="https://img.shields.io/badge/account-none-d8b98a?style=for-the-badge&labelColor=0c1210" alt="No account required">
 </p>
 
-<h1 align="center">Atlas</h1>
-
-<p align="center">
-  <b>A calm, local-first study library for medical students.</b><br>
-  One stable home for PDFs, past papers, notes, chat, and memes — instead of an endless Telegram scroll.
-</p>
-
 <p align="center">
   <a href="https://github.com/dreamboy7777/atlas-study-library/releases/download/v1.0.0/atlas-windows.zip"><img src="https://img.shields.io/badge/Download-Windows-9ff0dd?style=for-the-badge&logo=windows&logoColor=07110e&labelColor=0c1210" alt="Download for Windows"></a>
   <a href="https://github.com/dreamboy7777/atlas-study-library/releases/download/v1.0.0/atlas-android.apk"><img src="https://img.shields.io/badge/Download-Android-9ff0dd?style=for-the-badge&logo=android&logoColor=07110e&labelColor=0c1210" alt="Download for Android"></a>
